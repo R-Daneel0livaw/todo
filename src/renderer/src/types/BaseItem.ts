@@ -6,4 +6,6 @@ export interface BaseItem {
   description?: string
   status: TaskStatus
   createDate: Date
+  startDate?: Date
+  endDate?: Date
 }
