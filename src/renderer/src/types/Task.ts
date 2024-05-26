@@ -1,4 +1,4 @@
-import { BaseItem } from './BaseItem'
+import { BaseItem } from '.'
 
 export interface Task extends BaseItem {
   topic: string

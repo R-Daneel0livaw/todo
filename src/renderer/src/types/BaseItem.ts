@@ -1,4 +1,4 @@
-import { TaskStatus } from './TaskStatus'
+import { TaskStatus } from '.'
 
 export interface BaseItem {
   id: number
