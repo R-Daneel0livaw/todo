@@ -8,4 +8,5 @@ export interface BaseItem {
   createDate: Date
   startDate?: Date
   endDate?: Date
+  canceledDate?: Date
 }
