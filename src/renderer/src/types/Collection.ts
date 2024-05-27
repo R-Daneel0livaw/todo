@@ -1,13 +1,6 @@
-import { CollectionSubType, CollectionType } from '.'
+import { BaseItem, CollectionSubType, CollectionType } from '.'
 
-export interface Collection {
-  id: number
-  title: string
-  description?: string
+export interface Collection extends BaseItem {
   type: CollectionType
   subType: CollectionSubType
-  createDate: Date
-  startDate?: Date
-  endDate?: Date
-  canceledDate?: Date
 }
