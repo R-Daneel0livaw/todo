@@ -1,1 +1,1 @@
-export type TaskStatus = 'CREATED' | 'IN_PROGRESS' | 'FINISHED' | 'CANCELED'
+export type TaskStatus = 'CREATED' | 'MIGRATED' | 'IN_PROGRESS' | 'FINISHED' | 'CANCELED'
