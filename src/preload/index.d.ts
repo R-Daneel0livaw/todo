@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { Task, Event, Collection } from 'src/shared/types'
+import { Task } from '@shared/types'
 
 interface Api {
   getTask(taskId: number): Promise<Task>
