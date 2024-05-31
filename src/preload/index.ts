@@ -1,7 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { Api } from '@shared/types'
 
-const api = {
+const api: Api = {
   getTask: (taskId) => ipcRenderer.invoke('get-task', taskId),
   getTaskByCollection: (taskId, collectionId) =>
     ipcRenderer.invoke('get-task-by-collection', taskId, collectionId),
