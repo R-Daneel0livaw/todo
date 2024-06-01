@@ -1,3 +1,4 @@
+import { Event } from '@shared/types'
 import { ipcMain } from 'electron'
 
 export function setupEventHandlers() {
@@ -11,6 +12,19 @@ export function setupEventHandlers() {
 
   ipcMain.handle('get-events-by-collection', async (event, collectionId) => {
     console.log('get-events-by-collection', event, collectionId)
+    const eventData: Event = {
+      status: 'CREATED',
+      id: 4,
+      title: 'Gym',
+      createDate: new Date()
+    }
+    const eventData2: Event = {
+      status: 'CREATED',
+      id: 5,
+      title: 'Work',
+      createDate: new Date()
+    }
+    return [eventData, eventData2]
   })
 
   ipcMain.handle('add-event', async (event, eventData) => {

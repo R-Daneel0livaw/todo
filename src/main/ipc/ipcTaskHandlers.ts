@@ -1,3 +1,4 @@
+import { Task } from '@shared/types'
 import { ipcMain } from 'electron'
 
 export function setupTaskHandlers() {
@@ -11,6 +12,21 @@ export function setupTaskHandlers() {
 
   ipcMain.handle('get-tasks-by-collection', async (event, collectionId) => {
     console.log('get-tasks-by-collection', event, collectionId)
+    const task: Task = {
+      topic: 'Programming',
+      status: 'CREATED',
+      id: 1,
+      title: 'TODO: IPC Handlers',
+      createDate: new Date()
+    }
+    const task2: Task = {
+      topic: 'Reading',
+      status: 'CREATED',
+      id: 2,
+      title: 'Audio Book - Atomic Habits',
+      createDate: new Date()
+    }
+    return [task, task2]
   })
 
   ipcMain.handle('add-task', async (event, taskData) => {
