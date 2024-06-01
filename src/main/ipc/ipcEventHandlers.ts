@@ -1,37 +1,67 @@
 import { Event } from '@shared/types'
-import { ipcMain } from 'electron'
+import { IpcMainInvokeEvent, ipcMain } from 'electron'
 
 export function setupEventHandlers() {
-  ipcMain.handle('get-event', async (event, eventId) => {
-    console.log('get-event', event, eventId)
-  })
-
-  ipcMain.handle('get-event-by-collection', async (event, eventId, collectionId) => {
-    console.log('get-event-by-collection', event, eventId, collectionId)
-  })
-
-  ipcMain.handle('get-events-by-collection', async (event, collectionId) => {
-    console.log('get-events-by-collection', event, collectionId)
-    const eventData: Event = {
-      status: 'CREATED',
-      id: 4,
-      title: 'Gym',
-      createDate: new Date()
+  ipcMain.handle(
+    'get-event',
+    async (event: IpcMainInvokeEvent, eventId: number): Promise<Event> => {
+      console.log('get-event', event, eventId)
+      return getEvent()
     }
-    const eventData2: Event = {
-      status: 'CREATED',
-      id: 5,
-      title: 'Work',
-      createDate: new Date()
+  )
+
+  ipcMain.handle(
+    'get-event-by-collection',
+    async (event: IpcMainInvokeEvent, eventId: number, collectionId: number): Promise<Event> => {
+      console.log('get-event-by-collection', event, eventId, collectionId)
+      return getEvent()
     }
-    return [eventData, eventData2]
-  })
+  )
 
-  ipcMain.handle('add-event', async (event, eventData) => {
-    console.log('add-event', event, eventData)
-  })
+  ipcMain.handle(
+    'get-events-by-collection',
+    async (event: IpcMainInvokeEvent, collectionId: number): Promise<Event[]> => {
+      console.log('get-events-by-collection', event, collectionId)
+      return getEvents()
+    }
+  )
 
-  ipcMain.handle('delete-event', async (event, eventId) => {
-    console.log('delete-event', event, eventId)
-  })
+  ipcMain.handle(
+    'add-event',
+    async (event: IpcMainInvokeEvent, eventData: Event): Promise<void> => {
+      console.log('add-event', event, eventData)
+    }
+  )
+
+  ipcMain.handle(
+    'delete-event',
+    async (event: IpcMainInvokeEvent, eventId: number): Promise<void> => {
+      console.log('delete-event', event, eventId)
+    }
+  )
+}
+
+function getEvent(): Event {
+  return {
+    status: 'CREATED',
+    id: 4,
+    title: 'Gym',
+    createDate: new Date()
+  }
+}
+
+function getEvents(): Event[] {
+  const eventData: Event = {
+    status: 'CREATED',
+    id: 4,
+    title: 'Gym',
+    createDate: new Date()
+  }
+  const eventData2: Event = {
+    status: 'CREATED',
+    id: 5,
+    title: 'Work',
+    createDate: new Date()
+  }
+  return [eventData, eventData2]
 }
