@@ -1,3 +1,6 @@
+import { getCollections } from '@renderer/services/CollectionService'
+import { getEventsByCollectionId } from '@renderer/services/EventService'
+import { getTasksByCollectionId } from '@renderer/services/TaskService'
 import { Collection, Event, Task } from '@shared/types'
 import { useState, useEffect } from 'react'
 
@@ -9,17 +12,17 @@ function Versions(): JSX.Element {
 
   useEffect(() => {
     async function loadTasks() {
-      const tasks = await window.api.getTasksByCollection(1)
+      const tasks = await getTasksByCollectionId(1)
       setTasks(tasks)
     }
 
     async function loadEvents() {
-      const events = await window.api.getEventsByCollection(2)
+      const events = await getEventsByCollectionId(2)
       setEvents(events)
     }
 
     async function loadCollections() {
-      const collections = await window.api.getCollections()
+      const collections = await getCollections()
       setCollections(collections)
     }
 

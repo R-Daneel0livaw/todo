@@ -1,4 +1,4 @@
-import { Event } from '@shared/types'
+import { Collection, Event } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
 
 export function setupEventHandlers() {
@@ -11,17 +11,25 @@ export function setupEventHandlers() {
   )
 
   ipcMain.handle(
-    'get-event-by-collection',
+    'get-event-by-collection-id',
     async (event: IpcMainInvokeEvent, eventId: number, collectionId: number): Promise<Event> => {
-      console.log('get-event-by-collection', event, eventId, collectionId)
+      console.log('get-event-by-collection-id', event, eventId, collectionId)
       return getEvent()
     }
   )
 
   ipcMain.handle(
-    'get-events-by-collection',
+    'get-events-by-collection-id',
     async (event: IpcMainInvokeEvent, collectionId: number): Promise<Event[]> => {
-      console.log('get-events-by-collection', event, collectionId)
+      console.log('get-events-by-collection-id', event, collectionId)
+      return getEvents()
+    }
+  )
+
+  ipcMain.handle(
+    'get-events-by-collection',
+    async (event: IpcMainInvokeEvent, collectionData: Partial<Collection>): Promise<Event[]> => {
+      console.log('get-events-by-collection', event, collectionData)
       return getEvents()
     }
   )

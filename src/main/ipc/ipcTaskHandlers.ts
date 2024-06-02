@@ -1,4 +1,4 @@
-import { Task } from '@shared/types'
+import { Collection, Task } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
 
 export function setupTaskHandlers() {
@@ -8,17 +8,25 @@ export function setupTaskHandlers() {
   })
 
   ipcMain.handle(
-    'get-task-by-collection',
+    'get-task-by-collection-id',
     async (event: IpcMainInvokeEvent, taskId: number, collectionId: number): Promise<Task> => {
-      console.log('get-task-by-collection', event, taskId, collectionId)
+      console.log('get-task-by-collection-id', event, taskId, collectionId)
       return getTask()
     }
   )
 
   ipcMain.handle(
-    'get-tasks-by-collection',
+    'get-tasks-by-collection-id',
     async (event: IpcMainInvokeEvent, collectionId: number): Promise<Task[]> => {
-      console.log('get-tasks-by-collection', event, collectionId)
+      console.log('get-tasks-by-collection-id', event, collectionId)
+      return getTasks()
+    }
+  )
+
+  ipcMain.handle(
+    'get-tasks-by-collection',
+    async (event: IpcMainInvokeEvent, collectionData: Partial<Collection>): Promise<Task[]> => {
+      console.log('get-tasks-by-collection', event, collectionData)
       return getTasks()
     }
   )
