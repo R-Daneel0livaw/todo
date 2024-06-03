@@ -7,3 +7,7 @@ export const getCollections = async (): Promise<Collection[]> => {
 export const addCollection = async (collectionData: Collection): Promise<void> => {
   window.api.addCollection(collectionData)
 }
+
+export const deleteColection = async (collectionId): Promise<void> => {
+  window.api.deleteColection(collectionId)
+}

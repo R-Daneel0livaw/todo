@@ -15,3 +15,7 @@ export const getEventsByCollection = async (
 export const addEvent = async (eventData: Event): Promise<void> => {
   window.api.addEvent(eventData)
 }
+
+export const deleteEvent = async (eventId: number): Promise<void> => {
+  window.api.deleteEvent(eventId)
+}

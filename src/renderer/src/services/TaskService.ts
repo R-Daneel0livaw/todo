@@ -15,3 +15,7 @@ export const getTasksByCollection = async (
 export const addTask = async (taskData: Task): Promise<void> => {
   window.api.addTask(taskData)
 }
+
+export const deleteTask = async (taskId: number): Promise<void> => {
+  window.api.deleteTask(taskId)
+}
