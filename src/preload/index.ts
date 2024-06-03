@@ -12,6 +12,7 @@ const api: Api = {
     ipcRenderer.invoke('get-tasks-by-collection', collectionData),
   addTask: (taskData) => ipcRenderer.invoke('add-task', taskData),
   deleteTask: (taskId) => ipcRenderer.invoke('delete-task', taskId),
+  cancelTask: (taskId) => ipcRenderer.invoke('cancel-task', taskId),
   getEvent: (eventId) => ipcRenderer.invoke('get-event', eventId),
   getEventByCollectionId: (eventId, collectionId) =>
     ipcRenderer.invoke('get-event-by-collection-id', eventId, collectionId),
@@ -21,6 +22,7 @@ const api: Api = {
     ipcRenderer.invoke('get-events-by-collection', collectionData),
   addEvent: (eventData) => ipcRenderer.invoke('add-event', eventData),
   deleteEvent: (eventId) => ipcRenderer.invoke('delete-event', eventId),
+  cancelEvent: (eventId) => ipcRenderer.invoke('cancel-event', eventId),
   getCollection: (collectinId) => ipcRenderer.invoke('get-collection', collectinId),
   getCollections: () => ipcRenderer.invoke('get-collections'),
   addCollection: (collectionData) => ipcRenderer.invoke('add-collection', collectionData),

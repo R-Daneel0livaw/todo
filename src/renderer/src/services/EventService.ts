@@ -19,3 +19,7 @@ export const addEvent = async (eventData: Event): Promise<void> => {
 export const deleteEvent = async (eventId: number): Promise<void> => {
   window.api.deleteEvent(eventId)
 }
+
+export const cancelEvent = async (eventId: number): Promise<void> => {
+  window.api.cancelEvent(eventId)
+}

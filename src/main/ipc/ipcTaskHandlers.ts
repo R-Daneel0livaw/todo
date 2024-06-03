@@ -41,6 +41,13 @@ export function setupTaskHandlers() {
       console.log('delete-task', event, taskId)
     }
   )
+
+  ipcMain.handle(
+    'cancel-task',
+    async (event: IpcMainInvokeEvent, taskId: number): Promise<void> => {
+      console.log('cancel-task', event, taskId)
+    }
+  )
 }
 
 function getTask(): Task {

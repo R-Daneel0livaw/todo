@@ -19,3 +19,7 @@ export const addTask = async (taskData: Task): Promise<void> => {
 export const deleteTask = async (taskId: number): Promise<void> => {
   window.api.deleteTask(taskId)
 }
+
+export const cancelTask = async (taskId: number): Promise<void> => {
+  window.api.cancelTask(taskId)
+}

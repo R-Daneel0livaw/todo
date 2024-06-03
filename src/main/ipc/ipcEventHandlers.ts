@@ -47,6 +47,13 @@ export function setupEventHandlers() {
       console.log('delete-event', event, eventId)
     }
   )
+
+  ipcMain.handle(
+    'cancel-event',
+    async (event: IpcMainInvokeEvent, eventId: number): Promise<void> => {
+      console.log('cancel-event', event, eventId)
+    }
+  )
 }
 
 function getEvent(): Event {
