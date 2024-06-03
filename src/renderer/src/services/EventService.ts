@@ -11,3 +11,7 @@ export const getEventsByCollection = async (
   console.log(collectionData, cd)
   return window.api.getEventsByCollection(cd)
 }
+
+export const addEvent = async (eventData: Event): Promise<void> => {
+  window.api.addEvent(eventData)
+}
