@@ -1,1 +1,1 @@
-export type ProjectStatus = 'CREATED' | 'STARTED' | 'FINISHED' | 'CANCELED'
+export type ProjectStatus = 'CREATED' | 'STARTED' | 'FINISHED' | 'CANCELED' | 'DELETED'
