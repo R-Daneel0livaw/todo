@@ -1,7 +1,7 @@
 import { Collection, Task } from '@shared/types'
 
 export const getTasksByCollectionId = async (collectionId: number): Promise<Task[]> => {
-  return window.api.getTasksByCollectionId(collectionId)
+  return window.taskApi.getTasksByCollectionId(collectionId)
 }
 
 export const getTasksByCollection = async (
@@ -9,17 +9,17 @@ export const getTasksByCollection = async (
 ): Promise<Task[]> => {
   const cd: Partial<Collection> = { type: 'DEFAULT', subType: 'TASK' }
   console.log(collectionData, cd)
-  return window.api.getTasksByCollection(cd)
+  return window.taskApi.getTasksByCollection(cd)
 }
 
 export const addTask = async (taskData: Task): Promise<void> => {
-  window.api.addTask(taskData)
+  window.taskApi.addTask(taskData)
 }
 
 export const deleteTask = async (taskId: number): Promise<void> => {
-  window.api.deleteTask(taskId)
+  window.taskApi.deleteTask(taskId)
 }
 
 export const cancelTask = async (taskId: number): Promise<void> => {
-  window.api.cancelTask(taskId)
+  window.taskApi.cancelTask(taskId)
 }

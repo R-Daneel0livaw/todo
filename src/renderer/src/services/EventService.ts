@@ -1,7 +1,7 @@
 import { Collection, Event } from '@shared/types'
 
 export const getEventsByCollectionId = async (collectionId: number): Promise<Event[]> => {
-  return window.api.getEventsByCollectionId(collectionId)
+  return window.eventApi.getEventsByCollectionId(collectionId)
 }
 
 export const getEventsByCollection = async (
@@ -9,17 +9,17 @@ export const getEventsByCollection = async (
 ): Promise<Event[]> => {
   const cd: Partial<Collection> = { type: 'DEFAULT', subType: 'EVENT' }
   console.log(collectionData, cd)
-  return window.api.getEventsByCollection(cd)
+  return window.eventApi.getEventsByCollection(cd)
 }
 
 export const addEvent = async (eventData: Event): Promise<void> => {
-  window.api.addEvent(eventData)
+  window.eventApi.addEvent(eventData)
 }
 
 export const deleteEvent = async (eventId: number): Promise<void> => {
-  window.api.deleteEvent(eventId)
+  window.eventApi.deleteEvent(eventId)
 }
 
 export const cancelEvent = async (eventId: number): Promise<void> => {
-  window.api.cancelEvent(eventId)
+  window.eventApi.cancelEvent(eventId)
 }

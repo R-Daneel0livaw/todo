@@ -1,9 +1,12 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { Api } from '@shared/types'
+import { CollectionApi, EventApi, TaskApi } from '@shared/types'
 
 declare global {
   interface Window {
     electron: ElectronAPI
-    api: Api
+    // api: Api
+    taskApi: TaskApi
+    eventApi: EventApi
+    collectionApi: CollectionApi
   }
 }
