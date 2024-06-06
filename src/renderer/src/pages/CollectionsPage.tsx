@@ -33,7 +33,9 @@ function CollectionsPage() {
                 <p>Type: {collection.type}</p>
                 <p>Sub-Type: {collection.subType}</p>
                 <p>Created At: {collection.createDate.toLocaleString()}</p>
-                <p>Created At: {collection.startDate?.toLocaleString()}</p>
+                {collection.startDate && (
+                  <p>Started At: {collection.startDate?.toLocaleString()}</p>
+                )}
               </div>
             )}
           </li>
