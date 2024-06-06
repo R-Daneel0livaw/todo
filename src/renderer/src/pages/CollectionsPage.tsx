@@ -33,8 +33,10 @@ function CollectionsPage() {
                 <p>Type: {collection.type}</p>
                 <p>Sub-Type: {collection.subType}</p>
                 <p>Created At: {collection.createDate.toLocaleString()}</p>
-                {collection.startDate && (
-                  <p>Started At: {collection.startDate?.toLocaleString()}</p>
+                {collection.startDate && <p>Started At: {collection.startDate.toLocaleString()}</p>}
+                {collection.endDate && <p>Ended At: {collection.endDate.toLocaleString()}</p>}
+                {collection.canceledDate && (
+                  <p>Canceled At: {collection.canceledDate.toLocaleString()}</p>
                 )}
               </div>
             )}
