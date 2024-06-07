@@ -1,3 +1,4 @@
+import CollectionView from '@renderer/components/CollectionView'
 import { getCollections } from '@renderer/services/CollectionService'
 import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
@@ -24,27 +25,15 @@ function CollectionsPage() {
       <ul>
         {collections.map((collection) => (
           <li key={collection.id}>
-            <div onClick={() => handleExpand(collection.id)}>
-              <h2>{collection.title}</h2>
-              <p>{collection.description}</p>
-            </div>
-            {expandedCollectionId === collection.id && (
-              <div>
-                <p>Type: {collection.type}</p>
-                <p>Sub-Type: {collection.subType}</p>
-                <p>Created At: {collection.createDate.toLocaleString()}</p>
-                {collection.startDate && <p>Started At: {collection.startDate.toLocaleString()}</p>}
-                {collection.endDate && <p>Ended At: {collection.endDate.toLocaleString()}</p>}
-                {collection.canceledDate && (
-                  <p>Canceled At: {collection.canceledDate.toLocaleString()}</p>
-                )}
-              </div>
-            )}
+            <CollectionView
+              collection={collection}
+              isExpanded={expandedCollectionId === collection.id}
+              onExpand={handleExpand}
+            />
           </li>
         ))}
       </ul>
     </div>
   )
 }
-
 export default CollectionsPage
