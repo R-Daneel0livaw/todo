@@ -1,6 +1,7 @@
-import Database, { Database as DbType } from 'better-sqlite3'
+import Database from 'better-sqlite3'
+import type { Database as BetterSqlite3Database } from 'better-sqlite3'
 
-const db: DbType = new Database('todo.db')
+const db: BetterSqlite3Database = new Database('todo.db')
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS tasks (
