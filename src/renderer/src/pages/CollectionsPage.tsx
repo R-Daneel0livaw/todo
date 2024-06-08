@@ -36,4 +36,5 @@ function CollectionsPage() {
     </div>
   )
 }
+
 export default CollectionsPage
