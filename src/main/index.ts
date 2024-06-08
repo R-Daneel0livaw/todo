@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import { setupTaskHandlers } from './ipc/ipcTaskHandlers'
 import { setupEventHandlers } from './ipc/ipcEventHandlers'
 import { setupCollectionHandlers } from './ipc/ipcCollectionHandlers'
+import './database/sqlite'
 
 function createWindow(): void {
   // Create the browser window.

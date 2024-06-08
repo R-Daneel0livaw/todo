@@ -13,8 +13,7 @@ db.exec(`
     createDate TEXT,
     startDate TEXT,
     endDate TEXT,
-    canceledDate TEXT,
-    topic TEXT
+    canceledDate TEXT
   );
 
   CREATE TABLE IF NOT EXISTS events (
@@ -40,7 +39,7 @@ db.exec(`
     endDate TEXT,
     canceledDate TEXT
   );
-
+  
   CREATE TABLE IF NOT EXISTS collectionItems (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     collectionId INTEGER NOT NULL,
