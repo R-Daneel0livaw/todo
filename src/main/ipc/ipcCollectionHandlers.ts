@@ -39,24 +39,3 @@ function getCollection(): Collection {
     createDate: new Date()
   }
 }
-
-// function getCollections(): Collection[] {
-//   const collection: Collection = {
-//     description: 'Main Task List',
-//     type: 'DEFAULT',
-//     subType: 'TASK',
-//     id: 1,
-//     title: 'Task List',
-//     createDate: new Date()
-//   }
-
-//   const collection2: Collection = {
-//     description: 'Main Event List',
-//     type: 'DEFAULT',
-//     subType: 'EVENT',
-//     id: 2,
-//     title: 'Event List',
-//     createDate: new Date()
-//   }
-//   return [collection, collection2]
-// }
