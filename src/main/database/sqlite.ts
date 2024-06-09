@@ -1,3 +1,4 @@
+import { Collection } from '@shared/types'
 import Database from 'better-sqlite3'
 import type { Database as BetterSqlite3Database } from 'better-sqlite3'
 
@@ -50,5 +51,45 @@ db.exec(`
     FOREIGN KEY (itemId) REFERENCES events(id) ON DELETE CASCADE
   );
 `)
+
+const defaultCollections: Partial<Collection>[] = [
+  {
+    title: 'Task List',
+    description: 'Main Task List',
+    type: 'DEFAULT',
+    subType: 'TASK',
+    createDate: new Date(),
+    startDate: new Date()
+  },
+  {
+    title: 'Event List',
+    description: 'Main Event List',
+    type: 'DEFAULT',
+    subType: 'EVENT',
+    createDate: new Date(),
+    startDate: new Date()
+  }
+]
+
+const insertStmt = db.prepare(
+  'INSERT INTO collections (title, description, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?)'
+)
+const checkStmt = db.prepare('SELECT 1 FROM collections WHERE type = ? AND subType = ?')
+
+db.transaction(() => {
+  defaultCollections.forEach((collection) => {
+    const row = checkStmt.get(collection.type, collection.subType)
+    if (!row) {
+      insertStmt.run(
+        collection.title,
+        collection.description,
+        collection.type,
+        collection.subType,
+        collection.createDate?.toISOString(),
+        collection.startDate?.toISOString()
+      )
+    }
+  })
+})()
 
 export default db
