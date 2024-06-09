@@ -45,7 +45,7 @@ db.exec(`
     collectionId INTEGER NOT NULL,
     itemId INTEGER,
     itemType TEXT NOT NULL CHECK (itemType IN ('Task', 'Event', 'Collection')),
-    FOREIGN KEY (collectionId) REFERENCES collections (id),
+    FOREIGN KEY (collectionId) REFERENCES collections (id) ON DELETE CASCADE,
     FOREIGN KEY (itemId) REFERENCES tasks(id) ON DELETE CASCADE,
     FOREIGN KEY (itemId) REFERENCES events(id) ON DELETE CASCADE
   );
