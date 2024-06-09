@@ -1,5 +1,6 @@
 import { Collection } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
+import { getCollections } from '../database/collectionManager'
 
 export function setupCollectionHandlers() {
   ipcMain.handle(
@@ -10,8 +11,7 @@ export function setupCollectionHandlers() {
     }
   )
 
-  ipcMain.handle('get-collections', async (event: IpcMainInvokeEvent): Promise<Collection[]> => {
-    console.log('get-collections', event)
+  ipcMain.handle('get-collections', async (): Promise<Collection[]> => {
     return getCollections()
   })
 
@@ -40,23 +40,23 @@ function getCollection(): Collection {
   }
 }
 
-function getCollections(): Collection[] {
-  const collection: Collection = {
-    description: 'Main Task List',
-    type: 'DEFAULT',
-    subType: 'TASK',
-    id: 1,
-    title: 'Task List',
-    createDate: new Date()
-  }
+// function getCollections(): Collection[] {
+//   const collection: Collection = {
+//     description: 'Main Task List',
+//     type: 'DEFAULT',
+//     subType: 'TASK',
+//     id: 1,
+//     title: 'Task List',
+//     createDate: new Date()
+//   }
 
-  const collection2: Collection = {
-    description: 'Main Event List',
-    type: 'DEFAULT',
-    subType: 'EVENT',
-    id: 2,
-    title: 'Event List',
-    createDate: new Date()
-  }
-  return [collection, collection2]
-}
+//   const collection2: Collection = {
+//     description: 'Main Event List',
+//     type: 'DEFAULT',
+//     subType: 'EVENT',
+//     id: 2,
+//     title: 'Event List',
+//     createDate: new Date()
+//   }
+//   return [collection, collection2]
+// }
