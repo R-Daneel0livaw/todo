@@ -10,8 +10,7 @@ import {
 export function setupCollectionHandlers() {
   ipcMain.handle(
     'get-collection',
-    async (event: IpcMainInvokeEvent, collectionId: number): Promise<Collection> => {
-      console.log('get-collection', event, collectionId)
+    async (_: IpcMainInvokeEvent, collectionId: number): Promise<Collection> => {
       return getCollection(collectionId)
     }
   )
