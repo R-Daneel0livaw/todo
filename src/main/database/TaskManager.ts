@@ -3,8 +3,8 @@ import db from './sqlite'
 
 export function getTask(taskId: number): Task {
   const stmt = db.prepare('SELECT * FROM tasks WHERE id = ?')
-  const collection: Task = stmt.get(taskId) as Task
-  return collection
+  const task: Task = stmt.get(taskId) as Task
+  return task
 }
 
 export function getTaskByCollectionId(taskId: number, collectionId: number): Task {
@@ -14,8 +14,8 @@ export function getTaskByCollectionId(taskId: number, collectionId: number): Tas
     JOIN collectionItems ci ON t.id = ci.itemId
     WHERE t.id = ? AND ci.collectionId = ?
   `)
-  const collection: Task = stmt.get(taskId, collectionId) as Task
-  return collection
+  const task: Task = stmt.get(taskId, collectionId) as Task
+  return task
 }
 
 export function getTasksByCollectionId(collectionId: number): Task[] {
@@ -25,8 +25,8 @@ export function getTasksByCollectionId(collectionId: number): Task[] {
     JOIN collectionItems ci ON t.id = ci.itemId
     WHERE ci.collectionId = ?
   `)
-  const collection: Task[] = stmt.all(collectionId) as Task[]
-  return collection
+  const tasks: Task[] = stmt.all(collectionId) as Task[]
+  return tasks
 }
 
 export function addTask(taskData: Task) {

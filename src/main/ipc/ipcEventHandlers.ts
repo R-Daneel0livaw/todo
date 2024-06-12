@@ -1,28 +1,29 @@
 import { Collection, Event } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
+import {
+  addEvent,
+  deleteEvent,
+  getEvent,
+  getEventByCollectionId,
+  getEventsByCollectionId
+} from '../database/eventManager'
 
 export function setupEventHandlers() {
-  ipcMain.handle(
-    'get-event',
-    async (event: IpcMainInvokeEvent, eventId: number): Promise<Event> => {
-      console.log('get-event', event, eventId)
-      return getEvent()
-    }
-  )
+  ipcMain.handle('get-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<Event> => {
+    return getEvent(eventId)
+  })
 
   ipcMain.handle(
     'get-event-by-collection-id',
-    async (event: IpcMainInvokeEvent, eventId: number, collectionId: number): Promise<Event> => {
-      console.log('get-event-by-collection-id', event, eventId, collectionId)
-      return getEvent()
+    async (_: IpcMainInvokeEvent, eventId: number, collectionId: number): Promise<Event> => {
+      return getEventByCollectionId(eventId, collectionId)
     }
   )
 
   ipcMain.handle(
     'get-events-by-collection-id',
-    async (event: IpcMainInvokeEvent, collectionId: number): Promise<Event[]> => {
-      console.log('get-events-by-collection-id', event, collectionId)
-      return getEvents()
+    async (_: IpcMainInvokeEvent, collectionId: number): Promise<Event[]> => {
+      return getEventsByCollectionId(collectionId)
     }
   )
 
@@ -34,19 +35,13 @@ export function setupEventHandlers() {
     }
   )
 
-  ipcMain.handle(
-    'add-event',
-    async (event: IpcMainInvokeEvent, eventData: Event): Promise<void> => {
-      console.log('add-event', event, eventData)
-    }
-  )
+  ipcMain.handle('add-event', async (_: IpcMainInvokeEvent, eventData: Event): Promise<void> => {
+    addEvent(eventData)
+  })
 
-  ipcMain.handle(
-    'delete-event',
-    async (event: IpcMainInvokeEvent, eventId: number): Promise<void> => {
-      console.log('delete-event', event, eventId)
-    }
-  )
+  ipcMain.handle('delete-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<void> => {
+    deleteEvent(eventId)
+  })
 
   ipcMain.handle(
     'cancel-event',
@@ -54,15 +49,6 @@ export function setupEventHandlers() {
       console.log('cancel-event', event, eventId)
     }
   )
-}
-
-function getEvent(): Event {
-  return {
-    status: 'CREATED',
-    id: 4,
-    title: 'Gym',
-    createDate: new Date()
-  }
 }
 
 function getEvents(): Event[] {
