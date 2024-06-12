@@ -1,25 +1,29 @@
 import { Collection, Task } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
+import {
+  addTask,
+  deleteTask,
+  getTask,
+  getTaskByCollectionId,
+  getTasksByCollectionId
+} from '../database/taskManager'
 
 export function setupTaskHandlers() {
-  ipcMain.handle('get-task', async (event: IpcMainInvokeEvent, taskId: number): Promise<Task> => {
-    console.log('get-task', event, taskId)
-    return getTask()
+  ipcMain.handle('get-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<Task> => {
+    return getTask(taskId)
   })
 
   ipcMain.handle(
     'get-task-by-collection-id',
-    async (event: IpcMainInvokeEvent, taskId: number, collectionId: number): Promise<Task> => {
-      console.log('get-task-by-collection-id', event, taskId, collectionId)
-      return getTask()
+    async (_: IpcMainInvokeEvent, taskId: number, collectionId: number): Promise<Task> => {
+      return getTaskByCollectionId(taskId, collectionId)
     }
   )
 
   ipcMain.handle(
     'get-tasks-by-collection-id',
-    async (event: IpcMainInvokeEvent, collectionId: number): Promise<Task[]> => {
-      console.log('get-tasks-by-collection-id', event, collectionId)
-      return getTasks()
+    async (_: IpcMainInvokeEvent, collectionId: number): Promise<Task[]> => {
+      return getTasksByCollectionId(collectionId)
     }
   )
 
@@ -31,16 +35,13 @@ export function setupTaskHandlers() {
     }
   )
 
-  ipcMain.handle('add-task', async (event: IpcMainInvokeEvent, taskData: Task): Promise<void> => {
-    console.log('add-task', event, taskData)
+  ipcMain.handle('add-task', async (_: IpcMainInvokeEvent, taskData: Task): Promise<void> => {
+    addTask(taskData)
   })
 
-  ipcMain.handle(
-    'delete-task',
-    async (event: IpcMainInvokeEvent, taskId: number): Promise<void> => {
-      console.log('delete-task', event, taskId)
-    }
-  )
+  ipcMain.handle('delete-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
+    deleteTask(taskId)
+  })
 
   ipcMain.handle(
     'cancel-task',
@@ -48,16 +49,6 @@ export function setupTaskHandlers() {
       console.log('cancel-task', event, taskId)
     }
   )
-}
-
-function getTask(): Task {
-  return {
-    topic: 'Programming',
-    status: 'CREATED',
-    id: 1,
-    title: 'TODO: IPC Handlers',
-    createDate: new Date()
-  }
 }
 
 function getTasks(): Task[] {
