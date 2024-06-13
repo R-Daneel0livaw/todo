@@ -47,3 +47,8 @@ export function deleteEvent(eventId: number) {
   const stmt = db.prepare('DELETE FROM events WHERE id = ?')
   stmt.run(eventId)
 }
+
+export function cancelEvent(eventId: number) {
+  const stmt = db.prepare('UPDATE events SET status = ?, canceledDate = ? WHERE id = ?')
+  stmt.run('CANCELED', new Date().toISOString(), eventId)
+}

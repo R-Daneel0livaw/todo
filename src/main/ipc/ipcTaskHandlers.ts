@@ -2,6 +2,7 @@ import { Collection, Task } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
 import {
   addTask,
+  cancelTask,
   deleteTask,
   getTask,
   getTaskByCollectionId,
@@ -43,12 +44,9 @@ export function setupTaskHandlers() {
     deleteTask(taskId)
   })
 
-  ipcMain.handle(
-    'cancel-task',
-    async (event: IpcMainInvokeEvent, taskId: number): Promise<void> => {
-      console.log('cancel-task', event, taskId)
-    }
-  )
+  ipcMain.handle('cancel-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
+    cancelTask(taskId)
+  })
 }
 
 function getTasks(): Task[] {

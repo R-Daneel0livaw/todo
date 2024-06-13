@@ -47,3 +47,8 @@ export function deleteTask(taskId: number) {
   const stmt = db.prepare('DELETE FROM tasks WHERE id = ?')
   stmt.run(taskId)
 }
+
+export function cancelTask(taskId: number) {
+  const stmt = db.prepare('UPDATE tasks SET status = ?, canceledDate = ? WHERE id = ?')
+  stmt.run('CANCELED', new Date().toISOString(), taskId)
+}

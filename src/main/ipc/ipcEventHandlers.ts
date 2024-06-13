@@ -2,6 +2,7 @@ import { Collection, Event } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
 import {
   addEvent,
+  cancelEvent,
   deleteEvent,
   getEvent,
   getEventByCollectionId,
@@ -43,12 +44,9 @@ export function setupEventHandlers() {
     deleteEvent(eventId)
   })
 
-  ipcMain.handle(
-    'cancel-event',
-    async (event: IpcMainInvokeEvent, eventId: number): Promise<void> => {
-      console.log('cancel-event', event, eventId)
-    }
-  )
+  ipcMain.handle('cancel-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<void> => {
+    cancelEvent(eventId)
+  })
 }
 
 function getEvents(): Event[] {
