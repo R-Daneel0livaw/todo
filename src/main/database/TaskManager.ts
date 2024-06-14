@@ -1,4 +1,4 @@
-import { Task } from '@shared/types'
+import { Collection, Task } from '@shared/types'
 import db from './sqlite'
 
 export function getTask(taskId: number): Task {
@@ -26,6 +26,18 @@ export function getTasksByCollectionId(collectionId: number): Task[] {
     WHERE ci.collectionId = ?
   `)
   const tasks: Task[] = stmt.all(collectionId) as Task[]
+  return tasks
+}
+
+export function getTasksByCollection(collectionData: Partial<Collection>) {
+  const stmt = db.prepare(`
+    SELECT t.*
+    FROM tasks t
+    JOIN collectionItems ci ON t.id = ci.itemId
+    JOIN collections c ON ci.collectionId = c.id
+    WHERE c.type = ? AND c.subType = ? AND ci.itemType = 'Task'
+  `)
+  const tasks: Task[] = stmt.all(collectionData.type, collectionData.subType) as Task[]
   return tasks
 }
 

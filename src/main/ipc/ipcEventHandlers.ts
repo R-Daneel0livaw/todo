@@ -6,6 +6,7 @@ import {
   deleteEvent,
   getEvent,
   getEventByCollectionId,
+  getEventsByCollection,
   getEventsByCollectionId
 } from '../database/eventManager'
 
@@ -30,9 +31,8 @@ export function setupEventHandlers() {
 
   ipcMain.handle(
     'get-events-by-collection',
-    async (event: IpcMainInvokeEvent, collectionData: Partial<Collection>): Promise<Event[]> => {
-      console.log('get-events-by-collection', event, collectionData)
-      return getEvents()
+    async (_: IpcMainInvokeEvent, collectionData: Partial<Collection>): Promise<Event[]> => {
+      return getEventsByCollection(collectionData)
     }
   )
 
@@ -47,20 +47,4 @@ export function setupEventHandlers() {
   ipcMain.handle('cancel-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<void> => {
     cancelEvent(eventId)
   })
-}
-
-function getEvents(): Event[] {
-  const eventData: Event = {
-    status: 'CREATED',
-    id: 4,
-    title: 'Gym',
-    createDate: new Date()
-  }
-  const eventData2: Event = {
-    status: 'CREATED',
-    id: 5,
-    title: 'Work',
-    createDate: new Date()
-  }
-  return [eventData, eventData2]
 }

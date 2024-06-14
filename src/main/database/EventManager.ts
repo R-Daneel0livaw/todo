@@ -1,4 +1,4 @@
-import { Event } from '@shared/types'
+import { Collection, Event } from '@shared/types'
 import db from './sqlite'
 
 export function getEvent(eventId: number): Event {
@@ -26,6 +26,18 @@ export function getEventsByCollectionId(collectionId: number): Event[] {
     WHERE ci.collectionId = ?
   `)
   const events: Event[] = stmt.all(collectionId) as Event[]
+  return events
+}
+
+export function getEventsByCollection(collectionData: Partial<Collection>) {
+  const stmt = db.prepare(`
+    SELECT e.*
+    FROM events e
+    JOIN collectionItems ci ON e.id = ci.itemId
+    JOIN collections c ON ci.collectionId = c.id
+    WHERE c.type = ? AND c.subType = ? AND ci.itemType = 'Event'
+  `)
+  const events: Event[] = stmt.all(collectionData.type, collectionData.subType) as Event[]
   return events
 }
 
