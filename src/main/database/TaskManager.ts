@@ -30,14 +30,25 @@ export function getTasksByCollectionId(collectionId: number): Task[] {
 }
 
 export function getTasksByCollection(collectionData: Partial<Collection>) {
-  const stmt = db.prepare(`
+  let query = `
     SELECT t.*
     FROM tasks t
     JOIN collectionItems ci ON t.id = ci.itemId
     JOIN collections c ON ci.collectionId = c.id
-    WHERE c.type = ? AND c.subType = ? AND ci.itemType = 'Task'
-  `)
-  const tasks: Task[] = stmt.all(collectionData.type, collectionData.subType) as Task[]
+    WHERE ci.itemType = 'Task'
+  `
+  const params: (string | undefined)[] = []
+  if (collectionData.type) {
+    query += ' AND c.type = ?'
+    params.push(collectionData.type)
+  }
+  if (collectionData.subType) {
+    query += ' AND c.subType = ?'
+    params.push(collectionData.subType)
+  }
+
+  const stmt = db.prepare(query)
+  const tasks: Task[] = stmt.all(...params) as Task[]
   return tasks
 }
 

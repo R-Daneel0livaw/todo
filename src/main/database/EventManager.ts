@@ -30,14 +30,25 @@ export function getEventsByCollectionId(collectionId: number): Event[] {
 }
 
 export function getEventsByCollection(collectionData: Partial<Collection>) {
-  const stmt = db.prepare(`
+  let query = `
     SELECT e.*
     FROM events e
     JOIN collectionItems ci ON e.id = ci.itemId
     JOIN collections c ON ci.collectionId = c.id
-    WHERE c.type = ? AND c.subType = ? AND ci.itemType = 'Event'
-  `)
-  const events: Event[] = stmt.all(collectionData.type, collectionData.subType) as Event[]
+    WHERE ci.itemType = 'Event'
+  `
+  const params: (string | undefined)[] = []
+  if (collectionData.type) {
+    query += ' AND c.type = ?'
+    params.push(collectionData.type)
+  }
+  if (collectionData.subType) {
+    query += ' AND c.subType = ?'
+    params.push(collectionData.subType)
+  }
+
+  const stmt = db.prepare(query)
+  const events: Event[] = stmt.all(...params) as Event[]
   return events
 }
 
