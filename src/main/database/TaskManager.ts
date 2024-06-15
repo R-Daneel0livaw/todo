@@ -29,7 +29,7 @@ export function getTasksByCollectionId(collectionId: number): Task[] {
   return tasks
 }
 
-export function getTasksByCollection(collectionData: Partial<Collection>) {
+export function getTasksByCollection(collectionData: Partial<Collection>): Task[] {
   let query = `
     SELECT t.*
     FROM tasks t

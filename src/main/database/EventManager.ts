@@ -29,7 +29,7 @@ export function getEventsByCollectionId(collectionId: number): Event[] {
   return events
 }
 
-export function getEventsByCollection(collectionData: Partial<Collection>) {
+export function getEventsByCollection(collectionData: Partial<Collection>): Event[] {
   let query = `
     SELECT e.*
     FROM events e
