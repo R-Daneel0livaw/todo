@@ -22,6 +22,7 @@ function CollectionsPage() {
   return (
     <div>
       <h1>Collection List</h1>
+      <button>Add New</button>
       <ul>
         {collections.map((collection) => (
           <li key={collection.id}>
@@ -30,6 +31,7 @@ function CollectionsPage() {
               isExpanded={expandedCollectionId === collection.id}
               onExpand={handleExpand}
             />
+            <button>Edit</button>
           </li>
         ))}
       </ul>
