@@ -2,6 +2,7 @@ import CollectionView from '@renderer/components/CollectionView'
 import { getCollections } from '@renderer/services/CollectionService'
 import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
+import styles from './CollectionsPage.module.css'
 
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
@@ -20,8 +21,8 @@ function CollectionsPage() {
   }
 
   return (
-    <div>
-      <h1>Collection List</h1>
+    <div className={`${styles.collectionsContainer}`}>
+      <h1>Collections</h1>
       <button>Add New</button>
       <ul>
         {collections.map((collection) => (
