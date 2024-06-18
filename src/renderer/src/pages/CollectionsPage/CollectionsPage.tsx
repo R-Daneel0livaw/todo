@@ -1,8 +1,8 @@
-import CollectionView from '@renderer/components/CollectionView'
 import { getCollections } from '@renderer/services/CollectionService'
 import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
 import styles from './CollectionsPage.module.css'
+import CollectionView from '@renderer/components/CollectionView/CollectionView'
 
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
@@ -23,10 +23,10 @@ function CollectionsPage() {
   return (
     <div className={`${styles.collectionsContainer}`}>
       <h1>Collections</h1>
-      <button>Add New</button>
+      <button className={styles.collectionsAddBtn}>Add New</button>
       <ul>
         {collections.map((collection) => (
-          <li key={collection.id}>
+          <li key={collection.id} className={styles.collectionsItem}>
             <CollectionView
               collection={collection}
               isExpanded={expandedCollectionId === collection.id}

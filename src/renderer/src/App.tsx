@@ -1,4 +1,4 @@
-import CollectionsPage from './pages/CollectionsPage'
+import CollectionsPage from './pages/CollectionsPage/CollectionsPage'
 
 function App() {
   // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
