@@ -32,7 +32,7 @@ function CollectionsPage() {
               isExpanded={expandedCollectionId === collection.id}
               onExpand={handleExpand}
             />
-            <button>Edit</button>
+            <button className={styles.collectionsItemEditBtn}>Edit</button>
           </li>
         ))}
       </ul>
