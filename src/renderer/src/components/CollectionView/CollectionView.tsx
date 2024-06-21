@@ -7,6 +7,10 @@ interface CollectionViewProps {
   onExpand: (collectionId: number) => void
 }
 
+const removeTimeStamp = (date: Date) => {
+  return date.toLocaleString().split('T')[0]
+}
+
 function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProps) {
   return (
     <div>
@@ -20,12 +24,16 @@ function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProp
       </div>
       {isExpanded && (
         <div className={styles.collectionViewContainer}>
-          <p>Created At: {collection.createDate.toLocaleString()}</p>
-          {collection.startDate && <p>Started At: {collection.startDate.toLocaleString()}</p>}
-          {collection.endDate && <p>Ended At: {collection.endDate.toLocaleString()}</p>}
-          {collection.canceledDate && (
-            <p>Canceled At: {collection.canceledDate.toLocaleString()}</p>
-          )}
+          <p className={styles.collectionViewExpansionDetails}>
+            <span>Created: {removeTimeStamp(collection.createDate)}</span>
+            {collection.startDate && <span>Started: {removeTimeStamp(collection.startDate)}</span>}
+          </p>
+          <p className={styles.collectionViewExpansionDetails}>
+            {collection.endDate && <span>Ended: {removeTimeStamp(collection.endDate)}</span>}
+            {collection.canceledDate && (
+              <span>Canceled: {removeTimeStamp(collection.canceledDate)}</span>
+            )}
+          </p>
         </div>
       )}
     </div>
