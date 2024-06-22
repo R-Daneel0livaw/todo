@@ -27,6 +27,13 @@ function CollectionsPage() {
     setCollections((prevCollections) => [...prevCollections, newCollection])
   }
 
+  const handleEdit = async (collectionId) => {
+    const updatedCollections = collections.map((collection) =>
+      collection.id === collectionId ? { ...collection, title: 'Modified Title' } : collection
+    )
+    setCollections(updatedCollections)
+  }
+
   const handleExpand = (collectionId) => {
     setExpandedCollectionIds((prevExpandedIds) =>
       prevExpandedIds.includes(collectionId)
@@ -49,7 +56,12 @@ function CollectionsPage() {
               isExpanded={expandedCollectionIds.includes(collection.id)}
               onExpand={() => handleExpand(collection.id)}
             />
-            <button className={styles.collectionsItemEditBtn}>Edit</button>
+            <button
+              className={styles.collectionsItemEditBtn}
+              onClick={() => handleEdit(collection.id)}
+            >
+              Edit
+            </button>
           </li>
         ))}
       </ul>
