@@ -24,6 +24,7 @@ function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProp
       </div>
       {isExpanded && (
         <div className={styles.collectionViewContainer}>
+          {collection.longDescription && <p>{collection.longDescription}</p>}
           <p className={styles.collectionViewExpansionDetails}>
             <span>Created: {removeTimeStamp(collection.createDate)}</span>
             {collection.startDate && <span>Started: {removeTimeStamp(collection.startDate)}</span>}

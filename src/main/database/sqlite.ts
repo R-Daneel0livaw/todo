@@ -33,6 +33,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
     description TEXT,
+    longDescription TEXT,
     type TEXT,
     subType TEXT,
     createDate TEXT,
@@ -56,6 +57,7 @@ const defaultCollections: Partial<Collection>[] = [
   {
     title: 'Task List',
     description: 'Main Task List',
+    longDescription: 'All created Tasks will be available in the Main Task List.',
     type: 'DEFAULT',
     subType: 'TASK',
     createDate: new Date(),
@@ -64,6 +66,7 @@ const defaultCollections: Partial<Collection>[] = [
   {
     title: 'Event List',
     description: 'Main Event List',
+    longDescription: 'All created Events will be available in the Main Event List.',
     type: 'DEFAULT',
     subType: 'EVENT',
     createDate: new Date(),
@@ -72,7 +75,7 @@ const defaultCollections: Partial<Collection>[] = [
 ]
 
 const insertStmt = db.prepare(
-  'INSERT INTO collections (title, description, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?)'
+  'INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?, ?)'
 )
 const checkStmt = db.prepare('SELECT 1 FROM collections WHERE type = ? AND subType = ?')
 
@@ -83,6 +86,7 @@ db.transaction(() => {
       insertStmt.run(
         collection.title,
         collection.description,
+        collection.longDescription,
         collection.type,
         collection.subType,
         collection.createDate?.toISOString(),

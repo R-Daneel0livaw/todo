@@ -15,11 +15,12 @@ export function getCollections(): Collection[] {
 
 export function addCollection(collectionData: Collection) {
   const stmt = db.prepare(
-    'INSERT INTO collections (title, description, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?)'
+    'INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?, ?)'
   )
   stmt.run(
     collectionData.title,
     collectionData.description,
+    collectionData.longDescription,
     collectionData.type,
     collectionData.subType,
     collectionData.createDate?.toISOString(),

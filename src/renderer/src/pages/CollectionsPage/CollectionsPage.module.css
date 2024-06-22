@@ -13,7 +13,7 @@
   display: flex;
   align-items: baseline;
   gap: 1.2rem;
-  max-width: 30%;
+  max-width: 35%;
 }
 
 .collectionsItemEditBtn {
