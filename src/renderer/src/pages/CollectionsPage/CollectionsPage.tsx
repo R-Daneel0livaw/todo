@@ -6,7 +6,7 @@ import CollectionView from '@renderer/components/CollectionView/CollectionView'
 
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
-  const [expandedCollectionId, setExpandedCollectionId] = useState<number | null>(null)
+  const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
 
   useEffect(() => {
     async function loadCollections() {
@@ -16,8 +16,12 @@ function CollectionsPage() {
     loadCollections()
   }, [])
 
-  const handleExpand = (collectionId: number) => {
-    setExpandedCollectionId(expandedCollectionId === collectionId ? null : collectionId)
+  const handleExpand = (collectionId) => {
+    setExpandedCollectionIds((prevExpandedIds) =>
+      prevExpandedIds.includes(collectionId)
+        ? prevExpandedIds.filter((id) => id !== collectionId)
+        : [...prevExpandedIds, collectionId]
+    )
   }
 
   return (
@@ -29,8 +33,8 @@ function CollectionsPage() {
           <li key={collection.id} className={styles.collectionsItem}>
             <CollectionView
               collection={collection}
-              isExpanded={expandedCollectionId === collection.id}
-              onExpand={handleExpand}
+              isExpanded={expandedCollectionIds.includes(collection.id)}
+              onExpand={() => handleExpand(collection.id)}
             />
             <button className={styles.collectionsItemEditBtn}>Edit</button>
           </li>
