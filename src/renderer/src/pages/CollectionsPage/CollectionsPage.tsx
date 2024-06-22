@@ -16,6 +16,17 @@ function CollectionsPage() {
     loadCollections()
   }, [])
 
+  const handleAddNew = async () => {
+    const newCollection: Collection = {
+      id: 3,
+      type: 'DEFAULT',
+      subType: 'CUSTOM',
+      title: 'Dummy Collection',
+      createDate: new Date()
+    }
+    setCollections((prevCollections) => [...prevCollections, newCollection])
+  }
+
   const handleExpand = (collectionId) => {
     setExpandedCollectionIds((prevExpandedIds) =>
       prevExpandedIds.includes(collectionId)
@@ -27,7 +38,9 @@ function CollectionsPage() {
   return (
     <div className={`${styles.collectionsContainer}`}>
       <h1>Collections</h1>
-      <button className={styles.collectionsAddBtn}>Add New</button>
+      <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
+        Add New
+      </button>
       <ul>
         {collections.map((collection) => (
           <li key={collection.id} className={styles.collectionsItem}>
