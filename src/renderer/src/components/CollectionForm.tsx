@@ -1,3 +1,4 @@
+import { collectionSubTypes, collectionTypes } from '@renderer/utils/utils'
 import { Collection } from '@shared/types'
 import { FormEvent, useEffect, useState } from 'react'
 
@@ -70,19 +71,19 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
         />
         <select name="type" value={collectionState.type} onChange={handleChange} required>
           <option value="">Select Type</option>
-          <option value="Quarterly">Quarterly</option>
-          <option value="Monthly">Monthly</option>
-          <option value="Daily">Daily</option>
-          <option value="Project">Project</option>
-          <option value="Custom">Custom</option>
+          {collectionTypes.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
         </select>
         <select name="subType" value={collectionState.subType} onChange={handleChange} required>
           <option value="">Select Sub-Type</option>
-          <option value="Task">Task</option>
-          <option value="Event">Event</option>
-          <option value="Plan">Plan</option>
-          <option value="Log">Log</option>
-          <option value="Custom">Custom</option>
+          {collectionSubTypes.map((subType) => (
+            <option key={subType} value={subType}>
+              {subType}
+            </option>
+          ))}
         </select>
         <button type="submit">Save</button>
         <button type="button" onClick={onCancel}>
