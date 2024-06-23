@@ -66,7 +66,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           name="longDescription"
           value={collectionState.longDescription}
           onChange={handleChange}
-          placeholder="Long Description"
+          placeholder="More Information"
           required
         />
         <select name="type" value={collectionState.type} onChange={handleChange} required>
