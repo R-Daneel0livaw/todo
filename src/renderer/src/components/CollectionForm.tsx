@@ -43,7 +43,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
 
   return (
     <div>
-      <h1>{collection ? 'Edit Collection' : 'Add Collection'}</h1>
+      <h1>{collection ? `Edit Collection ${collectionState.title}` : 'Add Collection'}</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
