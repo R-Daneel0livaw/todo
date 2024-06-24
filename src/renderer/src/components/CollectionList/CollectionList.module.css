@@ -1,0 +1,10 @@
+.collectionsItem {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  max-width: 35%;
+}
+
+.collectionsItemEditBtn {
+  margin-left: auto;
+}

@@ -53,22 +53,6 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           placeholder="Title"
           required
         />
-        <input
-          type="text"
-          name="description"
-          value={collectionState.description}
-          onChange={handleChange}
-          placeholder="Description"
-          required
-        />
-        <input
-          type="text"
-          name="longDescription"
-          value={collectionState.longDescription}
-          onChange={handleChange}
-          placeholder="More Information"
-          required
-        />
         <select name="type" value={collectionState.type} onChange={handleChange} required>
           <option value="">Select Type</option>
           {collectionTypes.map((type) => (
@@ -85,6 +69,22 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             </option>
           ))}
         </select>
+        <input
+          type="text"
+          name="description"
+          value={collectionState.description}
+          onChange={handleChange}
+          placeholder="Description"
+          required
+        />
+        <input
+          type="text"
+          name="longDescription"
+          value={collectionState.longDescription}
+          onChange={handleChange}
+          placeholder="More Information"
+          required
+        />
         <button type="submit">Save</button>
         <button type="button" onClick={onCancel}>
           Cancel

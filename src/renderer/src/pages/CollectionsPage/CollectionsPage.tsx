@@ -2,11 +2,11 @@ import { getCollections } from '@renderer/services/CollectionService'
 import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
 import styles from './CollectionsPage.module.css'
-import CollectionView from '@renderer/components/CollectionView/CollectionView'
+import CollectionList from '@renderer/components/CollectionList/CollectionList'
 
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
-  const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
+  // const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
 
   useEffect(() => {
     async function loadCollections() {
@@ -27,20 +27,20 @@ function CollectionsPage() {
     setCollections((prevCollections) => [...prevCollections, newCollection])
   }
 
-  const handleEdit = async (collectionId) => {
-    const updatedCollections = collections.map((collection) =>
-      collection.id === collectionId ? { ...collection, title: 'Modified Title' } : collection
-    )
-    setCollections(updatedCollections)
-  }
+  // const handleEdit = async (collectionId) => {
+  //   const updatedCollections = collections.map((collection) =>
+  //     collection.id === collectionId ? { ...collection, title: 'Modified Title' } : collection
+  //   )
+  //   setCollections(updatedCollections)
+  // }
 
-  const handleExpand = (collectionId) => {
-    setExpandedCollectionIds((prevExpandedIds) =>
-      prevExpandedIds.includes(collectionId)
-        ? prevExpandedIds.filter((id) => id !== collectionId)
-        : [...prevExpandedIds, collectionId]
-    )
-  }
+  // const handleExpand = (collectionId) => {
+  //   setExpandedCollectionIds((prevExpandedIds) =>
+  //     prevExpandedIds.includes(collectionId)
+  //       ? prevExpandedIds.filter((id) => id !== collectionId)
+  //       : [...prevExpandedIds, collectionId]
+  //   )
+  // }
 
   return (
     <div className={`${styles.collectionsContainer}`}>
@@ -48,7 +48,8 @@ function CollectionsPage() {
       <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
         Add New
       </button>
-      <ul>
+      <CollectionList collections={collections} onEdit={setCollections} />
+      {/* <ul>
         {collections.map((collection) => (
           <li key={collection.id} className={styles.collectionsItem}>
             <CollectionView
@@ -64,7 +65,7 @@ function CollectionsPage() {
             </button>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   )
 }
