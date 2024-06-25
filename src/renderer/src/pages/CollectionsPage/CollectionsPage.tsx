@@ -3,10 +3,12 @@ import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
 import styles from './CollectionsPage.module.css'
 import CollectionList from '@renderer/components/CollectionList/CollectionList'
+import CollectionForm from '@renderer/components/CollectionForm'
 
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
-  // const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
+  const [isEditing, setIsEditing] = useState(false)
+  const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0)
 
   useEffect(() => {
     async function loadCollections() {
@@ -27,20 +29,26 @@ function CollectionsPage() {
     setCollections((prevCollections) => [...prevCollections, newCollection])
   }
 
-  // const handleEdit = async (collectionId) => {
-  //   const updatedCollections = collections.map((collection) =>
-  //     collection.id === collectionId ? { ...collection, title: 'Modified Title' } : collection
-  //   )
-  //   setCollections(updatedCollections)
-  // }
+  const handleEdit = (index: number) => {
+    setCurrentCollectionIndex(index)
+    setIsEditing(true)
+  }
 
-  // const handleExpand = (collectionId) => {
-  //   setExpandedCollectionIds((prevExpandedIds) =>
-  //     prevExpandedIds.includes(collectionId)
-  //       ? prevExpandedIds.filter((id) => id !== collectionId)
-  //       : [...prevExpandedIds, collectionId]
-  //   )
-  // }
+  const handleSave = (collection: Collection) => {
+    if (currentCollectionIndex !== null) {
+      const updatedCollections = collections.map((c, index) =>
+        index === currentCollectionIndex ? collection : c
+      )
+      setCollections(updatedCollections)
+    } else {
+      setCollections([...collections, collection])
+    }
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setIsEditing(false)
+  }
 
   return (
     <div className={`${styles.collectionsContainer}`}>
@@ -48,24 +56,15 @@ function CollectionsPage() {
       <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
         Add New
       </button>
-      <CollectionList collections={collections} onEdit={setCollections} />
-      {/* <ul>
-        {collections.map((collection) => (
-          <li key={collection.id} className={styles.collectionsItem}>
-            <CollectionView
-              collection={collection}
-              isExpanded={expandedCollectionIds.includes(collection.id)}
-              onExpand={() => handleExpand(collection.id)}
-            />
-            <button
-              className={styles.collectionsItemEditBtn}
-              onClick={() => handleEdit(collection.id)}
-            >
-              Edit
-            </button>
-          </li>
-        ))}
-      </ul> */}
+      {isEditing ? (
+        <CollectionForm
+          onSave={handleSave}
+          onCancel={handleCancel}
+          collection={collections[currentCollectionIndex]}
+        />
+      ) : (
+        <CollectionList collections={collections} onEdit={handleEdit} />
+      )}
     </div>
   )
 }

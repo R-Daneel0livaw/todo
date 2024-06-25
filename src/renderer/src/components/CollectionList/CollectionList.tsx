@@ -5,13 +5,13 @@ import { useState } from 'react'
 
 interface CollectionListProps {
   collections: Collection[]
-  onEdit: (collections: Collection[]) => void
+  onEdit: (index: number) => void
 }
 
 const CollectionList = ({ collections, onEdit }: CollectionListProps) => {
   const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
 
-  const handleExpand = (collectionId) => {
+  const handleExpand = (collectionId: number) => {
     setExpandedCollectionIds((prevExpandedIds) =>
       prevExpandedIds.includes(collectionId)
         ? prevExpandedIds.filter((id) => id !== collectionId)
@@ -19,26 +19,20 @@ const CollectionList = ({ collections, onEdit }: CollectionListProps) => {
     )
   }
 
-  const handleEdit = async (collectionId) => {
-    const updatedCollections = collections.map((collection) =>
-      collection.id === collectionId ? { ...collection, title: 'Modified Title' } : collection
-    )
-    onEdit(updatedCollections)
+  const handleEdit = async (index: number) => {
+    onEdit(index)
   }
 
   return (
     <ul>
-      {collections.map((collection) => (
+      {collections.map((collection, index) => (
         <li key={collection.id} className={styles.collectionsItem}>
           <CollectionView
             collection={collection}
             isExpanded={expandedCollectionIds.includes(collection.id)}
             onExpand={() => handleExpand(collection.id)}
           />
-          <button
-            className={styles.collectionsItemEditBtn}
-            onClick={() => handleEdit(collection.id)}
-          >
+          <button className={styles.collectionsItemEditBtn} onClick={() => handleEdit(index)}>
             Edit
           </button>
         </li>
