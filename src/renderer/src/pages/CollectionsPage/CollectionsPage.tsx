@@ -9,6 +9,7 @@ function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0)
+  const [inTransition, setInTransition] = useState(false)
 
   useEffect(() => {
     async function loadCollections() {
@@ -30,24 +31,36 @@ function CollectionsPage() {
   }
 
   const handleEdit = (index: number) => {
-    setCurrentCollectionIndex(index)
-    setIsEditing(true)
+    setInTransition(true)
+    setTimeout(() => {
+      setCurrentCollectionIndex(index)
+      setIsEditing(true)
+      setInTransition(false)
+    }, 300)
   }
 
   const handleSave = (collection: Collection) => {
-    if (currentCollectionIndex !== null) {
-      const updatedCollections = collections.map((c, index) =>
-        index === currentCollectionIndex ? collection : c
-      )
-      setCollections(updatedCollections)
-    } else {
-      setCollections([...collections, collection])
-    }
-    setIsEditing(false)
+    setInTransition(true)
+    setTimeout(() => {
+      if (currentCollectionIndex !== null) {
+        const updatedCollections = collections.map((c, index) =>
+          index === currentCollectionIndex ? collection : c
+        )
+        setCollections(updatedCollections)
+      } else {
+        setCollections([...collections, collection])
+      }
+      setIsEditing(false)
+      setInTransition(false)
+    }, 300)
   }
 
   const handleCancel = () => {
-    setIsEditing(false)
+    setInTransition(true)
+    setTimeout(() => {
+      setIsEditing(false)
+      setInTransition(false)
+    }, 300)
   }
 
   return (
@@ -56,15 +69,17 @@ function CollectionsPage() {
       <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
         Add New
       </button>
-      {isEditing ? (
-        <CollectionForm
-          onSave={handleSave}
-          onCancel={handleCancel}
-          collection={collections[currentCollectionIndex]}
-        />
-      ) : (
-        <CollectionList collections={collections} onEdit={handleEdit} />
-      )}
+      <div className={`${inTransition ? styles.viewTransitionExit : styles.viewTransitionEnter}`}>
+        {isEditing ? (
+          <CollectionForm
+            onSave={handleSave}
+            onCancel={handleCancel}
+            collection={collections[currentCollectionIndex]}
+          />
+        ) : (
+          <CollectionList collections={collections} onEdit={handleEdit} />
+        )}
+      </div>
     </div>
   )
 }
