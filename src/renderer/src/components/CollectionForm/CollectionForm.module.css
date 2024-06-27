@@ -1,0 +1,11 @@
+.collectionFormContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.collectionForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem
+}

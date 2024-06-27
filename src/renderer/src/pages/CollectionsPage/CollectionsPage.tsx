@@ -3,7 +3,7 @@ import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
 import styles from './CollectionsPage.module.css'
 import CollectionList from '@renderer/components/CollectionList/CollectionList'
-import CollectionForm from '@renderer/components/CollectionForm'
+import CollectionForm from '@renderer/components/CollectionForm/CollectionForm'
 
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])

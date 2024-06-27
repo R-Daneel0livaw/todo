@@ -1,6 +1,7 @@
 import { collectionSubTypes, collectionTypes } from '@renderer/utils/utils'
 import { Collection } from '@shared/types'
 import { FormEvent, useEffect, useState } from 'react'
+import styles from './CollectionForm.module.css'
 
 interface CollectionFormProps {
   onSave: (collection: Collection) => void
@@ -42,9 +43,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
   }
 
   return (
-    <div>
+    <div className={styles.collectionFormContainer}>
       <h1>{collection ? `Edit Collection ${collectionState.title}` : 'Add Collection'}</h1>
-      <form onSubmit={handleSubmit}>
+      <form className={styles.collectionForm} onSubmit={handleSubmit}>
         <input
           type="text"
           name="title"
