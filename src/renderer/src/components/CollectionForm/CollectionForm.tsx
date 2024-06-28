@@ -86,8 +86,8 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           placeholder="More Information"
           required
         />
-        <button type="submit">Save</button>
-        <button type="button" onClick={onCancel}>
+        <button type="submit" className={styles.collectionFormBtn}>Save</button>
+        <button type="button" className={styles.collectionFormBtn} onClick={onCancel}>
           Cancel
         </button>
       </form>
