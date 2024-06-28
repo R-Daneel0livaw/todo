@@ -53,8 +53,15 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           onChange={handleChange}
           placeholder="Title"
           required
+          className={styles.collectionFormMidWidthInput}
         />
-        <select name="type" value={collectionState.type} onChange={handleChange} required>
+        <select
+          name="type"
+          value={collectionState.type}
+          onChange={handleChange}
+          required
+          className={styles.collectionFormShortWidthInput}
+        >
           <option value="">Select Type</option>
           {collectionTypes.map((type) => (
             <option key={type} value={type}>
@@ -62,7 +69,13 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             </option>
           ))}
         </select>
-        <select name="subType" value={collectionState.subType} onChange={handleChange} required>
+        <select
+          name="subType"
+          value={collectionState.subType}
+          onChange={handleChange}
+          required
+          className={styles.collectionFormShortWidthInput}
+        >
           <option value="">Select Sub-Type</option>
           {collectionSubTypes.map((subType) => (
             <option key={subType} value={subType}>
@@ -77,6 +90,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           onChange={handleChange}
           placeholder="Description"
           required
+          className={styles.collectionFormMidWidthInput}
         />
         <input
           type="text"
@@ -85,8 +99,11 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           onChange={handleChange}
           placeholder="More Information"
           required
+          className={styles.collectionFormLongWidthInput}
         />
-        <button type="submit" className={styles.collectionFormBtn}>Save</button>
+        <button type="submit" className={styles.collectionFormBtn}>
+          Save
+        </button>
         <button type="button" className={styles.collectionFormBtn} onClick={onCancel}>
           Cancel
         </button>

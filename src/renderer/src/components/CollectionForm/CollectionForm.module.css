@@ -10,6 +10,18 @@
   gap: 1.5rem
 }
 
+.collectionFormShortWidthInput {
+  width: 15%;
+}
+
+.collectionFormMidWidthInput {
+  width: 35%;
+}
+
+.collectionFormLongWidthInput {
+  width: 65%;
+}
+
 .collectionFormBtn {
   width: fit-content;
 }
