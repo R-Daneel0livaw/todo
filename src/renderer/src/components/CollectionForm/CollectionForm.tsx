@@ -56,20 +56,22 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           className={styles.collectionFormMidWidthInput}
         />
         <div className={styles.collectionFormInputContainer}>
-          <select
-            name="type"
-            value={collectionState.type}
-            onChange={handleChange}
-            required
-            className={styles.collectionFormShortWidthInput}
-          >
-            <option value="">Select Type</option>
-            {collectionTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+          {collectionState.type !== 'DEFAULT' && (
+            <select
+              name="type"
+              value={collectionState.type}
+              onChange={handleChange}
+              required
+              className={styles.collectionFormShortWidthInput}
+            >
+              <option value="">Select Type</option>
+              {collectionTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          )}
           <select
             name="subType"
             value={collectionState.subType}
