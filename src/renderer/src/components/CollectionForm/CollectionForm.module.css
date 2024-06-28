@@ -22,6 +22,11 @@
   width: 65%;
 }
 
+.collectionFormBtnContainer, .collectionFormInputContainer {
+  display: flex;
+  gap: 1.5rem
+}
+
 .collectionFormBtn {
   width: fit-content;
 }
