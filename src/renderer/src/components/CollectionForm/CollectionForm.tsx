@@ -32,7 +32,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
     )
   }, [collection])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target
     setCollectionState((prevCollection) => ({ ...prevCollection, [name]: value }))
   }
@@ -96,13 +98,11 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
           required
           className={styles.collectionFormMidWidthInput}
         />
-        <input
-          type="text"
+        <textarea
           name="longDescription"
           value={collectionState.longDescription}
           onChange={handleChange}
           placeholder="More Information"
-          required
           className={styles.collectionFormLongWidthInput}
         />
         <div className={styles.collectionFormBtnContainer}>
