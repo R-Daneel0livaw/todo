@@ -66,9 +66,6 @@ function CollectionsPage() {
   return (
     <div className={`${styles.collectionsContainer}`}>
       <h1>Collections</h1>
-      <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
-        Add New
-      </button>
       <div className={`${inTransition ? styles.viewTransitionExit : styles.viewTransitionEnter}`}>
         {isEditing ? (
           <CollectionForm
@@ -77,7 +74,12 @@ function CollectionsPage() {
             collection={collections[currentCollectionIndex]}
           />
         ) : (
-          <CollectionList collections={collections} onEdit={handleEdit} />
+          <div className={styles.collectionsViewContainer}>
+            <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
+              Add New
+            </button>
+            <CollectionList collections={collections} onEdit={handleEdit} />
+          </div>
         )}
       </div>
     </div>

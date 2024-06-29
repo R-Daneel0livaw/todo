@@ -1,8 +1,14 @@
 .collectionsContainer {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   padding: 2rem;
+}
+
+.collectionsViewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem
 }
 
 .collectionsAddBtn {
