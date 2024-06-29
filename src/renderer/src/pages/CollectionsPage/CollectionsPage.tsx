@@ -20,14 +20,6 @@ function CollectionsPage() {
   }, [])
 
   const handleAddNew = async () => {
-    // const newCollection: Collection = {
-    //   id: 3,
-    //   type: 'DEFAULT',
-    //   subType: 'CUSTOM',
-    //   title: 'Dummy Collection',
-    //   createDate: new Date()
-    // }
-    // setCollections((prevCollections) => [...prevCollections, newCollection])
     setInTransition(true)
     setTimeout(() => {
       setCurrentCollectionIndex(-1)
