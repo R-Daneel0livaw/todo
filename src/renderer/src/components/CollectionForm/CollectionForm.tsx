@@ -27,7 +27,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
         description: '',
         longDescription: '',
         type: 'DEFAULT',
-        subType: 'CUSTOM'
+        subType: 'DEFAULT'
       }
     )
   }, [collection])
@@ -41,6 +41,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
+    console.log('Collection State is ', collectionState)
     onSave(collectionState)
   }
 

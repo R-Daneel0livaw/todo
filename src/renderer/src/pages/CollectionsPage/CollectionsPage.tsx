@@ -20,14 +20,20 @@ function CollectionsPage() {
   }, [])
 
   const handleAddNew = async () => {
-    const newCollection: Collection = {
-      id: 3,
-      type: 'DEFAULT',
-      subType: 'CUSTOM',
-      title: 'Dummy Collection',
-      createDate: new Date()
-    }
-    setCollections((prevCollections) => [...prevCollections, newCollection])
+    // const newCollection: Collection = {
+    //   id: 3,
+    //   type: 'DEFAULT',
+    //   subType: 'CUSTOM',
+    //   title: 'Dummy Collection',
+    //   createDate: new Date()
+    // }
+    // setCollections((prevCollections) => [...prevCollections, newCollection])
+    setInTransition(true)
+    setTimeout(() => {
+      setCurrentCollectionIndex(-1)
+      setIsEditing(true)
+      setInTransition(false)
+    }, 300)
   }
 
   const handleEdit = (index: number) => {
@@ -41,8 +47,9 @@ function CollectionsPage() {
 
   const handleSave = (collection: Collection) => {
     setInTransition(true)
+    console.log('Got a new Collection save ', collection)
     setTimeout(() => {
-      if (currentCollectionIndex !== null) {
+      if (currentCollectionIndex !== -1) {
         const updatedCollections = collections.map((c, index) =>
           index === currentCollectionIndex ? collection : c
         )
