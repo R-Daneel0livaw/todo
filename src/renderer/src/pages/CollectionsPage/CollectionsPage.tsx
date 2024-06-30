@@ -31,6 +31,7 @@ function CollectionsPage() {
   const handleEdit = (index: number) => {
     setInTransition(true)
     setTimeout(() => {
+      console.log(collections)
       setCurrentCollectionIndex(index)
       setIsEditing(true)
       setInTransition(false)
@@ -39,7 +40,6 @@ function CollectionsPage() {
 
   const handleSave = (collection: Collection) => {
     setInTransition(true)
-    console.log('Got a new Collection save ', collection)
     setTimeout(() => {
       if (currentCollectionIndex !== null) {
         const updatedCollections = collections.map((c, index) =>
@@ -70,9 +70,7 @@ function CollectionsPage() {
           <CollectionForm
             onSave={handleSave}
             onCancel={handleCancel}
-            collection={
-              currentCollectionIndex ? collections[currentCollectionIndex] : collections[-1]
-            }
+            collection={collections[currentCollectionIndex != null ? currentCollectionIndex : -1]}
           />
         ) : (
           <div className={styles.collectionsViewContainer}>
