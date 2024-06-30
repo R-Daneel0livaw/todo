@@ -70,7 +70,9 @@ function CollectionsPage() {
           <CollectionForm
             onSave={handleSave}
             onCancel={handleCancel}
-            collection={collections[currentCollectionIndex]}
+            collection={
+              currentCollectionIndex ? collections[currentCollectionIndex] : collections[-1]
+            }
           />
         ) : (
           <div className={styles.collectionsViewContainer}>
