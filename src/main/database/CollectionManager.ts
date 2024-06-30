@@ -1,8 +1,8 @@
 import { Collection } from '@shared/types'
 import db from './sqlite'
 
-  interface LastInsertRowId {
-    id: number
+interface LastInsertRowId {
+  id: number
 }
 
 export function getCollection(collectionId: number): Collection {
