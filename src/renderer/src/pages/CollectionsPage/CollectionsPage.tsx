@@ -8,7 +8,7 @@ import CollectionForm from '@renderer/components/CollectionForm/CollectionForm'
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [isEditing, setIsEditing] = useState(false)
-  const [currentCollectionIndex, setCurrentCollectionIndex] = useState(0)
+  const [currentCollectionIndex, setCurrentCollectionIndex] = useState<number | null>(null)
   const [inTransition, setInTransition] = useState(false)
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function CollectionsPage() {
   const handleAddNew = async () => {
     setInTransition(true)
     setTimeout(() => {
-      setCurrentCollectionIndex(-1)
+      setCurrentCollectionIndex(null)
       setIsEditing(true)
       setInTransition(false)
     }, 300)
@@ -41,7 +41,7 @@ function CollectionsPage() {
     setInTransition(true)
     console.log('Got a new Collection save ', collection)
     setTimeout(() => {
-      if (currentCollectionIndex !== -1) {
+      if (currentCollectionIndex !== null) {
         const updatedCollections = collections.map((c, index) =>
           index === currentCollectionIndex ? collection : c
         )
