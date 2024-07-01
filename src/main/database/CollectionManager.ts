@@ -1,10 +1,6 @@
 import { Collection } from '@shared/types'
 import db from './sqlite'
 
-interface LastInsertRowId {
-  id: number
-}
-
 export function getCollection(collectionId: number): Collection {
   const stmt = db.prepare('SELECT * FROM collections WHERE id = ?')
   const collection: Collection = stmt.get(collectionId) as Collection
@@ -19,7 +15,7 @@ export function getCollections(): Collection[] {
 
 export function addCollection(collectionData: Collection) {
   const stmt = db.prepare(
-    'INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?, ?)`
   )
   stmt.run(
     collectionData.title,
@@ -33,9 +29,20 @@ export function addCollection(collectionData: Collection) {
 }
 
 export function addAndRetrieveCollection(collectionData: Collection) {
-  addCollection(collectionData)
-  const result = db.prepare('SELECT last_insert_rowid() as id').get() as LastInsertRowId
-  const newCollection = getCollection(result.id)
+  const stmt = db.prepare(
+    `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    RETURNING id, title, description, longDescription, type, subType, createDate, startDate`
+  )
+  const newCollection = stmt.get(
+    collectionData.title,
+    collectionData.description,
+    collectionData.longDescription,
+    collectionData.type,
+    collectionData.subType,
+    collectionData.createDate?.toISOString(),
+    collectionData.startDate?.toISOString()
+  )
   return newCollection
 }
 
