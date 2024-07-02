@@ -32,7 +32,9 @@ const collectionApi: CollectionApi = {
   getCollection: (collectinId) => ipcRenderer.invoke('get-collection', collectinId),
   getCollections: () => ipcRenderer.invoke('get-collections'),
   addCollection: (collectionData) => ipcRenderer.invoke('add-collection', collectionData),
-  deleteColection: (collectionId) => ipcRenderer.invoke('delete-collection', collectionId)
+  deleteColection: (collectionId) => ipcRenderer.invoke('delete-collection', collectionId),
+  addAndRetrieveCollection: (collectionData) =>
+    ipcRenderer.invoke('add-retrieve-collection', collectionData)
 }
 
 if (process.contextIsolated) {

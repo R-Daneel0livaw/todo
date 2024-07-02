@@ -5,4 +5,5 @@ export interface CollectionApi {
   getCollections(): Promise<Collection[]>
   addCollection(collectionData: Collection): Promise<void>
   deleteColection(collectionId: number): Promise<void>
+  addAndRetrieveCollection(collectionData: Collection): Promise<Collection>
 }

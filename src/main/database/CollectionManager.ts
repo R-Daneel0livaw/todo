@@ -28,7 +28,7 @@ export function addCollection(collectionData: Collection) {
   )
 }
 
-export function addAndRetrieveCollection(collectionData: Collection) {
+export function addAndRetrieveCollection(collectionData: Collection): Collection {
   const stmt = db.prepare(
     `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) 
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -42,7 +42,7 @@ export function addAndRetrieveCollection(collectionData: Collection) {
     collectionData.subType,
     collectionData.createDate?.toISOString(),
     collectionData.startDate?.toISOString()
-  )
+  ) as Collection
   return newCollection
 }
 
