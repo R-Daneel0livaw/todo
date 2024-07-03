@@ -1,4 +1,4 @@
-import { getCollections } from '@renderer/services/CollectionService'
+import { addAndRetrieveCollection, getCollections } from '@renderer/services/CollectionService'
 import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
 import styles from './CollectionsPage.module.css'
@@ -38,20 +38,26 @@ function CollectionsPage() {
     }, 300)
   }
 
-  const handleSave = (collection: Collection) => {
+  const handleSave = async (collection: Collection) => {
     setInTransition(true)
-    setTimeout(() => {
-      if (currentCollectionIndex !== null) {
-        const updatedCollections = collections.map((c, index) =>
-          index === currentCollectionIndex ? collection : c
-        )
-        setCollections(updatedCollections)
-      } else {
-        setCollections([...collections, collection])
-      }
-      setIsEditing(false)
+    try {
+      const savedCollection = await addAndRetrieveCollection(collection)
+      setTimeout(() => {
+        if (currentCollectionIndex !== null) {
+          const updatedCollections = collections.map((c, index) =>
+            index === currentCollectionIndex ? savedCollection : c
+          )
+          setCollections(updatedCollections)
+        } else {
+          setCollections([...collections, savedCollection])
+        }
+        setIsEditing(false)
+      }, 300)
+    } catch (error) {
+      console.error('Failed to save the collection:', error)
+    } finally {
       setInTransition(false)
-    }, 300)
+    }
   }
 
   const handleCancel = () => {
