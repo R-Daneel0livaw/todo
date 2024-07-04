@@ -1,4 +1,8 @@
-import { addAndRetrieveCollection, getCollections } from '@renderer/services/CollectionService'
+import {
+  addAndRetrieveCollection,
+  getCollections,
+  updateCollection
+} from '@renderer/services/CollectionService'
 import { Collection } from '@shared/types'
 import { useEffect, useState } from 'react'
 import styles from './CollectionsPage.module.css'
@@ -41,7 +45,13 @@ function CollectionsPage() {
   const handleSave = async (collection: Collection) => {
     setInTransition(true)
     try {
-      const savedCollection = await addAndRetrieveCollection(collection)
+      let savedCollection
+      if (currentCollectionIndex !== null) {
+        savedCollection = await updateCollection(collection)
+      } else {
+        savedCollection = await addAndRetrieveCollection(collection)
+      }
+
       setTimeout(() => {
         if (currentCollectionIndex !== null) {
           const updatedCollections = collections.map((c, index) =>
