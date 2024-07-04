@@ -5,7 +5,8 @@ import {
   deleteCollection,
   getCollection,
   getCollections,
-  addAndRetrieveCollection
+  addAndRetrieveCollection,
+  updateCollection
 } from '../database/collectionManager'
 
 export function setupCollectionHandlers() {
@@ -38,6 +39,13 @@ export function setupCollectionHandlers() {
     'add-retrieve-collection',
     async (_: IpcMainInvokeEvent, collectionData: Collection): Promise<Collection> => {
       return addAndRetrieveCollection(collectionData)
+    }
+  )
+
+  ipcMain.handle(
+    'update-collection',
+    async (_: IpcMainInvokeEvent, collectionData: Collection): Promise<Collection> => {
+      return updateCollection(collectionData)
     }
   )
 }

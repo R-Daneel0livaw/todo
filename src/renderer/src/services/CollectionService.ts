@@ -15,3 +15,7 @@ export const deleteColection = async (collectionId): Promise<void> => {
 export const addAndRetrieveCollection = async (collectionData: Collection): Promise<Collection> => {
   return window.collectionApi.addAndRetrieveCollection(collectionData)
 }
+
+export const updateCollection = async (collectionData: Collection): Promise<Collection> => {
+  return window.collectionApi.updateCollection(collectionData)
+}
