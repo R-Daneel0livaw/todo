@@ -29,6 +29,7 @@ export function addCollection(collectionData: Collection) {
 }
 
 export function addAndRetrieveCollection(collectionData: Collection): Collection {
+  console.log('collectionData is: ', collectionData)
   const stmt = db.prepare(
     `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) 
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -44,6 +45,28 @@ export function addAndRetrieveCollection(collectionData: Collection): Collection
     collectionData.startDate?.toISOString()
   ) as Collection
   return newCollection
+}
+
+export function updateCollection(collectionData: Collection): Collection {
+  const updateStmt = db.prepare(
+    `UPDATE collections
+     SET title = ?, description = ?, longDescription = ?, type = ?, subType = ?, createDate = ?, startDate = ?
+     WHERE id = ?
+     RETURNING *`
+  )
+
+  const updatedCollection = updateStmt.get(
+    collectionData.title,
+    collectionData.description,
+    collectionData.longDescription,
+    collectionData.type,
+    collectionData.subType,
+    collectionData.createDate?.toISOString(),
+    collectionData.startDate?.toISOString(),
+    collectionData.id
+  ) as Collection
+
+  return updatedCollection
 }
 
 export function deleteCollection(collectionId: number) {
