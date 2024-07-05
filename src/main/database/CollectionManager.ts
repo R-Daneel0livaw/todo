@@ -4,13 +4,29 @@ import db from './sqlite'
 export function getCollection(collectionId: number): Collection {
   const stmt = db.prepare('SELECT * FROM collections WHERE id = ?')
   const collection: Collection = stmt.get(collectionId) as Collection
-  return collection
+  return convert(collection)
 }
 
 export function getCollections(): Collection[] {
   const stmt = db.prepare('SELECT * FROM collections')
   const collections: Collection[] = stmt.all() as Collection[]
-  return collections
+  return collections.map((c) => convert(c))
+}
+
+function convert(collectionData: Collection) {
+  const converted: Collection = {
+    id: collectionData.id,
+    title: collectionData.title,
+    description: collectionData.description && collectionData.description,
+    longDescription: collectionData.longDescription && collectionData.longDescription,
+    type: collectionData.type,
+    subType: collectionData.subType,
+    createDate: new Date(collectionData.createDate),
+    startDate: collectionData.startDate && new Date(collectionData.startDate),
+    endDate: collectionData.endDate && new Date(collectionData.endDate),
+    canceledDate: collectionData.canceledDate && new Date(collectionData.canceledDate)
+  }
+  return converted
 }
 
 export function addCollection(collectionData: Collection) {
