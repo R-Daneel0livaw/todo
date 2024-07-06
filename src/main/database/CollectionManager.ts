@@ -13,22 +13,6 @@ export function getCollections(): Collection[] {
   return collections.map((c) => convert(c))
 }
 
-function convert(collectionData: Collection) {
-  const converted: Collection = {
-    id: collectionData.id,
-    title: collectionData.title,
-    description: collectionData.description && collectionData.description,
-    longDescription: collectionData.longDescription && collectionData.longDescription,
-    type: collectionData.type,
-    subType: collectionData.subType,
-    createDate: new Date(collectionData.createDate),
-    startDate: collectionData.startDate && new Date(collectionData.startDate),
-    endDate: collectionData.endDate && new Date(collectionData.endDate),
-    canceledDate: collectionData.canceledDate && new Date(collectionData.canceledDate)
-  }
-  return converted
-}
-
 export function addCollection(collectionData: Collection) {
   const stmt = db.prepare(
     `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?, ?)`
@@ -60,7 +44,7 @@ export function addAndRetrieveCollection(collectionData: Collection): Collection
     collectionData.createDate?.toISOString(),
     collectionData.startDate?.toISOString()
   ) as Collection
-  return newCollection
+  return convert(newCollection)
 }
 
 export function updateCollection(collectionData: Collection): Collection {
@@ -82,10 +66,26 @@ export function updateCollection(collectionData: Collection): Collection {
     collectionData.id
   ) as Collection
 
-  return updatedCollection
+  return convert(updatedCollection)
 }
 
 export function deleteCollection(collectionId: number) {
   const stmt = db.prepare('DELETE FROM collections WHERE id = ?')
   stmt.run(collectionId)
+}
+
+function convert(collectionData: Collection) {
+  const converted: Collection = {
+    id: collectionData.id,
+    title: collectionData.title,
+    description: collectionData.description && collectionData.description,
+    longDescription: collectionData.longDescription && collectionData.longDescription,
+    type: collectionData.type,
+    subType: collectionData.subType,
+    createDate: new Date(collectionData.createDate),
+    startDate: collectionData.startDate && new Date(collectionData.startDate),
+    endDate: collectionData.endDate && new Date(collectionData.endDate),
+    canceledDate: collectionData.canceledDate && new Date(collectionData.canceledDate)
+  }
+  return converted
 }

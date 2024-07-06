@@ -35,7 +35,6 @@ function CollectionsPage() {
   const handleEdit = (index: number) => {
     setInTransition(true)
     setTimeout(() => {
-      console.log(collections)
       setCurrentCollectionIndex(index)
       setIsEditing(true)
       setInTransition(false)
