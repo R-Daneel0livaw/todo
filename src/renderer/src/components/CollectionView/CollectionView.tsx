@@ -1,14 +1,11 @@
 import { Collection } from '@shared/types'
 import styles from './CollectionView.module.css'
+import { getDateParts } from '@renderer/utils/utils'
 
 interface CollectionViewProps {
   collection: Collection
   isExpanded: boolean
   onExpand: (collectionId: number) => void
-}
-
-const removeTimeStamp = (date: Date) => {
-  return date.toLocaleString().split('T')[0]
 }
 
 function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProps) {
@@ -26,13 +23,15 @@ function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProp
         <div className={styles.collectionViewContainer}>
           {collection.longDescription && <p>{collection.longDescription}</p>}
           <p className={styles.collectionViewExpansionDetails}>
-            <span>Created: {removeTimeStamp(collection.createDate)}</span>
-            {collection.startDate && <span>Started: {removeTimeStamp(collection.startDate)}</span>}
+            <span>Created: {getDateParts(collection.createDate).date}</span>
+            {collection.startDate && (
+              <span>Started: {getDateParts(collection.startDate).date}</span>
+            )}
           </p>
           <p className={styles.collectionViewExpansionDetails}>
-            {collection.endDate && <span>Ended: {removeTimeStamp(collection.endDate)}</span>}
+            {collection.endDate && <span>Ended: {getDateParts(collection.endDate).date}</span>}
             {collection.canceledDate && (
-              <span>Canceled: {removeTimeStamp(collection.canceledDate)}</span>
+              <span>Canceled: {getDateParts(collection.canceledDate).date}</span>
             )}
           </p>
         </div>
