@@ -9,6 +9,11 @@ interface CollectionViewProps {
 }
 
 function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProps) {
+  const createdDateParts = getDateParts(collection.createDate)
+  const startDateParts = collection.startDate ? getDateParts(collection.startDate) : null
+  const endDateParts = collection.endDate ? getDateParts(collection.endDate) : null
+  const canceledDateParts = collection.canceledDate ? getDateParts(collection.canceledDate) : null
+
   return (
     <div>
       <div className={styles.collectionViewContainer} onClick={() => onExpand(collection.id)}>
@@ -23,25 +28,17 @@ function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProp
         <div className={styles.collectionViewContainer}>
           {collection.longDescription && <p>{collection.longDescription}</p>}
           <p className={styles.collectionViewExpansionDetails}>
-            <span title={getDateParts(collection.createDate).time}>
-              Created: {getDateParts(collection.createDate).date}
-            </span>
+            <span title={createdDateParts.time}>Created: {createdDateParts.date}</span>
             {collection.startDate && (
-              <span title={getDateParts(collection.startDate).time}>
-                Started: {getDateParts(collection.startDate).date}
-              </span>
+              <span title={startDateParts?.time}>Started: {startDateParts?.date}</span>
             )}
           </p>
           <p className={styles.collectionViewExpansionDetails}>
             {collection.endDate && (
-              <span title={getDateParts(collection.endDate).time}>
-                Ended: {getDateParts(collection.endDate).date}
-              </span>
+              <span title={endDateParts?.time}>Ended: {endDateParts?.date}</span>
             )}
             {collection.canceledDate && (
-              <span title={getDateParts(collection.canceledDate).time}>
-                Canceled: {getDateParts(collection.canceledDate).date}
-              </span>
+              <span title={canceledDateParts?.time}>Canceled: {canceledDateParts?.date}</span>
             )}
           </p>
         </div>
