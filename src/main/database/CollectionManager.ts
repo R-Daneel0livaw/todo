@@ -29,7 +29,6 @@ export function addCollection(collectionData: Collection) {
 }
 
 export function addAndRetrieveCollection(collectionData: Collection): Collection {
-  console.log('collectionData is: ', collectionData)
   const stmt = db.prepare(
     `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) 
     VALUES (?, ?, ?, ?, ?, ?, ?)

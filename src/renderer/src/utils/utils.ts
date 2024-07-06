@@ -43,14 +43,19 @@ export const getDateParts = (date: Date) => {
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: 'numeric',
-    second: 'numeric',
     hour12: true
   }
 
   const formattedTime = new Intl.DateTimeFormat('en-US', timeOptions).format(date)
 
+  const timeZoneAbbreviation = date
+    .toLocaleTimeString('en-US', { timeZoneName: 'short' })
+    .split(' ')[2]
+
+  const formattedTimeWithZone = `${formattedTime} ${timeZoneAbbreviation}`
+
   return {
     date: formattedDateWithSuffix,
-    time: formattedTime
+    time: formattedTimeWithZone
   }
 }
