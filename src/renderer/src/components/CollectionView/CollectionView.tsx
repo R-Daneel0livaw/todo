@@ -23,15 +23,25 @@ function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProp
         <div className={styles.collectionViewContainer}>
           {collection.longDescription && <p>{collection.longDescription}</p>}
           <p className={styles.collectionViewExpansionDetails}>
-            <span>Created: {getDateParts(collection.createDate).date}</span>
+            <span title={getDateParts(collection.createDate).time}>
+              Created: {getDateParts(collection.createDate).date}
+            </span>
             {collection.startDate && (
-              <span>Started: {getDateParts(collection.startDate).date}</span>
+              <span title={getDateParts(collection.startDate).time}>
+                Started: {getDateParts(collection.startDate).date}
+              </span>
             )}
           </p>
           <p className={styles.collectionViewExpansionDetails}>
-            {collection.endDate && <span>Ended: {getDateParts(collection.endDate).date}</span>}
+            {collection.endDate && (
+              <span title={getDateParts(collection.endDate).time}>
+                Ended: {getDateParts(collection.endDate).date}
+              </span>
+            )}
             {collection.canceledDate && (
-              <span>Canceled: {getDateParts(collection.canceledDate).date}</span>
+              <span title={getDateParts(collection.canceledDate).time}>
+                Canceled: {getDateParts(collection.canceledDate).date}
+              </span>
             )}
           </p>
         </div>

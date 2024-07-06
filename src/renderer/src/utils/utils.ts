@@ -14,7 +14,8 @@ export const getDateParts = (date: Date) => {
   const dateOptions: Intl.DateTimeFormatOptions = {
     weekday: 'long',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    year: 'numeric'
   }
 
   const formattedDate = new Intl.DateTimeFormat('en-US', dateOptions).format(date)
