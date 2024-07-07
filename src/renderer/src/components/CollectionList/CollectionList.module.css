@@ -5,6 +5,8 @@
   max-width: 35%;
 }
 
-.collectionsItemEditBtn {
+.collectionsItemBtnContainer {
+  display: flex;
+  gap: 1rem;
   margin-left: auto;
 }

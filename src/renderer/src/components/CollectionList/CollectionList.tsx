@@ -6,9 +6,10 @@ import { useState } from 'react'
 interface CollectionListProps {
   collections: Collection[]
   onEdit: (index: number) => void
+  onDelete: (index: number) => void
 }
 
-const CollectionList = ({ collections, onEdit }: CollectionListProps) => {
+const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) => {
   const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
 
   const handleExpand = (collectionId: number) => {
@@ -23,6 +24,10 @@ const CollectionList = ({ collections, onEdit }: CollectionListProps) => {
     onEdit(index)
   }
 
+  const handleDelete = async (index: number) => {
+    onDelete(index)
+  }
+
   return (
     <ul>
       {collections.map((collection, index) => (
@@ -32,9 +37,10 @@ const CollectionList = ({ collections, onEdit }: CollectionListProps) => {
             isExpanded={expandedCollectionIds.includes(collection.id)}
             onExpand={() => handleExpand(collection.id)}
           />
-          <button className={styles.collectionsItemEditBtn} onClick={() => handleEdit(index)}>
-            Edit
-          </button>
+          <div className={styles.collectionsItemBtnContainer}>
+            <button onClick={() => handleEdit(index)}>Edit</button>
+            <button onClick={() => handleDelete(index)}>Delete</button>
+          </div>
         </li>
       ))}
     </ul>

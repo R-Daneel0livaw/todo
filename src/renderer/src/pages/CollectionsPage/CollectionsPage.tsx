@@ -41,6 +41,10 @@ function CollectionsPage() {
     }, 300)
   }
 
+  const handleDelete = (index: number) => {
+    console.log('Delete Called', index)
+  }
+
   const handleSave = async (collection: Collection) => {
     setInTransition(true)
     try {
@@ -92,7 +96,7 @@ function CollectionsPage() {
             <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
               Add New
             </button>
-            <CollectionList collections={collections} onEdit={handleEdit} />
+            <CollectionList collections={collections} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         )}
       </div>
