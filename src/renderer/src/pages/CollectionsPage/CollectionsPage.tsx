@@ -42,13 +42,24 @@ function CollectionsPage() {
   }
 
   const handleDelete = (index: number) => {
-    console.log('Delete Called', index)
+    setInTransition(true)
+    try {
+      // await deleteTask(tasks[index])
+      setTimeout(() => {
+        const updatedCollections = collections.filter((_, i) => i !== index)
+        setCollections(updatedCollections)
+        setInTransition(false)
+      }, 300)
+    } catch (error) {
+      console.error('Failed to delete the collection:', error)
+      setInTransition(false)
+    }
   }
 
   const handleSave = async (collection: Collection) => {
     setInTransition(true)
     try {
-      let savedCollection
+      let savedCollection: Collection
       if (currentCollectionIndex !== null) {
         savedCollection = await updateCollection(collection)
       } else {
