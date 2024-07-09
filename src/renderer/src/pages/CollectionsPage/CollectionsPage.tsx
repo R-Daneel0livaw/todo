@@ -1,5 +1,6 @@
 import {
   addAndRetrieveCollection,
+  deleteColection,
   getCollections,
   updateCollection
 } from '@renderer/services/CollectionService'
@@ -41,10 +42,10 @@ function CollectionsPage() {
     }, 300)
   }
 
-  const handleDelete = (index: number) => {
+  const handleDelete = async (index: number) => {
     setInTransition(true)
     try {
-      // await deleteTask(tasks[index])
+      await deleteColection(collections[index])
       setTimeout(() => {
         const updatedCollections = collections.filter((_, i) => i !== index)
         setCollections(updatedCollections)
