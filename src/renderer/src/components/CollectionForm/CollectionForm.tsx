@@ -15,8 +15,8 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
       title: '',
       description: '',
       longDescription: '',
-      type: 'DEFAULT',
-      subType: 'CUSTOM'
+      type: '',
+      subType: ''
     }
   )
 
@@ -26,8 +26,8 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
         title: '',
         description: '',
         longDescription: '',
-        type: 'DEFAULT',
-        subType: 'DEFAULT'
+        type: '',
+        subType: ''
       }
     )
   }, [collection])
@@ -44,7 +44,6 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
     if (!collectionState.createDate) {
       collectionState.createDate = new Date()
     }
-    console.log('saving collection state', collectionState)
     onSave(collectionState)
   }
 
