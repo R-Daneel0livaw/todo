@@ -69,7 +69,6 @@ export function updateCollection(collectionData: Collection): Collection {
 }
 
 export function deleteCollection(collectionId: number) {
-  console.log('collectionManager deleteCollection ', collectionId)
   const stmt = db.prepare('DELETE FROM collections WHERE id = ?')
   stmt.run(collectionId)
 }
