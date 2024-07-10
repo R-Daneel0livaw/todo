@@ -76,12 +76,11 @@ function CollectionsPage() {
         } else {
           setCollections([...collections, savedCollection])
         }
+        setInTransition(false)
         setIsEditing(false)
       }, 300)
     } catch (error) {
       console.error('Failed to save the collection:', error)
-    } finally {
-      setInTransition(false)
     }
   }
 
