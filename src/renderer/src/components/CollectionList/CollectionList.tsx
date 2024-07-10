@@ -39,7 +39,9 @@ const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) 
           />
           <div className={styles.collectionsItemBtnContainer}>
             <button onClick={() => handleEdit(index)}>Edit</button>
-            <button onClick={() => handleDelete(index)}>Delete</button>
+            {collection.type !== 'DEFAULT' && (
+              <button onClick={() => handleDelete(index)}>Delete</button>
+            )}
           </div>
         </li>
       ))}

@@ -44,6 +44,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
     if (!collectionState.createDate) {
       collectionState.createDate = new Date()
     }
+    console.log('saving collection state', collectionState)
     onSave(collectionState)
   }
 
