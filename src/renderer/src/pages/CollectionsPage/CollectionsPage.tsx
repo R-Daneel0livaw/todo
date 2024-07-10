@@ -45,7 +45,7 @@ function CollectionsPage() {
   const handleDelete = async (index: number) => {
     setInTransition(true)
     try {
-      await deleteColection(collections[index])
+      await deleteColection(collections[index].id)
       setTimeout(() => {
         const updatedCollections = collections.filter((_, i) => i !== index)
         setCollections(updatedCollections)
