@@ -43,17 +43,14 @@ function CollectionsPage() {
   }
 
   const handleDelete = async (index: number) => {
-    setInTransition(true)
     try {
       await deleteColection(collections[index].id)
       setTimeout(() => {
         const updatedCollections = collections.filter((_, i) => i !== index)
         setCollections(updatedCollections)
-        setInTransition(false)
       }, 300)
     } catch (error) {
       console.error('Failed to delete the collection:', error)
-      setInTransition(false)
     }
   }
 
@@ -81,6 +78,7 @@ function CollectionsPage() {
       }, 300)
     } catch (error) {
       console.error('Failed to save the collection:', error)
+      setInTransition(false)
     }
   }
 
