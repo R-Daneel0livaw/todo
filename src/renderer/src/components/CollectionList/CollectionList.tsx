@@ -11,6 +11,7 @@ interface CollectionListProps {
 
 const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) => {
   const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
+  const [deletingIndex, setDeletingIndex] = useState<number | null>(null)
 
   const handleExpand = (collectionId: number) => {
     setExpandedCollectionIds((prevExpandedIds) =>
@@ -25,13 +26,20 @@ const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) 
   }
 
   const handleDelete = async (index: number) => {
-    onDelete(index)
+    setDeletingIndex(index)
+    setTimeout(() => {
+      onDelete(index)
+      setDeletingIndex(null)
+    }, 300)
   }
 
   return (
     <ul>
       {collections.map((collection, index) => (
-        <li key={collection.id} className={styles.collectionsItem}>
+        <li
+          key={collection.id}
+          className={`${styles.collectionsItem} ${deletingIndex === index ? styles.fadeOut : ''}`}
+        >
           <CollectionView
             collection={collection}
             isExpanded={expandedCollectionIds.includes(collection.id)}

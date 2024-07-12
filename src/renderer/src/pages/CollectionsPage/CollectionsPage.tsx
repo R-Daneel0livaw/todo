@@ -12,8 +12,8 @@ import CollectionForm from '@renderer/components/CollectionForm/CollectionForm'
 
 function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
-  const [isEditing, setIsEditing] = useState(false)
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState<number | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
   const [inTransition, setInTransition] = useState(false)
 
   useEffect(() => {
@@ -45,10 +45,8 @@ function CollectionsPage() {
   const handleDelete = async (index: number) => {
     try {
       await deleteColection(collections[index].id)
-      setTimeout(() => {
-        const updatedCollections = collections.filter((_, i) => i !== index)
-        setCollections(updatedCollections)
-      }, 300)
+      const updatedCollections = collections.filter((_, i) => i !== index)
+      setCollections(updatedCollections)
     } catch (error) {
       console.error('Failed to delete the collection:', error)
     }
