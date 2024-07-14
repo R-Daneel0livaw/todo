@@ -3,11 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <title>TODO</title>
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
-    />
+    <meta 
+        http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; 
+          script-src 'self'; 
+          font-src 'self' https://fonts.gstatic.com;
+          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Euphoria+Script&family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400;1,500;1,600&family=Oswald:wght@400;500;600;700&family=Roboto:wght@100&display=swap"
+      rel="stylesheet">
   </head>
 
   <body>
