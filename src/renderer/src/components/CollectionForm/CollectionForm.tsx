@@ -1,4 +1,4 @@
-import { collectionSubTypes, collectionTypes } from '@renderer/utils/utils'
+import { collectionSubTypes, collectionTypes, toTitleCase } from '@renderer/utils/utils'
 import { Collection } from '@shared/types'
 import { FormEvent, useEffect, useState } from 'react'
 import styles from './CollectionForm.module.css'
@@ -72,7 +72,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               <option value="">Select Type</option>
               {collectionTypes.map((type) => (
                 <option key={type} value={type}>
-                  {type}
+                  {toTitleCase(type)}
                 </option>
               ))}
             </select>
@@ -87,7 +87,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             <option value="">Select Sub-Type</option>
             {collectionSubTypes.map((subType) => (
               <option key={subType} value={subType}>
-                {subType}
+                {toTitleCase(subType)}
               </option>
             ))}
           </select>
