@@ -5,10 +5,22 @@
   margin-bottom: 1.2rem;
 }
 
+.collectionViewTitle {
+  font-size: 1.4rem;
+}
+
 .collectionViewType {
   margin-right: 0.5rem;
 }
 
-.collectionViewExpansionDetails  span:not(:last-child) {
-  margin-right: .75rem;
+.collectionViewMainInfo {
+  font-size: 1.1rem;
+}
+
+.collectionViewExpansionDetails {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: 0;
+  margin-left: .5rem;
 }

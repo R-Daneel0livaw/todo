@@ -90,7 +90,7 @@ function CollectionsPage() {
 
   return (
     <div className={`${styles.collectionsContainer}`}>
-      <h1>Collections</h1>
+      <h1 className={styles.collectionsTitle}>Collections</h1>
       <div className={`${inTransition ? styles.viewTransitionExit : styles.viewTransitionEnter}`}>
         {isEditing ? (
           <CollectionForm

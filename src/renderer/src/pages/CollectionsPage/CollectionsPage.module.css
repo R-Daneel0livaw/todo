@@ -5,6 +5,10 @@
   padding: 2rem;
 }
 
+.collectionsTitle {
+  font-size: 1.8rem;
+}
+
 .collectionsViewContainer {
   display: flex;
   flex-direction: column;
