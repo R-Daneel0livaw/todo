@@ -4,6 +4,10 @@
   gap: 2rem;
 }
 
+.collectionFormTitle {
+  font-size: 1.6rem;
+}
+
 .collectionForm {
   display: flex;
   flex-direction: column;
