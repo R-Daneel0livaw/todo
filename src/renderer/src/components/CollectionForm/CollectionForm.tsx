@@ -56,31 +56,38 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
         <input
           type="text"
           name="title"
+          id="title"
           value={collectionState.title}
           onChange={handleChange}
           placeholder="Title"
           required
           className={styles.collectionFormMidWidthInput}
         />
+        <label htmlFor="title">Title</label>
         <div className={styles.collectionFormInputContainer}>
           {collectionState.type !== 'DEFAULT' && (
-            <select
-              name="type"
-              value={collectionState.type}
-              onChange={handleChange}
-              required
-              className={styles.collectionFormShortWidthInput}
-            >
-              <option value="">Select Type</option>
-              {collectionTypes.map((type) => (
-                <option key={type} value={type}>
-                  {toTitleCase(type)}
-                </option>
-              ))}
-            </select>
+            <>
+              <select
+                name="type"
+                id="type"
+                value={collectionState.type}
+                onChange={handleChange}
+                required
+                className={styles.collectionFormShortWidthInput}
+              >
+                <option value="">Select Type</option>
+                {collectionTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {toTitleCase(type)}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="type">Type</label>
+            </>
           )}
           <select
             name="subType"
+            id="subType"
             value={collectionState.subType}
             onChange={handleChange}
             required
@@ -93,23 +100,28 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               </option>
             ))}
           </select>
+          <label htmlFor="subType">Sub-Type</label>
         </div>
         <input
           type="text"
           name="description"
+          id="description"
           value={collectionState.description}
           onChange={handleChange}
           placeholder="Description"
           required
           className={styles.collectionFormMidWidthInput}
         />
+        <label htmlFor="description">Description</label>
         <textarea
           name="longDescription"
           value={collectionState.longDescription}
+          id="longDescription"
           onChange={handleChange}
           placeholder="More Information"
           className={styles.collectionFormLongWidthInput}
         />
+        <label htmlFor="longDescription">More Information</label>
         <div className={styles.collectionFormBtnContainer}>
           <button type="submit" className={styles.collectionFormBtn}>
             Save
