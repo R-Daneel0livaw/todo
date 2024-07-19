@@ -23,7 +23,7 @@
 .innerLabel {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 5px;
   display: flex;
   align-items: center;
   color: #aeb4ba;

@@ -60,7 +60,6 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             id="title"
             value={collectionState.title}
             onChange={handleChange}
-            placeholder="Title"
             required
             className={styles.collectionFormMidWidthInput}
           />
@@ -119,7 +118,6 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             id="description"
             value={collectionState.description}
             onChange={handleChange}
-            placeholder="Description"
             required
             className={styles.collectionFormMidWidthInput}
           />
@@ -133,7 +131,6 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             value={collectionState.longDescription}
             id="longDescription"
             onChange={handleChange}
-            placeholder="More Information"
             className={styles.collectionFormLongWidthInput}
           />
           <label htmlFor="longDescription" className={styles.innerLabel}>
