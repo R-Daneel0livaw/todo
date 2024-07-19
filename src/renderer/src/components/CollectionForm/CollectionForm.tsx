@@ -53,7 +53,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
         {collection ? `Edit Collection ${collectionState.title}` : 'Add Collection'}
       </h1>
       <form className={styles.collectionForm} onSubmit={handleSubmit}>
-        <div>
+        <div className={styles.fieldHolder}>
           <input
             type="text"
             name="title"
@@ -64,11 +64,13 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             required
             className={styles.collectionFormMidWidthInput}
           />
-          <label htmlFor="title">Title</label>
+          <label htmlFor="title" className={styles.innerLabel}>
+            Title
+          </label>
         </div>
         <div className={styles.collectionFormInputContainer}>
           {collectionState.type !== 'DEFAULT' && (
-            <div>
+            <div className={styles.fieldHolder}>
               <select
                 name="type"
                 id="type"
@@ -84,10 +86,12 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                   </option>
                 ))}
               </select>
-              <label htmlFor="type">Type</label>
+              <label htmlFor="type" className={styles.innerLabel}>
+                Type
+              </label>
             </div>
           )}
-          <div>
+          <div className={styles.fieldHolder}>
             <select
               name="subType"
               id="subType"
@@ -103,10 +107,12 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 </option>
               ))}
             </select>
-            <label htmlFor="subType">Sub-Type</label>
+            <label htmlFor="subType" className={styles.innerLabel}>
+              Sub-Type
+            </label>
           </div>
         </div>
-        <div>
+        <div className={styles.fieldHolder}>
           <input
             type="text"
             name="description"
@@ -117,9 +123,11 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             required
             className={styles.collectionFormMidWidthInput}
           />
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description" className={styles.innerLabel}>
+            Description
+          </label>
         </div>
-        <div>
+        <div className={styles.fieldHolder}>
           <textarea
             name="longDescription"
             value={collectionState.longDescription}
@@ -128,7 +136,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             placeholder="More Information"
             className={styles.collectionFormLongWidthInput}
           />
-          <label htmlFor="longDescription">More Information</label>
+          <label htmlFor="longDescription" className={styles.innerLabel}>
+            More Information
+          </label>
         </div>
         <div className={styles.collectionFormBtnContainer}>
           <button type="submit" className={styles.collectionFormBtn}>
