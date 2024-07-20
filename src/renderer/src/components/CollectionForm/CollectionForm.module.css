@@ -51,6 +51,10 @@
     color: #EF5350;
 }
 
+.displayNone {
+  display: none;
+}
+
 .collectionFormShortWidthInput {
   width: 15%;
 }

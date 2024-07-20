@@ -78,7 +78,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 required
                 className={`${styles.innerInput}`}
               >
-                <option value="">Select Type</option>
+                <option disabled value="" className={styles.displayNone}></option>
                 {collectionTypes.map((type) => (
                   <option key={type} value={type}>
                     {toTitleCase(type)}
@@ -99,7 +99,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               required
               className={`${styles.innerInput}`}
             >
-              <option value="">Select Sub-Type</option>
+              <option disabled value="" className={styles.displayNone}></option>
               {collectionSubTypes.map((subType) => (
                 <option key={subType} value={subType}>
                   {toTitleCase(subType)}
