@@ -40,7 +40,7 @@
 }
 
 .innerInput:valid + label {
-    color: #EF5350;
+    color: #42a96a;
 }
 
 .innerInput.touched:invalid {
