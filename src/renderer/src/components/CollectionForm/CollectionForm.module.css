@@ -22,7 +22,7 @@
 
 .innerLabel {
   position: absolute;
-  top: 0;
+  top: 2px;
   left: 5px;
   display: flex;
   align-items: center;
@@ -34,7 +34,7 @@
 
 .innerInput:focus + label,
 .innerInput:valid + label {
-    font-size: .75rem;
+    font-size: .85rem;
     top: -25px;
     pointer-events: none;
 }
