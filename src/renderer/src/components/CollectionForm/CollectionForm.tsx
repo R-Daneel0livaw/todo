@@ -61,7 +61,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             value={collectionState.title}
             onChange={handleChange}
             required
-            className={styles.collectionFormMidWidthInput}
+            className={`${styles.innerInput} ${styles.collectionFormMidWidthInput}`}
           />
           <label htmlFor="title" className={styles.innerLabel}>
             Title
@@ -76,7 +76,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 value={collectionState.type}
                 onChange={handleChange}
                 required
-                className={styles.collectionFormShortWidthInput}
+                className={`${styles.innerInput} ${styles.collectionFormShortWidthInput}`}
               >
                 <option value="">Select Type</option>
                 {collectionTypes.map((type) => (
@@ -97,7 +97,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               value={collectionState.subType}
               onChange={handleChange}
               required
-              className={styles.collectionFormShortWidthInput}
+              className={`${styles.innerInput} ${styles.collectionFormShortWidthInput}`}
             >
               <option value="">Select Sub-Type</option>
               {collectionSubTypes.map((subType) => (
@@ -119,7 +119,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             value={collectionState.description}
             onChange={handleChange}
             required
-            className={styles.collectionFormMidWidthInput}
+            className={`${styles.innerInput} ${styles.collectionFormMidWidthInput}`}
           />
           <label htmlFor="description" className={styles.innerLabel}>
             Description
@@ -131,7 +131,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             value={collectionState.longDescription}
             id="longDescription"
             onChange={handleChange}
-            className={styles.collectionFormLongWidthInput}
+            className={`${styles.innerInput} ${styles.collectionFormLongWidthInput}`}
           />
           <label htmlFor="longDescription" className={styles.innerLabel}>
             More Information

@@ -32,6 +32,29 @@
   transition: .3s ease-in-out;
 }
 
+.innerInput:focus + label,
+.innerInput:valid + label {
+    font-size: .75rem;
+    top: -25px;
+    pointer-events: none;
+}
+
+.innerInput:valid {
+    border-bottom: 2px solid #00684a;
+}
+
+.innerInput:valid + label {
+    color: #EF5350;
+}
+
+.innerInput.touched:invalid {
+    border-bottom: 2px solid #EF5350;
+}
+
+.innerInput.touched:invalid + label {
+    color: #EF5350;
+}
+
 .collectionFormShortWidthInput {
   width: 15%;
 }
