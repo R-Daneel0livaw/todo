@@ -39,10 +39,6 @@
     pointer-events: none;
 }
 
-.innerInput:valid {
-    border-bottom: 2px solid #00684a;
-}
-
 .innerInput:valid + label {
     color: #EF5350;
 }

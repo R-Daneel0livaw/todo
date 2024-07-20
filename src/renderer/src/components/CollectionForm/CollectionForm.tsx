@@ -76,7 +76,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 value={collectionState.type}
                 onChange={handleChange}
                 required
-                className={`${styles.innerInput} ${styles.collectionFormShortWidthInput}`}
+                className={`${styles.innerInput}`}
               >
                 <option value="">Select Type</option>
                 {collectionTypes.map((type) => (
@@ -97,7 +97,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               value={collectionState.subType}
               onChange={handleChange}
               required
-              className={`${styles.innerInput} ${styles.collectionFormShortWidthInput}`}
+              className={`${styles.innerInput}`}
             >
               <option value="">Select Sub-Type</option>
               {collectionSubTypes.map((subType) => (
