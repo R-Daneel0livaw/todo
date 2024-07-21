@@ -20,6 +20,10 @@
   margin-bottom: 1.25rem;
 }
 
+.fieldHolder select {
+  width: 10rem;
+}
+
 .innerLabel {
   position: absolute;
   top: 2px;

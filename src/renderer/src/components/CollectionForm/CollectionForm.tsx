@@ -131,6 +131,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             value={collectionState.longDescription}
             id="longDescription"
             onChange={handleChange}
+            required
             className={`${styles.innerInput} ${styles.collectionFormLongWidthInput}`}
           />
           <label htmlFor="longDescription" className={styles.innerLabel}>
