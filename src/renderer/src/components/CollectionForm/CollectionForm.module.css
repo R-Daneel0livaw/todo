@@ -40,6 +40,7 @@
 .innerInput:valid + label {
     font-size: .85rem;
     top: -25px;
+    left: 0;
     pointer-events: none;
 }
 
