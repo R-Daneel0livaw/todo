@@ -65,3 +65,12 @@ export const toTitleCase = (str: string) => {
     return letter.toUpperCase()
   })
 }
+
+export const validSubTypes: Record<CollectionType, CollectionSubType[]> = {
+  DEFAULT: ['TASK', 'EVENT'],
+  QUARTERLY: ['TASK', 'EVENT'],
+  MONTHLY: ['TASK', 'EVENT'],
+  DAILY: ['TASK', 'EVENT', 'PLAN', 'LOG'],
+  PROJECT: ['TASK', 'EVENT'],
+  CUSTOM: ['TASK', 'EVENT', 'CUSTOM']
+}
