@@ -1,4 +1,9 @@
-import { collectionSubTypes, collectionTypes, toTitleCase } from '@renderer/utils/utils'
+import {
+  collectionSubTypes,
+  collectionTypes,
+  toTitleCase,
+  validSubTypes
+} from '@renderer/utils/utils'
 import { Collection } from '@shared/types'
 import { FormEvent, useEffect, useState } from 'react'
 import styles from './CollectionForm.module.css'
@@ -19,6 +24,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
       subType: ''
     }
   )
+
+  const subTypeOptions = validSubTypes[collectionState.type]
+  console.log(subTypeOptions)
 
   useEffect(() => {
     setCollectionState(
@@ -84,6 +92,11 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                     {toTitleCase(type)}
                   </option>
                 ))}
+                {/* {Object.keys(validSubTypes).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))} */}
               </select>
               <label htmlFor="type" className={styles.innerLabel}>
                 Type
@@ -105,6 +118,11 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                   {toTitleCase(subType)}
                 </option>
               ))}
+              {/* {subTypeOptions.map((subType) => (
+                <option key={subType} value={subType}>
+                  {subType}
+                </option>
+              ))} */}
             </select>
             <label htmlFor="subType" className={styles.innerLabel}>
               Sub-Type
