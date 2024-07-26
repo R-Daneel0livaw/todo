@@ -72,8 +72,8 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             Title
           </label>
         </div>
-        <div className={styles.collectionFormInputContainer}>
-          {collectionState.type !== 'DEFAULT' && (
+        {collectionState.type !== 'DEFAULT' && (
+          <div className={styles.collectionFormInputContainer}>
             <div className={styles.fieldHolder}>
               <select
                 name="type"
@@ -96,28 +96,28 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 Type
               </label>
             </div>
-          )}
-          <div className={styles.fieldHolder}>
-            <select
-              name="subType"
-              id="subType"
-              value={collectionState.subType}
-              onChange={handleChange}
-              required
-              className={`${styles.innerInput}`}
-            >
-              <option disabled value="" className={styles.displayNone}></option>
-              {subTypeOptions.map((subType) => (
-                <option key={subType} value={subType}>
-                  {subType}
-                </option>
-              ))}
-            </select>
-            <label htmlFor="subType" className={styles.innerLabel}>
-              Sub-Type
-            </label>
+            <div className={styles.fieldHolder}>
+              <select
+                name="subType"
+                id="subType"
+                value={collectionState.subType}
+                onChange={handleChange}
+                required
+                className={`${styles.innerInput}`}
+              >
+                <option disabled value="" className={styles.displayNone}></option>
+                {subTypeOptions.map((subType) => (
+                  <option key={subType} value={subType}>
+                    {subType}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="subType" className={styles.innerLabel}>
+                Sub-Type
+              </label>
+            </div>
           </div>
-        </div>
+        )}
         <div className={styles.fieldHolder}>
           <input
             type="text"
