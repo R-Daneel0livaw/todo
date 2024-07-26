@@ -1,10 +1,5 @@
-import {
-  collectionSubTypes,
-  collectionTypes,
-  toTitleCase,
-  validSubTypes
-} from '@renderer/utils/utils'
-import { Collection } from '@shared/types'
+import { allSubTypes, validSubTypes } from '@renderer/utils/utils'
+import { Collection, CollectionType } from '@shared/types'
 import { FormEvent, useEffect, useState } from 'react'
 import styles from './CollectionForm.module.css'
 
@@ -25,8 +20,10 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
     }
   )
 
-  const subTypeOptions = validSubTypes[collectionState.type]
-  console.log(subTypeOptions)
+  const subTypeOptions =
+    collectionState.type && collectionState.type in validSubTypes
+      ? validSubTypes[collectionState.type as CollectionType]
+      : allSubTypes
 
   useEffect(() => {
     setCollectionState(
@@ -87,16 +84,11 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 className={`${styles.innerInput}`}
               >
                 <option disabled value="" className={styles.displayNone}></option>
-                {collectionTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {toTitleCase(type)}
-                  </option>
-                ))}
-                {/* {Object.keys(validSubTypes).map((type) => (
+                {Object.keys(validSubTypes).map((type) => (
                   <option key={type} value={type}>
                     {type}
                   </option>
-                ))} */}
+                ))}
               </select>
               <label htmlFor="type" className={styles.innerLabel}>
                 Type
@@ -113,16 +105,11 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               className={`${styles.innerInput}`}
             >
               <option disabled value="" className={styles.displayNone}></option>
-              {collectionSubTypes.map((subType) => (
-                <option key={subType} value={subType}>
-                  {toTitleCase(subType)}
-                </option>
-              ))}
-              {/* {subTypeOptions.map((subType) => (
+              {subTypeOptions.map((subType) => (
                 <option key={subType} value={subType}>
                   {subType}
                 </option>
-              ))} */}
+              ))}
             </select>
             <label htmlFor="subType" className={styles.innerLabel}>
               Sub-Type

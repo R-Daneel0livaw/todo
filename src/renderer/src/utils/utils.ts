@@ -74,3 +74,5 @@ export const validSubTypes: Record<CollectionType, CollectionSubType[]> = {
   PROJECT: ['TASK', 'EVENT'],
   CUSTOM: ['TASK', 'EVENT', 'CUSTOM']
 }
+
+export const allSubTypes: CollectionSubType[] = ['TASK', 'EVENT', 'PLAN', 'LOG', 'CUSTOM']
