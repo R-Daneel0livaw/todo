@@ -68,9 +68,9 @@ export const toTitleCase = (str: string) => {
 
 export const validSubTypes: Record<CollectionType, CollectionSubType[]> = {
   DEFAULT: ['TASK', 'EVENT'],
-  QUARTERLY: ['TASK', 'EVENT'],
-  MONTHLY: ['TASK', 'EVENT'],
   DAILY: ['TASK', 'EVENT', 'PLAN', 'LOG'],
+  MONTHLY: ['TASK', 'EVENT'],
+  QUARTERLY: ['TASK', 'EVENT'],
   PROJECT: ['TASK', 'EVENT'],
   CUSTOM: ['TASK', 'EVENT', 'CUSTOM']
 }
