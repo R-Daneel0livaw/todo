@@ -84,11 +84,13 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 className={`${styles.innerInput}`}
               >
                 <option disabled value="" className={styles.displayNone}></option>
-                {Object.keys(validSubTypes).map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
+                {Object.keys(validSubTypes)
+                  .filter((t) => t !== 'DEFAULT')
+                  .map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
               </select>
               <label htmlFor="type" className={styles.innerLabel}>
                 Type
