@@ -80,3 +80,16 @@
 .collectionFormBtn {
   width: fit-content;
 }
+
+/* input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  color: transparent;
+}
+
+input[type="date"]::-webkit-datetime-edit-text {
+  color: transparent;
+}
+
+input[type="date"]::-webkit-clear-button,
+input[type="date"]::-webkit-inner-spin-button {
+  display: none;
+} */

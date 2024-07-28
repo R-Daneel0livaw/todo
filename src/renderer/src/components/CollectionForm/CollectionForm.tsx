@@ -144,6 +144,22 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             More Information
           </label>
         </div>
+        <div className={styles.fieldHolder}>
+          <input
+            type="date"
+            name="startDate"
+            id="startDate"
+            value={
+              collectionState.startDate ? collectionState.startDate.toISOString().split('T')[0] : ''
+            }
+            onChange={handleChange}
+            required
+            className={`${styles.innerInput}`}
+          />
+          <label htmlFor="startDate" className={styles.innerLabel}>
+            Start Date
+          </label>
+        </div>
         <div className={styles.collectionFormBtnContainer}>
           <button type="submit" className={styles.collectionFormBtn}>
             Save
