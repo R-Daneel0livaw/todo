@@ -20,6 +20,15 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
     }
   )
 
+  const fieldTypes = {
+    title: 'string',
+    type: 'string',
+    subType: 'string',
+    description: 'string',
+    longDescription: 'string',
+    startDate: 'date'
+  }
+
   const subTypeOptions =
     collectionState.type && collectionState.type in validSubTypes
       ? validSubTypes[collectionState.type as CollectionType]
@@ -41,7 +50,12 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
-    setCollectionState((prevCollection) => ({ ...prevCollection, [name]: value }))
+    const fieldType = fieldTypes[name]
+    console.log(name, value, typeof value)
+    setCollectionState((prevCollection) => ({
+      ...prevCollection,
+      [name]: fieldType === 'date' ? new Date(value) : value
+    }))
   }
 
   const handleSubmit = (e: FormEvent) => {
