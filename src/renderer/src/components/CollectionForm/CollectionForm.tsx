@@ -29,6 +29,12 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
     startDate: 'date'
   }
 
+  const [touchedFields, setTouchedFields] = useState<TouchedFields>({})
+
+  interface TouchedFields {
+    [key: string]: boolean
+  }
+
   const subTypeOptions =
     collectionState.type && collectionState.type in validSubTypes
       ? validSubTypes[collectionState.type as CollectionType]
@@ -56,6 +62,13 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
       ...prevCollection,
       [name]: fieldType === 'date' ? new Date(value) : value
     }))
+  }
+
+  const handleBlur = (field: string) => {
+    setTouchedFields({
+      ...touchedFields,
+      [field]: true
+    })
   }
 
   const handleSubmit = (e: FormEvent) => {
@@ -167,8 +180,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               collectionState.startDate ? collectionState.startDate.toISOString().split('T')[0] : ''
             }
             onChange={handleChange}
+            onBlur={() => handleBlur('startDate')}
             required
-            className={`${styles.innerInput}`}
+            className={`${styles.innerInput} ${touchedFields.startDate ? styles.touched : ''}`}
           />
           <label htmlFor="startDate" className={styles.innerLabel}>
             Start Date
