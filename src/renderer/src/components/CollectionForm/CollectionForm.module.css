@@ -101,3 +101,23 @@ input[type="date"]:focus::-webkit-datetime-edit-fields-wrapper {
 input[type="date"]:focus::-webkit-datetime-edit-text {
   color: initial;
 }
+
+
+
+
+/* input[type="date"].innerInput::-webkit-datetime-edit-fields-wrapper,
+input[type="date"].innerInput::-webkit-datetime-edit-text {
+  color: transparent;
+}
+
+input[type="date"].innerInput:focus::-webkit-datetime-edit-fields-wrapper,
+input[type="date"].innerInput:focus::-webkit-datetime-edit-text,
+input[type="date"].innerInput.touched::-webkit-datetime-edit-fields-wrapper,
+input[type="date"].innerInput.touched::-webkit-datetime-edit-text {
+  color: initial;
+}
+
+input[type="date"].innerInput.valid::-webkit-datetime-edit-fields-wrapper,
+input[type="date"].innerInput.valid::-webkit-datetime-edit-text {
+  color: initial;
+} */
