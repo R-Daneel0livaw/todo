@@ -50,6 +50,13 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
         subType: ''
       }
     )
+
+    if (collection?.startDate) {
+      setTouchedFields((prev) => ({
+        ...prev,
+        startDate: true
+      }))
+    }
   }, [collection])
 
   const handleChange = (
@@ -181,6 +188,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             }
             onChange={handleChange}
             onBlur={() => handleBlur('startDate')}
+            onFocus={() => handleBlur('startDate')}
             required
             className={`${styles.innerInput} ${touchedFields.startDate ? styles.touched : ''}`}
           />
