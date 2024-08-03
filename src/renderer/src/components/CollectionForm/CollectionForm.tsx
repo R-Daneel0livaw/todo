@@ -107,8 +107,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             id="title"
             value={collectionState.title}
             onChange={handleChange}
+            onBlur={() => handleBlur('title')}
             required
-            className={`${styles.innerInput} ${styles.collectionFormMidWidthInput}`}
+            className={`${styles.innerInput} ${styles.collectionFormMidWidthInput} ${touchedFields.title ? styles.touched : ''}`}
           />
           <label htmlFor="title" className={styles.innerLabel}>
             Title
@@ -167,8 +168,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             id="description"
             value={collectionState.description}
             onChange={handleChange}
+            onBlur={() => handleBlur('description')}
             required
-            className={`${styles.innerInput} ${styles.collectionFormMidWidthInput}`}
+            className={`${styles.innerInput} ${styles.collectionFormMidWidthInput} ${touchedFields.description ? styles.touched : ''}`}
           />
           <label htmlFor="description" className={styles.innerLabel}>
             Description
