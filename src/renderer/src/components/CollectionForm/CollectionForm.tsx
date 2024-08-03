@@ -1,6 +1,6 @@
 import { allSubTypes, toTitleCase, validSubTypes } from '@renderer/utils/utils'
 import { Collection, CollectionType } from '@shared/types'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import styles from './CollectionForm.module.css'
 
 interface CollectionFormProps {
@@ -40,6 +40,8 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
       ? validSubTypes[collectionState.type as CollectionType]
       : allSubTypes
 
+  const inputRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
     setCollectionState(
       collection || {
@@ -76,6 +78,12 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
       ...touchedFields,
       [field]: true
     })
+  }
+
+  const handleDivClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
   }
 
   const handleSubmit = (e: FormEvent) => {
@@ -178,7 +186,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             More Information
           </label>
         </div>
-        <div className={styles.fieldHolder}>
+        <div className={styles.fieldHolder} onClick={handleDivClick}>
           <input
             type="date"
             name="startDate"
@@ -188,7 +196,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             }
             onChange={handleChange}
             onBlur={() => handleBlur('startDate')}
-            onFocus={() => handleBlur('startDate')}
+            ref={inputRef}
             required
             className={`${styles.innerInput} ${touchedFields.startDate ? styles.touched : ''}`}
           />
