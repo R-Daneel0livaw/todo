@@ -48,10 +48,6 @@
     color: #42a96a;
 }
 
-.innerInput.touched:invalid {
-    border-bottom: 2px solid #EF5350;
-}
-
 .innerInput.touched:invalid + label {
     color: #EF5350;
 }
