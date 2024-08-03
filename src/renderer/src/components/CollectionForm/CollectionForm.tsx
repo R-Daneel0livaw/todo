@@ -123,8 +123,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 id="type"
                 value={collectionState.type}
                 onChange={handleChange}
+                onBlur={() => handleBlur('type')}
                 required
-                className={`${styles.innerInput}`}
+                className={`${styles.innerInput} ${touchedFields.type ? styles.touched : ''}`}
               >
                 <option disabled value="" className={styles.displayNone}></option>
                 {Object.keys(validSubTypes)
@@ -145,8 +146,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 id="subType"
                 value={collectionState.subType}
                 onChange={handleChange}
+                onBlur={() => handleBlur('subType')}
                 required
-                className={`${styles.innerInput}`}
+                className={`${styles.innerInput} ${touchedFields.subType ? styles.touched : ''}`}
               >
                 <option disabled value="" className={styles.displayNone}></option>
                 {subTypeOptions.map((subType) => (
