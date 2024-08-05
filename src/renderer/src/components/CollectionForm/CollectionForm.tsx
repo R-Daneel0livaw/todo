@@ -66,7 +66,6 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
   ) => {
     const { name, value } = e.target
     const fieldType = fieldTypes[name]
-    console.log(name, value, typeof value)
     setCollectionState((prevCollection) => ({
       ...prevCollection,
       [name]: fieldType === 'date' ? new Date(value) : value
@@ -74,10 +73,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
   }
 
   const handleBlur =
-    (field: string) =>
+    (field: string, checkValue: boolean) =>
     (event: React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLSelectElement>) => {
-      console.log('the field', field, 'the value', event.target.value)
-      if (field !== 'startDate' || (field === 'startDate' && event.target.value)) {
+      if (!checkValue || (checkValue && event.target.value)) {
         setTouchedFields({
           ...touchedFields,
           [field]: true
@@ -112,7 +110,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             id="title"
             value={collectionState.title}
             onChange={handleChange}
-            onBlur={handleBlur('title')}
+            onBlur={handleBlur('title', false)}
             required
             className={`${styles.innerInput} ${styles.collectionFormMidWidthInput} ${touchedFields.title ? styles.touched : ''}`}
           />
@@ -128,7 +126,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 id="type"
                 value={collectionState.type}
                 onChange={handleChange}
-                onBlur={handleBlur('type')}
+                onBlur={handleBlur('type', false)}
                 required
                 className={`${styles.innerInput} ${touchedFields.type ? styles.touched : ''}`}
               >
@@ -151,7 +149,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
                 id="subType"
                 value={collectionState.subType}
                 onChange={handleChange}
-                onBlur={handleBlur('subType')}
+                onBlur={handleBlur('subType', false)}
                 required
                 className={`${styles.innerInput} ${touchedFields.subType ? styles.touched : ''}`}
               >
@@ -175,7 +173,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             id="description"
             value={collectionState.description}
             onChange={handleChange}
-            onBlur={handleBlur('description')}
+            onBlur={handleBlur('description', false)}
             required
             className={`${styles.innerInput} ${styles.collectionFormMidWidthInput} ${touchedFields.description ? styles.touched : ''}`}
           />
@@ -204,7 +202,7 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
               collectionState.startDate ? collectionState.startDate.toISOString().split('T')[0] : ''
             }
             onChange={handleChange}
-            onBlur={handleBlur('startDate')}
+            onBlur={handleBlur('startDate', true)}
             ref={inputRef}
             required
             className={`${styles.innerInput} ${touchedFields.startDate ? styles.touched : ''}`}
