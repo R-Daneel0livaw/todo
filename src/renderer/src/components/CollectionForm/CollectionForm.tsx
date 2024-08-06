@@ -204,7 +204,6 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             onChange={handleChange}
             onBlur={handleBlur('startDate', true)}
             ref={inputRef}
-            required
             className={`${styles.innerInput} ${touchedFields.startDate ? styles.touched : ''}`}
           />
           <label htmlFor="startDate" className={styles.innerLabel}>
