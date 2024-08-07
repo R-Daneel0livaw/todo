@@ -37,14 +37,14 @@
 }
 
 .innerInput:focus + label,
-.innerInput:valid + label {
+.innerInput.touched:valid + label {
     font-size: .85rem;
     top: -25px;
     left: 0;
     pointer-events: none;
 }
 
-.innerInput:valid + label {
+.innerInput.touched:valid + label {
     color: #42a96a;
 }
 

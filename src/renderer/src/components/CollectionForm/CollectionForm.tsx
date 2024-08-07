@@ -74,7 +74,12 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
 
   const handleBlur =
     (field: string, checkValue: boolean) =>
-    (event: React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLSelectElement>) => {
+    (
+      event:
+        | React.FocusEvent<HTMLInputElement>
+        | React.FocusEvent<HTMLSelectElement>
+        | React.FocusEvent<HTMLTextAreaElement>
+    ) => {
       if (!checkValue || (checkValue && event.target.value)) {
         setTouchedFields({
           ...touchedFields,
@@ -187,7 +192,8 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             value={collectionState.longDescription}
             id="longDescription"
             onChange={handleChange}
-            className={`${styles.innerInput} ${styles.collectionFormLongWidthInput}`}
+            onBlur={handleBlur('longDescription', true)}
+            className={`${styles.innerInput} ${styles.collectionFormLongWidthInput} ${touchedFields.longDescription ? styles.touched : ''}`}
           />
           <label htmlFor="longDescription" className={styles.innerLabel}>
             More Information
