@@ -53,6 +53,36 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
       }
     )
 
+    if (collection?.title) {
+      setTouchedFields((prev) => ({
+        ...prev,
+        title: true
+      }))
+    }
+    if (collection?.type) {
+      setTouchedFields((prev) => ({
+        ...prev,
+        type: true
+      }))
+    }
+    if (collection?.subType) {
+      setTouchedFields((prev) => ({
+        ...prev,
+        subType: true
+      }))
+    }
+    if (collection?.description) {
+      setTouchedFields((prev) => ({
+        ...prev,
+        description: true
+      }))
+    }
+    if (collection?.longDescription) {
+      setTouchedFields((prev) => ({
+        ...prev,
+        longDescription: true
+      }))
+    }
     if (collection?.startDate) {
       setTouchedFields((prev) => ({
         ...prev,
