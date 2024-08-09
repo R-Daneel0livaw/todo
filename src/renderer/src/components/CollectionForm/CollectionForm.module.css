@@ -36,6 +36,12 @@
   transition: .3s ease-in-out;
 }
 
+input[type="text"].innerInput,
+input[type="date"].innerInput,
+select.innerInput {
+  height: 1.8rem;
+}
+
 .innerInput:focus + label,
 .innerInput.touched:valid + label {
     font-size: .85rem;
