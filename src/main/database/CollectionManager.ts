@@ -13,26 +13,29 @@ export function getCollections(): Collection[] {
   return collections.map((c) => convert(c))
 }
 
-export function addCollection(collectionData: Collection) {
+export function addCollection(collectionData: Collection): number {
   const stmt = db.prepare(
-    `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate, metadata)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
   )
-  stmt.run(
+  const result = stmt.run(
     collectionData.title,
     collectionData.description,
     collectionData.longDescription,
     collectionData.type,
     collectionData.subType,
     collectionData.createDate?.toISOString(),
-    collectionData.startDate?.toISOString()
+    collectionData.startDate?.toISOString(),
+    collectionData.metadata ? JSON.stringify(collectionData.metadata) : null
   )
+  return result.lastInsertRowid as number
 }
 
 export function addAndRetrieveCollection(collectionData: Collection): Collection {
   const stmt = db.prepare(
-    `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    RETURNING id, title, description, longDescription, type, subType, createDate, startDate`
+    `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate, metadata)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    RETURNING *`
   )
   const newCollection = stmt.get(
     collectionData.title,
@@ -41,7 +44,8 @@ export function addAndRetrieveCollection(collectionData: Collection): Collection
     collectionData.type,
     collectionData.subType,
     collectionData.createDate?.toISOString(),
-    collectionData.startDate?.toISOString()
+    collectionData.startDate?.toISOString(),
+    collectionData.metadata ? JSON.stringify(collectionData.metadata) : null
   ) as Collection
   return convert(newCollection)
 }
@@ -49,7 +53,7 @@ export function addAndRetrieveCollection(collectionData: Collection): Collection
 export function updateCollection(collectionData: Collection): Collection {
   const updateStmt = db.prepare(
     `UPDATE collections
-     SET title = ?, description = ?, longDescription = ?, type = ?, subType = ?, createDate = ?, startDate = ?
+     SET title = ?, description = ?, longDescription = ?, type = ?, subType = ?, createDate = ?, startDate = ?, metadata = ?, archived_at = ?
      WHERE id = ?
      RETURNING *`
   )
@@ -62,10 +66,17 @@ export function updateCollection(collectionData: Collection): Collection {
     collectionData.subType,
     collectionData.createDate?.toISOString(),
     collectionData.startDate?.toISOString(),
+    collectionData.metadata ? JSON.stringify(collectionData.metadata) : null,
+    collectionData.archived_at?.toISOString() || null,
     collectionData.id
   ) as Collection
 
   return convert(updatedCollection)
+}
+
+export function archiveCollection(collectionId: number) {
+  const stmt = db.prepare('UPDATE collections SET archived_at = ? WHERE id = ?')
+  stmt.run(new Date().toISOString(), collectionId)
 }
 
 export function deleteCollection(collectionId: number) {
@@ -73,7 +84,7 @@ export function deleteCollection(collectionId: number) {
   stmt.run(collectionId)
 }
 
-function convert(collectionData: Collection) {
+function convert(collectionData: any): Collection {
   const converted: Collection = {
     id: collectionData.id,
     title: collectionData.title,
@@ -84,7 +95,9 @@ function convert(collectionData: Collection) {
     createDate: new Date(collectionData.createDate),
     startDate: collectionData.startDate && new Date(collectionData.startDate),
     endDate: collectionData.endDate && new Date(collectionData.endDate),
-    canceledDate: collectionData.canceledDate && new Date(collectionData.canceledDate)
+    canceledDate: collectionData.canceledDate && new Date(collectionData.canceledDate),
+    archived_at: collectionData.archived_at && new Date(collectionData.archived_at),
+    metadata: collectionData.metadata ? JSON.parse(collectionData.metadata) : undefined
   }
   return converted
 }

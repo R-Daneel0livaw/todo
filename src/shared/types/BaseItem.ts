@@ -6,4 +6,5 @@ export interface BaseItem {
   startDate?: Date
   endDate?: Date
   canceledDate?: Date
+  metadata?: Record<string, any>
 }

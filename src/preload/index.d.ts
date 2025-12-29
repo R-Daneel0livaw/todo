@@ -1,5 +1,13 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { CollectionApi, EventApi, TaskApi } from '@shared/types'
+import {
+  ActivityApi,
+  CollectionApi,
+  CollectionItemApi,
+  EventApi,
+  TaskApi,
+  TaskDependencyApi,
+  VmRegistryApi
+} from '@shared/types'
 
 declare global {
   interface Window {
@@ -7,5 +15,9 @@ declare global {
     taskApi: TaskApi
     eventApi: EventApi
     collectionApi: CollectionApi
+    collectionItemApi: CollectionItemApi
+    taskDependencyApi: TaskDependencyApi
+    activityApi: ActivityApi
+    vmRegistryApi: VmRegistryApi
   }
 }

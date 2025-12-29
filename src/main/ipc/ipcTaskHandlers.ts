@@ -3,12 +3,15 @@ import { IpcMainInvokeEvent, ipcMain } from 'electron'
 import {
   addTask,
   cancelTask,
+  completeTask,
   deleteTask,
   getTask,
   getTaskByCollectionId,
   getTasksByCollection,
-  getTasksByCollectionId
-} from '../database/taskManager'
+  getTasksByCollectionId,
+  migrateTask,
+  updateTask
+} from '../database/TaskManager'
 
 export function setupTaskHandlers() {
   ipcMain.handle('get-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<Task> => {
@@ -36,8 +39,19 @@ export function setupTaskHandlers() {
     }
   )
 
-  ipcMain.handle('add-task', async (_: IpcMainInvokeEvent, taskData: Task): Promise<void> => {
-    addTask(taskData)
+  ipcMain.handle('add-task', async (_: IpcMainInvokeEvent, taskData: Task): Promise<number> => {
+    return addTask(taskData)
+  })
+
+  ipcMain.handle(
+    'update-task',
+    async (_: IpcMainInvokeEvent, taskData: Partial<Task> & { id: number }): Promise<void> => {
+      updateTask(taskData)
+    }
+  )
+
+  ipcMain.handle('complete-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
+    completeTask(taskId)
   })
 
   ipcMain.handle('delete-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
@@ -47,4 +61,11 @@ export function setupTaskHandlers() {
   ipcMain.handle('cancel-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
     cancelTask(taskId)
   })
+
+  ipcMain.handle(
+    'migrate-task',
+    async (_: IpcMainInvokeEvent, taskId: number, toTaskId: number): Promise<void> => {
+      migrateTask(taskId, toTaskId)
+    }
+  )
 }

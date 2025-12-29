@@ -5,7 +5,10 @@ export interface TaskApi {
   getTaskByCollectionId(taskId: number, collectionId: number): Promise<Task>
   getTasksByCollectionId(collectionId: number): Promise<Task[]>
   getTasksByCollection(collectionData: Partial<Collection>): Promise<Task[]>
-  addTask(taskData: Task): Promise<void>
+  addTask(taskData: Task): Promise<number>
+  updateTask(taskData: Partial<Task> & { id: number }): Promise<void>
+  completeTask(taskId: number): Promise<void>
   deleteTask(taskId: number): Promise<void>
   cancelTask(taskId: number): Promise<void>
+  migrateTask(taskId: number, toTaskId: number): Promise<void>
 }

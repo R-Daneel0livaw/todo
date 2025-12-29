@@ -3,12 +3,14 @@ import { IpcMainInvokeEvent, ipcMain } from 'electron'
 import {
   addEvent,
   cancelEvent,
+  completeEvent,
   deleteEvent,
   getEvent,
   getEventByCollectionId,
   getEventsByCollection,
-  getEventsByCollectionId
-} from '../database/eventManager'
+  getEventsByCollectionId,
+  updateEvent
+} from '../database/EventManager'
 
 export function setupEventHandlers() {
   ipcMain.handle('get-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<Event> => {
@@ -36,9 +38,23 @@ export function setupEventHandlers() {
     }
   )
 
-  ipcMain.handle('add-event', async (_: IpcMainInvokeEvent, eventData: Event): Promise<void> => {
-    addEvent(eventData)
+  ipcMain.handle('add-event', async (_: IpcMainInvokeEvent, eventData: Event): Promise<number> => {
+    return addEvent(eventData)
   })
+
+  ipcMain.handle(
+    'update-event',
+    async (_: IpcMainInvokeEvent, eventData: Partial<Event> & { id: number }): Promise<void> => {
+      updateEvent(eventData)
+    }
+  )
+
+  ipcMain.handle(
+    'complete-event',
+    async (_: IpcMainInvokeEvent, eventId: number): Promise<void> => {
+      completeEvent(eventId)
+    }
+  )
 
   ipcMain.handle('delete-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<void> => {
     deleteEvent(eventId)

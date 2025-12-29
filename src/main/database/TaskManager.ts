@@ -52,18 +52,76 @@ export function getTasksByCollection(collectionData: Partial<Collection>): Task[
   return tasks
 }
 
-export function addTask(taskData: Task) {
-  const stmt = db.prepare(
-    'INSERT INTO tasks (title, description, topic, status, createDate, startDate) VALUES (?, ?, ?, ?, ?, ?)'
-  )
-  stmt.run(
+export function addTask(taskData: Task): number {
+  const stmt = db.prepare(`
+    INSERT INTO tasks (title, description, topic, status, createDate, startDate, metadata, migrated_from_id, migrated_to_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `)
+  const result = stmt.run(
     taskData.title,
     taskData.description,
     taskData.topic,
     taskData.status,
     taskData.createDate?.toISOString(),
-    taskData.startDate?.toISOString()
+    taskData.startDate?.toISOString(),
+    taskData.metadata ? JSON.stringify(taskData.metadata) : null,
+    taskData.migrated_from_id || null,
+    taskData.migrated_to_id || null
   )
+  return result.lastInsertRowid as number
+}
+
+export function updateTask(taskData: Partial<Task> & { id: number }) {
+  const fields: string[] = []
+  const values: any[] = []
+
+  if (taskData.title !== undefined) {
+    fields.push('title = ?')
+    values.push(taskData.title)
+  }
+  if (taskData.description !== undefined) {
+    fields.push('description = ?')
+    values.push(taskData.description)
+  }
+  if (taskData.topic !== undefined) {
+    fields.push('topic = ?')
+    values.push(taskData.topic)
+  }
+  if (taskData.status !== undefined) {
+    fields.push('status = ?')
+    values.push(taskData.status)
+  }
+  if (taskData.startDate !== undefined) {
+    fields.push('startDate = ?')
+    values.push(taskData.startDate?.toISOString())
+  }
+  if (taskData.endDate !== undefined) {
+    fields.push('endDate = ?')
+    values.push(taskData.endDate?.toISOString())
+  }
+  if (taskData.metadata !== undefined) {
+    fields.push('metadata = ?')
+    values.push(JSON.stringify(taskData.metadata))
+  }
+  if (taskData.migrated_from_id !== undefined) {
+    fields.push('migrated_from_id = ?')
+    values.push(taskData.migrated_from_id)
+  }
+  if (taskData.migrated_to_id !== undefined) {
+    fields.push('migrated_to_id = ?')
+    values.push(taskData.migrated_to_id)
+  }
+
+  if (fields.length === 0) return
+
+  values.push(taskData.id)
+  const stmt = db.prepare(`UPDATE tasks SET ${fields.join(', ')} WHERE id = ?`)
+  stmt.run(...values)
+}
+
+export function completeTask(taskId: number) {
+  const stmt = db.prepare('UPDATE tasks SET status = ?, endDate = ? WHERE id = ?')
+  stmt.run('FINISHED', new Date().toISOString(), taskId)
 }
 
 export function deleteTask(taskId: number) {
@@ -74,4 +132,17 @@ export function deleteTask(taskId: number) {
 export function cancelTask(taskId: number) {
   const stmt = db.prepare('UPDATE tasks SET status = ?, canceledDate = ? WHERE id = ?')
   stmt.run('CANCELED', new Date().toISOString(), taskId)
+}
+
+export function migrateTask(taskId: number, toTaskId: number) {
+  const transaction = db.transaction(() => {
+    // Update the original task's migrated_to_id
+    const updateOriginal = db.prepare('UPDATE tasks SET migrated_to_id = ?, status = ? WHERE id = ?')
+    updateOriginal.run(toTaskId, 'MIGRATED', taskId)
+
+    // Update the new task's migrated_from_id
+    const updateNew = db.prepare('UPDATE tasks SET migrated_from_id = ? WHERE id = ?')
+    updateNew.run(taskId, toTaskId)
+  })
+  transaction()
 }

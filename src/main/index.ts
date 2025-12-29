@@ -5,6 +5,10 @@ import icon from '../../resources/icon.png?asset'
 import { setupTaskHandlers } from './ipc/ipcTaskHandlers'
 import { setupEventHandlers } from './ipc/ipcEventHandlers'
 import { setupCollectionHandlers } from './ipc/ipcCollectionHandlers'
+import { setupCollectionItemHandlers } from './ipc/ipcCollectionItemHandlers'
+import { setupTaskDependencyHandlers } from './ipc/ipcTaskDependencyHandlers'
+import { setupActivityHandlers } from './ipc/ipcActivityHandlers'
+import { setupVmRegistryHandlers } from './ipc/ipcVmRegistryHandlers'
 import './database/sqlite'
 
 function createWindow(): void {
@@ -36,6 +40,10 @@ function createWindow(): void {
   setupTaskHandlers()
   setupEventHandlers()
   setupCollectionHandlers()
+  setupCollectionItemHandlers()
+  setupTaskDependencyHandlers()
+  setupActivityHandlers()
+  setupVmRegistryHandlers()
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.

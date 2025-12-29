@@ -1,13 +1,14 @@
 import { Collection } from '@shared/types'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
 import {
+  addAndRetrieveCollection,
   addCollection,
+  archiveCollection,
   deleteCollection,
   getCollection,
   getCollections,
-  addAndRetrieveCollection,
   updateCollection
-} from '../database/collectionManager'
+} from '../database/CollectionManager'
 
 export function setupCollectionHandlers() {
   ipcMain.handle(
@@ -23,15 +24,8 @@ export function setupCollectionHandlers() {
 
   ipcMain.handle(
     'add-collection',
-    async (_: IpcMainInvokeEvent, collectionData: Collection): Promise<void> => {
-      addCollection(collectionData)
-    }
-  )
-
-  ipcMain.handle(
-    'delete-collection',
-    async (_: IpcMainInvokeEvent, collectionId: number): Promise<void> => {
-      deleteCollection(collectionId)
+    async (_: IpcMainInvokeEvent, collectionData: Collection): Promise<number> => {
+      return addCollection(collectionData)
     }
   )
 
@@ -46,6 +40,20 @@ export function setupCollectionHandlers() {
     'update-collection',
     async (_: IpcMainInvokeEvent, collectionData: Collection): Promise<Collection> => {
       return updateCollection(collectionData)
+    }
+  )
+
+  ipcMain.handle(
+    'archive-collection',
+    async (_: IpcMainInvokeEvent, collectionId: number): Promise<void> => {
+      archiveCollection(collectionId)
+    }
+  )
+
+  ipcMain.handle(
+    'delete-collection',
+    async (_: IpcMainInvokeEvent, collectionId: number): Promise<void> => {
+      deleteCollection(collectionId)
     }
   )
 }
