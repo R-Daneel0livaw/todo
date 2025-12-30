@@ -1678,14 +1678,16 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 ### Phase 2: Journal MCP Server (Core)
 
 **2.1 Database Layer**
-- [ ] Migrate existing database managers to `journal-mcp/src/database/`
-- [ ] Port TaskManager with all operations
-- [ ] Port EventManager with all operations
-- [ ] Port CollectionManager with all operations
-- [ ] Port CollectionItemManager (many-to-many)
-- [ ] Port TaskDependencyManager with graph operations
-- [ ] Port ActivityManager for activity tracking
-- [ ] Port VmRegistryManager for VM tracking
+- [x] Migrate existing database managers to `journal-mcp/src/database/`
+- [x] Port TaskManager with all operations
+- [x] Port EventManager with all operations
+- [x] Port CollectionManager with all operations
+- [x] Port CollectionItemManager (many-to-many)
+- [x] Port TaskDependencyManager with graph operations
+- [x] Port ActivityManager for activity tracking
+- [x] Port VmRegistryManager for VM tracking
+- [x] Setup journal-mcp package with dependencies (better-sqlite3, express, MCP SDK)
+- [x] Configure TypeScript for ES modules with .js extensions
 - [ ] Fix date serialization issues (SQLite string ↔ Date object)
 - [ ] Add error handling to all database operations
 - [ ] Add input validation to all managers
@@ -2058,7 +2060,8 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 
 **Overall Progress:**
 - **Phase 1 - Foundation:** ✅ **COMPLETE** (16/16 tasks - 100%)
-- **Phase 2 - Journal MCP:** 0/50+ tasks complete (0%)
+- **Phase 2 - Journal MCP:** 10/50+ tasks complete (~20%)
+  - **2.1 Database Layer:** ✅ **COMPLETE** (10/13 tasks - 77%)
 - **Phase 3 - Electron App:** 0/30+ tasks complete (0%)
 - **Phase 4 - VirtualBox MCP:** 0/25+ tasks complete (0%)
 - **Phase 5 - Activity Reporter:** 0/15+ tasks complete (0%)
@@ -2068,12 +2071,12 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - **Phase 9 - Deployment:** 0/15+ tasks complete (0%)
 - **Phase 10 - Polish:** 0/15+ tasks complete (0%)
 
-**Current Status:** Phase 1 complete! Monorepo structure established, shared types package created, Electron app migrated and building successfully.
+**Current Status:** Phase 2.1 Database Layer mostly complete! All database managers ported to journal-mcp package, TypeScript configured for ES modules, dependencies installed. Ready to implement graph algorithms next.
 
 **Next Immediate Tasks (Phase 2):**
-1. Create packages/journal-mcp/ structure
-2. Port database managers from packages/electron-app/src/main/database/ to journal-mcp
-3. Fix typos in existing codebase (collectinId, deleteColection)
-4. Fix date serialization in database layer
-5. Add error handling and validation to database managers
-6. Implement graph algorithms (cycle detection first)
+1. Fix date serialization in database layer (SQLite strings ↔ Date objects)
+2. Add error handling to database operations
+3. Add input validation to database managers
+4. Implement graph algorithms (cycle detection, topological sort, critical path)
+5. Build HTTP API server with Express
+6. Build MCP tools for Claude Desktop
