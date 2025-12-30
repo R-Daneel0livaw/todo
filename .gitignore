@@ -1,7 +1,42 @@
+# Dependencies
 node_modules
+**/node_modules
+
+# Build outputs
 dist
 out
+**/dist
+**/out
+*.tsbuildinfo
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log*
+logs
+
+# Databases
 todo.db
 *.db
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+.env.local
+*.local
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
+.claude
+
+# Temporary files
+*.tmp
+*.temp

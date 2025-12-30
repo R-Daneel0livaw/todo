@@ -1,0 +1,17 @@
+{
+  "name": "@awesome-dev-journal/shared",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for Awesome Dev Journal",
+  "main": "./types/index.ts",
+  "types": "./types/index.ts",
+  "exports": {
+    ".": "./types/index.ts",
+    "./types": "./types/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
