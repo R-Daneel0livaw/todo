@@ -1732,6 +1732,8 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 **2.5 Utilities & Configuration**
 - [ ] Implement date serialization utilities
 - [ ] Implement logging utility
+- [ ] Move database file from root to `packages/journal-mcp/data/`
+- [ ] Make database path configurable via environment variable
 - [ ] Create `config.example.json`
 - [ ] Create `.env.example`
 - [ ] Add configuration loading
