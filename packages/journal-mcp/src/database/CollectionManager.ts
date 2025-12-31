@@ -13,6 +13,12 @@ export function getCollections(): Collection[] {
   return collections.map((c) => convert(c))
 }
 
+export function getCollectionsByType(type: string): Collection[] {
+  const stmt = db.prepare('SELECT * FROM collections WHERE type = ?')
+  const collections: Collection[] = stmt.all(type) as Collection[]
+  return collections.map((c) => convert(c))
+}
+
 export function addCollection(collectionData: Collection): number {
   const stmt = db.prepare(
     `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate, metadata)
