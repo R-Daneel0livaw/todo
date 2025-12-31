@@ -1,6 +1,11 @@
 import { Collection, Task } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
 
+export function getAllTasks(): Task[] {
+  const stmt = db.prepare('SELECT * FROM tasks ORDER BY createDate DESC')
+  return stmt.all() as Task[]
+}
+
 export function getTask(taskId: number): Task {
   const stmt = db.prepare('SELECT * FROM tasks WHERE id = ?')
   const task: Task = stmt.get(taskId) as Task

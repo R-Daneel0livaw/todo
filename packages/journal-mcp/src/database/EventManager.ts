@@ -1,6 +1,11 @@
 import { Collection, Event } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
 
+export function getAllEvents(): Event[] {
+  const stmt = db.prepare('SELECT * FROM events ORDER BY createDate DESC')
+  return stmt.all() as Event[]
+}
+
 export function getEvent(eventId: number): Event {
   const stmt = db.prepare('SELECT * FROM events WHERE id = ?')
   const event: Event = stmt.get(eventId) as Event

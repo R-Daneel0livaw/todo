@@ -1703,19 +1703,23 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - [ ] Performance testing with 1000+ tasks
 
 **2.3 HTTP API Server**
-- [ ] Setup Express server in `http/server.ts`
-- [ ] Implement CORS middleware
-- [ ] Implement error handling middleware
-- [ ] Implement validation middleware
-- [ ] Create task routes (GET/POST/PUT/DELETE /api/tasks)
-- [ ] Create event routes (GET/POST/PUT/DELETE /api/events)
-- [ ] Create collection routes (GET/POST/PUT /api/collections)
-- [ ] Create dependency routes (POST/GET /api/dependencies)
-- [ ] Create activity routes (POST/GET /api/activity)
-- [ ] Create VM routes (GET/POST /api/vms)
-- [ ] Create health check endpoint (GET /api/health)
-- [ ] Add request logging
-- [ ] Integration tests for all endpoints
+- [x] Setup Express server in `http/server.ts`
+- [x] Implement CORS middleware
+- [x] Implement error handling middleware
+- [x] Implement request logging middleware
+- [x] Create task routes (GET/POST/PUT/DELETE /api/tasks)
+- [x] Create event routes (GET/POST/PUT/DELETE /api/events)
+- [x] Create collection routes (GET/POST/PUT /api/collections)
+- [x] Create collection item routes (POST/DELETE /api/collections/:id/items)
+- [x] Create dependency routes (POST/GET /api/dependencies)
+- [x] Create activity routes (POST/GET /api/activity)
+- [x] Create VM routes (GET/POST /api/vms)
+- [x] Create health check endpoint (GET /api/health)
+- [x] Wire all routes into Express app
+- [x] Add getAllTasks(), getAllEvents() helper functions
+- [x] Test server starts and responds to requests
+- [ ] Implement validation middleware (defer to later)
+- [ ] Integration tests for all endpoints (defer to Phase 7)
 
 **2.4 MCP Server Implementation**
 - [ ] Setup MCP server in `mcp/server.ts`
@@ -2062,8 +2066,9 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 
 **Overall Progress:**
 - **Phase 1 - Foundation:** ✅ **COMPLETE** (16/16 tasks - 100%)
-- **Phase 2 - Journal MCP:** 10/50+ tasks complete (~20%)
+- **Phase 2 - Journal MCP:** 25/50+ tasks complete (~50%)
   - **2.1 Database Layer:** ✅ **COMPLETE** (10/13 tasks - 77%)
+  - **2.3 HTTP API Server:** ✅ **COMPLETE** (15/17 tasks - 88%)
 - **Phase 3 - Electron App:** 0/30+ tasks complete (0%)
 - **Phase 4 - VirtualBox MCP:** 0/25+ tasks complete (0%)
 - **Phase 5 - Activity Reporter:** 0/15+ tasks complete (0%)
@@ -2073,12 +2078,11 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - **Phase 9 - Deployment:** 0/15+ tasks complete (0%)
 - **Phase 10 - Polish:** 0/15+ tasks complete (0%)
 
-**Current Status:** Phase 2.1 Database Layer mostly complete! All database managers ported to journal-mcp package, TypeScript configured for ES modules, dependencies installed. Ready to implement graph algorithms next.
+**Current Status:** Phase 2.3 HTTP API Server complete! Express server running on port 3333 with full REST API for tasks, events, collections, dependencies, activity, and VMs. Ready to build MCP tools next or jump to Phase 3 (Electron migration).
 
-**Next Immediate Tasks (Phase 2):**
-1. Fix date serialization in database layer (SQLite strings ↔ Date objects)
-2. Add error handling to database operations
-3. Add input validation to database managers
-4. Implement graph algorithms (cycle detection, topological sort, critical path)
-5. Build HTTP API server with Express
-6. Build MCP tools for Claude Desktop
+**Next Immediate Tasks:**
+1. Phase 2.4: Build MCP Server with tools for Claude Desktop
+2. OR jump to Phase 3: Migrate Electron app to use HTTP API
+3. Implement graph algorithms (optional - already have SQL implementations)
+4. Fix date serialization (defer to later)
+5. Add error handling and validation (defer to later)
