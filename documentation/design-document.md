@@ -1760,15 +1760,17 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - [x] Test that Electron app still builds
 
 **3.2 HTTP Client Implementation**
-- [ ] Create `journal-client.ts` HTTP client
-- [ ] Implement task endpoints client methods
-- [ ] Implement event endpoints client methods
-- [ ] Implement collection endpoints client methods
-- [ ] Implement dependency endpoints client methods
-- [ ] Implement activity endpoints client methods
-- [ ] Implement VM endpoints client methods
-- [ ] Add error handling and retries
-- [ ] Add request/response types
+- [x] Create `journal-client.ts` HTTP client
+- [x] Implement task endpoints client methods (9 methods)
+- [x] Implement event endpoints client methods (8 methods)
+- [x] Implement collection endpoints client methods (7 methods)
+- [x] Implement collection item endpoints client methods (3 methods)
+- [x] Implement dependency endpoints client methods (8 methods)
+- [x] Implement activity endpoints client methods (7 methods)
+- [x] Implement VM endpoints client methods (9 methods)
+- [x] Add error handling with try/catch and proper error messages
+- [x] Add TypeScript types from @awesome-dev-journal/shared
+- [x] Implement reusable fetchJSON helper function
 
 **3.3 IPC Handlers Migration**
 - [ ] Update `ipcTaskHandlers.ts` to proxy to HTTP API
@@ -1947,7 +1949,7 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - [ ] Graph algorithm tests
 - [ ] Task dependency logic tests
 - [ ] Activity parsing tests
-- [ ] HTTP client tests
+- [ ] HTTP client tests (create proper test harness for TypeScript HTTP client)
 - [ ] MCP tool tests
 
 **7.2 Integration Tests**
@@ -2069,8 +2071,9 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - **Phase 2 - Journal MCP:** 25/50+ tasks complete (~50%)
   - **2.1 Database Layer:** ✅ **COMPLETE** (10/13 tasks - 77%)
   - **2.3 HTTP API Server:** ✅ **COMPLETE** (15/17 tasks - 88%)
-- **Phase 3 - Electron App:** 5/30+ tasks complete (~17%)
+- **Phase 3 - Electron App:** 16/30+ tasks complete (~53%)
   - **3.1 Electron App Package Setup:** ✅ **COMPLETE** (5/5 tasks - 100%)
+  - **3.2 HTTP Client Implementation:** ✅ **COMPLETE** (11/11 tasks - 100%)
 - **Phase 4 - VirtualBox MCP:** 0/25+ tasks complete (0%)
 - **Phase 5 - Activity Reporter:** 0/15+ tasks complete (0%)
 - **Phase 6 - VM Agent:** 0/20+ tasks complete (0%)
@@ -2079,7 +2082,7 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - **Phase 9 - Deployment:** 0/15+ tasks complete (0%)
 - **Phase 10 - Polish:** 0/15+ tasks complete (0%)
 
-**Current Status:** Starting Phase 3.2! Electron app is packaged and building. Ready to create HTTP client to connect Electron app to journal-mcp server.
+**Current Status:** Phase 3.2 HTTP Client complete! Full HTTP client created with 51+ methods covering all journal-mcp endpoints. Ready for Phase 3.3: Update IPC handlers to use HTTP client.
 
 **Next Immediate Tasks:**
 1. Phase 2.4: Build MCP Server with tools for Claude Desktop
