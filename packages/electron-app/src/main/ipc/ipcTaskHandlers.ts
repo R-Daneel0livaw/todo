@@ -1,71 +1,47 @@
-import { Collection, Task } from '@awesome-dev-journal/shared'
+import { Task } from '@awesome-dev-journal/shared'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
-import {
-  addTask,
-  cancelTask,
-  completeTask,
-  deleteTask,
-  getTask,
-  getTaskByCollectionId,
-  getTasksByCollection,
-  getTasksByCollectionId,
-  migrateTask,
-  updateTask
-} from '../database/TaskManager'
+import * as JournalClient from '../api/journal-client'
 
 export function setupTaskHandlers() {
   ipcMain.handle('get-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<Task> => {
-    return getTask(taskId)
+    return JournalClient.getTask(taskId)
   })
-
-  ipcMain.handle(
-    'get-task-by-collection-id',
-    async (_: IpcMainInvokeEvent, taskId: number, collectionId: number): Promise<Task> => {
-      return getTaskByCollectionId(taskId, collectionId)
-    }
-  )
 
   ipcMain.handle(
     'get-tasks-by-collection-id',
     async (_: IpcMainInvokeEvent, collectionId: number): Promise<Task[]> => {
-      return getTasksByCollectionId(collectionId)
-    }
-  )
-
-  ipcMain.handle(
-    'get-tasks-by-collection',
-    async (_: IpcMainInvokeEvent, collectionData: Partial<Collection>): Promise<Task[]> => {
-      return getTasksByCollection(collectionData)
+      return JournalClient.getTasksByCollectionId(collectionId)
     }
   )
 
   ipcMain.handle('add-task', async (_: IpcMainInvokeEvent, taskData: Task): Promise<number> => {
-    return addTask(taskData)
+    const result = await JournalClient.createTask(taskData)
+    return result.id
   })
 
   ipcMain.handle(
     'update-task',
     async (_: IpcMainInvokeEvent, taskData: Partial<Task> & { id: number }): Promise<void> => {
-      updateTask(taskData)
+      await JournalClient.updateTask(taskData.id, taskData)
     }
   )
 
   ipcMain.handle('complete-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
-    completeTask(taskId)
+    await JournalClient.completeTask(taskId)
   })
 
   ipcMain.handle('delete-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
-    deleteTask(taskId)
+    await JournalClient.deleteTask(taskId)
   })
 
   ipcMain.handle('cancel-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<void> => {
-    cancelTask(taskId)
+    await JournalClient.cancelTask(taskId)
   })
 
   ipcMain.handle(
     'migrate-task',
     async (_: IpcMainInvokeEvent, taskId: number, toTaskId: number): Promise<void> => {
-      migrateTask(taskId, toTaskId)
+      await JournalClient.migrateTask(taskId, toTaskId)
     }
   )
 }

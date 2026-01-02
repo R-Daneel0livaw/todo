@@ -1,12 +1,6 @@
+import { CollectionItem } from '@awesome-dev-journal/shared'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
-import {
-  addToCollection,
-  getCollectionItems,
-  getItemCollections,
-  isItemInCollection,
-  removeFromCollection,
-  type CollectionItem
-} from '../database/CollectionItemManager'
+import * as JournalClient from '../api/journal-client'
 
 export function setupCollectionItemHandlers() {
   ipcMain.handle(
@@ -17,7 +11,8 @@ export function setupCollectionItemHandlers() {
       itemId: number,
       itemType: 'Task' | 'Event' | 'Collection'
     ): Promise<number> => {
-      return addToCollection(collectionId, itemId, itemType)
+      const result = await JournalClient.addItemToCollection(collectionId, itemId, itemType)
+      return result.id
     }
   )
 
@@ -29,37 +24,38 @@ export function setupCollectionItemHandlers() {
       itemId: number,
       itemType: 'Task' | 'Event' | 'Collection'
     ): Promise<void> => {
-      removeFromCollection(collectionId, itemId, itemType)
+      await JournalClient.removeItemFromCollection(collectionId, itemId, itemType)
     }
   )
 
   ipcMain.handle(
     'get-collection-items',
     async (_: IpcMainInvokeEvent, collectionId: number): Promise<CollectionItem[]> => {
-      return getCollectionItems(collectionId)
+      return JournalClient.getCollectionItems(collectionId)
     }
   )
 
-  ipcMain.handle(
-    'get-item-collections',
-    async (
-      _: IpcMainInvokeEvent,
-      itemId: number,
-      itemType: 'Task' | 'Event' | 'Collection'
-    ): Promise<CollectionItem[]> => {
-      return getItemCollections(itemId, itemType)
-    }
-  )
+  // TODO: Temporarily disabled - need HTTP API endpoints for these methods
+  // ipcMain.handle(
+  //   'get-item-collections',
+  //   async (
+  //     _: IpcMainInvokeEvent,
+  //     itemId: number,
+  //     itemType: 'Task' | 'Event' | 'Collection'
+  //   ): Promise<CollectionItem[]> => {
+  //     return getItemCollections(itemId, itemType)
+  //   }
+  // )
 
-  ipcMain.handle(
-    'is-item-in-collection',
-    async (
-      _: IpcMainInvokeEvent,
-      collectionId: number,
-      itemId: number,
-      itemType: 'Task' | 'Event' | 'Collection'
-    ): Promise<boolean> => {
-      return isItemInCollection(collectionId, itemId, itemType)
-    }
-  )
+  // ipcMain.handle(
+  //   'is-item-in-collection',
+  //   async (
+  //     _: IpcMainInvokeEvent,
+  //     collectionId: number,
+  //     itemId: number,
+  //     itemType: 'Task' | 'Event' | 'Collection'
+  //   ): Promise<boolean> => {
+  //     return isItemInCollection(collectionId, itemId, itemType)
+  //   }
+  // )
 }

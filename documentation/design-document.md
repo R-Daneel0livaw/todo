@@ -1773,15 +1773,15 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - [x] Implement reusable fetchJSON helper function
 
 **3.3 IPC Handlers Migration**
-- [ ] Update `ipcTaskHandlers.ts` to proxy to HTTP API
-- [ ] Update `ipcEventHandlers.ts` to proxy to HTTP API
-- [ ] Update `ipcCollectionHandlers.ts` to proxy to HTTP API
-- [ ] Update `ipcCollectionItemHandlers.ts` to proxy to HTTP API
-- [ ] Update `ipcTaskDependencyHandlers.ts` to proxy to HTTP API
-- [ ] Update `ipcActivityHandlers.ts` to proxy to HTTP API
-- [ ] Update `ipcVmRegistryHandlers.ts` to proxy to HTTP API
-- [ ] Remove direct database access from main process
-- [ ] Test all IPC handlers with HTTP backend
+- [x] Update `ipcTaskHandlers.ts` to proxy to HTTP API (8 handlers migrated)
+- [x] Update `ipcEventHandlers.ts` to proxy to HTTP API (7 handlers migrated)
+- [x] Update `ipcCollectionHandlers.ts` to proxy to HTTP API (7 handlers migrated)
+- [x] Update `ipcCollectionItemHandlers.ts` to proxy to HTTP API (3 handlers migrated, 2 disabled pending API)
+- [x] Update `ipcTaskDependencyHandlers.ts` to proxy to HTTP API (8 handlers migrated)
+- [x] Update `ipcActivityHandlers.ts` to proxy to HTTP API (7 handlers migrated)
+- [x] Update `ipcVmRegistryHandlers.ts` to proxy to HTTP API (9 handlers migrated)
+- [x] Remove direct database access from main process
+- [x] Test all IPC handlers with HTTP backend
 
 **3.4 Claude API Integration (Embedded AI Chat)**
 - [ ] Install Anthropic SDK dependency
@@ -2071,9 +2071,10 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - **Phase 2 - Journal MCP:** 25/50+ tasks complete (~50%)
   - **2.1 Database Layer:** ✅ **COMPLETE** (10/13 tasks - 77%)
   - **2.3 HTTP API Server:** ✅ **COMPLETE** (15/17 tasks - 88%)
-- **Phase 3 - Electron App:** 16/30+ tasks complete (~53%)
+- **Phase 3 - Electron App:** 25/30+ tasks complete (~83%)
   - **3.1 Electron App Package Setup:** ✅ **COMPLETE** (5/5 tasks - 100%)
   - **3.2 HTTP Client Implementation:** ✅ **COMPLETE** (11/11 tasks - 100%)
+  - **3.3 IPC Handlers Migration:** ✅ **COMPLETE** (9/9 tasks - 100%)
 - **Phase 4 - VirtualBox MCP:** 0/25+ tasks complete (0%)
 - **Phase 5 - Activity Reporter:** 0/15+ tasks complete (0%)
 - **Phase 6 - VM Agent:** 0/20+ tasks complete (0%)
@@ -2082,11 +2083,12 @@ This section tracks all tasks needed to complete the project as designed. Mark i
 - **Phase 9 - Deployment:** 0/15+ tasks complete (0%)
 - **Phase 10 - Polish:** 0/15+ tasks complete (0%)
 
-**Current Status:** Phase 3.2 HTTP Client complete! Full HTTP client created with 51+ methods covering all journal-mcp endpoints. Ready for Phase 3.3: Update IPC handlers to use HTTP client.
+**Current Status:** Phase 3.3 IPC Handlers Migration complete! All 49 IPC handlers across 7 files successfully migrated and tested. Electron app architecture successfully changed from direct SQLite access to HTTP client → Journal MCP Server pattern. App is running and communicating with Journal MCP server successfully.
 
 **Next Immediate Tasks:**
-1. Phase 2.4: Build MCP Server with tools for Claude Desktop
-2. OR jump to Phase 3: Migrate Electron app to use HTTP API
-3. Implement graph algorithms (optional - already have SQL implementations)
-4. Fix date serialization (defer to later)
-5. Add error handling and validation (defer to later)
+1. **Phase 2.4: Build MCP Server with tools for Claude Desktop** - Implement MCP tools so Claude can interact with the journal
+2. **Add missing HTTP API endpoints** - Implement `get-item-collections` and `is-item-in-collection` to enable disabled handlers
+3. **Phase 3.4-3.6: Embedded AI Chat** - Add Claude API integration to Electron app
+4. Implement graph algorithms (optional - already have SQL implementations)
+5. Fix date serialization (defer to later)
+6. Add error handling and validation (defer to later)

@@ -1,16 +1,6 @@
-import { Task } from '@awesome-dev-journal/shared'
+import { Task, ActivityType } from '@awesome-dev-journal/shared'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
-import {
-  addActivity,
-  deleteOldActivity,
-  getActivityByEvent,
-  getActivityByTask,
-  getActivitySummary,
-  getRecentActivityByType,
-  suggestTaskCompletion,
-  type Activity,
-  type ActivityType
-} from '../database/ActivityManager'
+import * as JournalClient from '../api/journal-client'
 
 export function setupActivityHandlers() {
   ipcMain.handle(
@@ -23,7 +13,8 @@ export function setupActivityHandlers() {
       relatedTaskId?: number,
       relatedEventId?: number
     ): Promise<number> => {
-      return addActivity(type, source, data, relatedTaskId, relatedEventId)
+      const result = await JournalClient.addActivity(type, source, data, relatedTaskId, relatedEventId)
+      return result.id
     }
   )
 
@@ -32,22 +23,22 @@ export function setupActivityHandlers() {
     async (
       _: IpcMainInvokeEvent,
       options?: { minutes?: number; hours?: number; days?: number }
-    ): Promise<Activity[]> => {
-      return getActivitySummary(options)
+    ): Promise<any[]> => {
+      return JournalClient.getActivitySummary(options)
     }
   )
 
   ipcMain.handle(
     'get-activity-by-task',
-    async (_: IpcMainInvokeEvent, taskId: number): Promise<Activity[]> => {
-      return getActivityByTask(taskId)
+    async (_: IpcMainInvokeEvent, taskId: number): Promise<any[]> => {
+      return JournalClient.getActivityByTask(taskId)
     }
   )
 
   ipcMain.handle(
     'get-activity-by-event',
-    async (_: IpcMainInvokeEvent, eventId: number): Promise<Activity[]> => {
-      return getActivityByEvent(eventId)
+    async (_: IpcMainInvokeEvent, eventId: number): Promise<any[]> => {
+      return JournalClient.getActivityByEvent(eventId)
     }
   )
 
@@ -57,21 +48,21 @@ export function setupActivityHandlers() {
       _: IpcMainInvokeEvent,
       minutes?: number
     ): Promise<Array<{ task: Task; confidence: number; reason: string }>> => {
-      return suggestTaskCompletion(minutes)
+      return JournalClient.suggestTaskCompletion(minutes)
     }
   )
 
   ipcMain.handle(
     'get-recent-activity-by-type',
-    async (_: IpcMainInvokeEvent, type: ActivityType, limit?: number): Promise<Activity[]> => {
-      return getRecentActivityByType(type, limit)
+    async (_: IpcMainInvokeEvent, type: ActivityType, limit?: number): Promise<any[]> => {
+      return JournalClient.getRecentActivityByType(type, limit)
     }
   )
 
   ipcMain.handle(
     'delete-old-activity',
-    async (_: IpcMainInvokeEvent, daysToKeep?: number): Promise<number> => {
-      return deleteOldActivity(daysToKeep)
+    async (_: IpcMainInvokeEvent, daysToKeep?: number): Promise<void> => {
+      await JournalClient.deleteOldActivity(daysToKeep)
     }
   )
 }

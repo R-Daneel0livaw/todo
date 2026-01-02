@@ -1,15 +1,6 @@
 import { Task } from '@awesome-dev-journal/shared'
 import { IpcMainInvokeEvent, ipcMain } from 'electron'
-import {
-  addTaskDependency,
-  getAllDependencies,
-  getBlockedTasks,
-  getCriticalPath,
-  getDependentTasks,
-  getTaskDependencies,
-  getUnblockedTasks,
-  removeTaskDependency
-} from '../database/TaskDependencyManager'
+import * as JournalClient from '../api/journal-client'
 
 export function setupTaskDependencyHandlers() {
   ipcMain.handle(
@@ -21,47 +12,53 @@ export function setupTaskDependencyHandlers() {
       dependencyType?: 'blocks' | 'related' | 'suggested',
       createdBy?: 'user' | 'ai_suggested'
     ): Promise<number> => {
-      return addTaskDependency(taskId, dependsOnTaskId, dependencyType, createdBy)
+      const result = await JournalClient.addTaskDependency(
+        taskId,
+        dependsOnTaskId,
+        dependencyType,
+        createdBy
+      )
+      return result.id
     }
   )
 
   ipcMain.handle(
     'remove-task-dependency',
     async (_: IpcMainInvokeEvent, dependencyId: number): Promise<void> => {
-      removeTaskDependency(dependencyId)
+      await JournalClient.removeTaskDependency(dependencyId)
     }
   )
 
   ipcMain.handle(
     'get-task-dependencies',
     async (_: IpcMainInvokeEvent, taskId: number): Promise<Task[]> => {
-      return getTaskDependencies(taskId)
+      return JournalClient.getTaskDependencies(taskId)
     }
   )
 
   ipcMain.handle(
     'get-dependent-tasks',
     async (_: IpcMainInvokeEvent, taskId: number): Promise<Task[]> => {
-      return getDependentTasks(taskId)
+      return JournalClient.getDependentTasks(taskId)
     }
   )
 
   ipcMain.handle('get-unblocked-tasks', async (): Promise<Task[]> => {
-    return getUnblockedTasks()
+    return JournalClient.getUnblockedTasks()
   })
 
   ipcMain.handle('get-blocked-tasks', async (): Promise<Task[]> => {
-    return getBlockedTasks()
+    return JournalClient.getBlockedTasks()
   })
 
   ipcMain.handle('get-critical-path', async (): Promise<Task[]> => {
-    return getCriticalPath()
+    return JournalClient.getCriticalPath()
   })
 
   ipcMain.handle(
     'get-all-dependencies',
     async (_: IpcMainInvokeEvent, taskId: number): Promise<Task[]> => {
-      return getAllDependencies(taskId)
+      return JournalClient.getAllTaskDependencies(taskId)
     }
   )
 }
