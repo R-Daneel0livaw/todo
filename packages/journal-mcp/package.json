@@ -7,8 +7,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:mcp": "tsx src/index.ts mcp",
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:mcp": "node dist/index.js mcp",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -10,6 +10,7 @@
     "dev:electron": "npm run dev --workspace=packages/electron-app",
     "build:electron": "npm run build --workspace=packages/electron-app",
     "dev:journal-mcp": "npm run dev --workspace=packages/journal-mcp",
+    "dev:journal-mcp:mcp": "npm run dev:mcp --workspace=packages/journal-mcp",
     "build:all": "npm run build --workspaces --if-present",
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
