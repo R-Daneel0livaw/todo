@@ -120,6 +120,43 @@ export function getTaskTools(): Tool[] {
           }
         }
       }
+    },
+    {
+      name: 'get_task_by_collection',
+      description: 'Get a specific task by both task ID and collection ID',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          task_id: {
+            type: 'number',
+            description: 'ID of the task'
+          },
+          collection_id: {
+            type: 'number',
+            description: 'ID of the collection'
+          }
+        },
+        required: ['task_id', 'collection_id']
+      }
+    },
+    {
+      name: 'get_tasks_by_collection_type',
+      description: 'Get tasks filtered by collection type and/or subtype',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          type: {
+            type: 'string',
+            enum: ['PROJECT', 'DAILY', 'MONTHLY', 'QUARTERLY', 'DEFAULT', 'CUSTOM'],
+            description: 'Collection type to filter by'
+          },
+          subType: {
+            type: 'string',
+            enum: ['TASK', 'EVENT', 'PLAN', 'LOG', 'CUSTOM'],
+            description: 'Collection subtype to filter by'
+          }
+        }
+      }
     }
   ]
 }
@@ -257,6 +294,43 @@ export async function handleTaskTools(toolName: string, args: any) {
       } else {
         tasks = TaskManager.getAllTasks()
       }
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              count: tasks.length,
+              tasks
+            }, null, 2)
+          }
+        ]
+      }
+    }
+
+    case 'get_task_by_collection': {
+      const task = TaskManager.getTaskByCollectionId(args.task_id, args.collection_id)
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              task
+            }, null, 2)
+          }
+        ]
+      }
+    }
+
+    case 'get_tasks_by_collection_type': {
+      const collectionData: any = {}
+      if (args.type) collectionData.type = args.type
+      if (args.subType) collectionData.subType = args.subType
+
+      const tasks = TaskManager.getTasksByCollection(collectionData)
 
       return {
         content: [

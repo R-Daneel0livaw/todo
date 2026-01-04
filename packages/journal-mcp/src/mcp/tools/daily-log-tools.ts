@@ -87,7 +87,7 @@ export async function handleDailyLogTools(toolName: string, args: any) {
 
     case 'migrate_task': {
       const task = TaskManager.getTask(args.task_id)
-      TaskManager.migrateTask(args.task_id, args.to_collection_id)
+      TaskManager.migrateTaskToCollection(args.task_id, args.to_collection_id)
 
       return {
         content: [

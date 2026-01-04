@@ -6,7 +6,7 @@ import { Collection } from '@awesome-dev-journal/shared'
 const router = Router()
 
 // GET /api/collections - Get all collections
-router.get('/', (req: Request, res: Response) => {
+router.get('/', (_req: Request, res: Response): void => {
   try {
     const collections = CollectionManager.getCollections()
     res.json(collections)
@@ -16,12 +16,13 @@ router.get('/', (req: Request, res: Response) => {
 })
 
 // GET /api/collections/:id - Get collection by ID
-router.get('/:id', (req: Request, res: Response) => {
+router.get('/:id', (req: Request, res: Response): void => {
   try {
     const id = parseInt(req.params.id)
     const collection = CollectionManager.getCollection(id)
     if (!collection) {
-      return res.status(404).json({ error: 'Collection not found' })
+      res.status(404).json({ error: 'Collection not found' })
+      return
     }
     res.json(collection)
   } catch (error) {
@@ -97,13 +98,14 @@ router.get('/:id/items', (req: Request, res: Response) => {
 })
 
 // POST /api/collections/:id/items - Add item to collection
-router.post('/:id/items', (req: Request, res: Response) => {
+router.post('/:id/items', (req: Request, res: Response): void => {
   try {
     const collectionId = parseInt(req.params.id)
     const { itemId, itemType } = req.body
 
     if (!itemId || !itemType) {
-      return res.status(400).json({ error: 'itemId and itemType are required' })
+      res.status(400).json({ error: 'itemId and itemType are required' })
+      return
     }
 
     const id = CollectionItemManager.addToCollection(collectionId, itemId, itemType)
@@ -114,17 +116,55 @@ router.post('/:id/items', (req: Request, res: Response) => {
 })
 
 // DELETE /api/collections/:id/items - Remove item from collection
-router.delete('/:id/items', (req: Request, res: Response) => {
+router.delete('/:id/items', (req: Request, res: Response): void => {
   try {
     const collectionId = parseInt(req.params.id)
     const { itemId, itemType } = req.body
 
     if (!itemId || !itemType) {
-      return res.status(400).json({ error: 'itemId and itemType are required' })
+      res.status(400).json({ error: 'itemId and itemType are required' })
+      return
     }
 
     CollectionItemManager.removeFromCollection(collectionId, itemId, itemType)
     res.json({ message: 'Item removed from collection successfully' })
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message })
+  }
+})
+
+// GET /api/collections/item/:itemId - Get all collections containing an item
+router.get('/item/:itemId', (req: Request, res: Response): void => {
+  try {
+    const itemId = parseInt(req.params.itemId)
+    const { itemType } = req.query
+
+    if (!itemType) {
+      res.status(400).json({ error: 'itemType query parameter is required' })
+      return
+    }
+
+    const collections = CollectionItemManager.getItemCollections(itemId, itemType as any)
+    res.json(collections)
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message })
+  }
+})
+
+// GET /api/collections/:id/items/:itemId/check - Check if item is in collection
+router.get('/:id/items/:itemId/check', (req: Request, res: Response): void => {
+  try {
+    const collectionId = parseInt(req.params.id)
+    const itemId = parseInt(req.params.itemId)
+    const { itemType } = req.query
+
+    if (!itemType) {
+      res.status(400).json({ error: 'itemType query parameter is required' })
+      return
+    }
+
+    const isInCollection = CollectionItemManager.isItemInCollection(collectionId, itemId, itemType as any)
+    res.json({ isInCollection })
   } catch (error) {
     res.status(500).json({ error: (error as Error).message })
   }

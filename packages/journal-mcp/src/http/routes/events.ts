@@ -5,7 +5,7 @@ import { Event } from '@awesome-dev-journal/shared'
 const router = Router()
 
 // GET /api/events - Get all events
-router.get('/', (req: Request, res: Response) => {
+router.get('/', (_req: Request, res: Response): void => {
   try {
     const events = EventManager.getAllEvents()
     res.json(events)
@@ -15,12 +15,13 @@ router.get('/', (req: Request, res: Response) => {
 })
 
 // GET /api/events/:id - Get event by ID
-router.get('/:id', (req: Request, res: Response) => {
+router.get('/:id', (req: Request, res: Response): void => {
   try {
     const id = parseInt(req.params.id)
     const event = EventManager.getEvent(id)
     if (!event) {
-      return res.status(404).json({ error: 'Event not found' })
+      res.status(404).json({ error: 'Event not found' })
+      return
     }
     res.json(event)
   } catch (error) {
@@ -34,6 +35,22 @@ router.get('/collection/:collectionId', (req: Request, res: Response) => {
     const collectionId = parseInt(req.params.collectionId)
     const events = EventManager.getEventsByCollectionId(collectionId)
     res.json(events)
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message })
+  }
+})
+
+// GET /api/events/:eventId/collection/:collectionId - Get event by both event ID and collection ID
+router.get('/:eventId/collection/:collectionId', (req: Request, res: Response): void => {
+  try {
+    const eventId = parseInt(req.params.eventId)
+    const collectionId = parseInt(req.params.collectionId)
+    const event = EventManager.getEventByCollectionId(eventId, collectionId)
+    if (!event) {
+      res.status(404).json({ error: 'Event not found in collection' })
+      return
+    }
+    res.json(event)
   } catch (error) {
     res.status(500).json({ error: (error as Error).message })
   }

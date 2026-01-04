@@ -151,3 +151,35 @@ export function migrateTask(taskId: number, toTaskId: number) {
   })
   transaction()
 }
+
+export function migrateTaskToCollection(taskId: number, toCollectionId: number) {
+  const transaction = db.transaction(() => {
+    // Get current collections for this task
+    const getCurrentCollections = db.prepare(`
+      SELECT collectionId FROM collectionItems
+      WHERE itemId = ? AND itemType = 'Task'
+    `)
+    const currentCollections = getCurrentCollections.all(taskId) as { collectionId: number }[]
+
+    // Remove task from all current collections
+    const removeStmt = db.prepare(`
+      DELETE FROM collectionItems
+      WHERE itemId = ? AND itemType = 'Task'
+    `)
+    removeStmt.run(taskId)
+
+    // Add task to new collection
+    const addStmt = db.prepare(`
+      INSERT INTO collectionItems (collectionId, itemId, itemType)
+      VALUES (?, ?, 'Task')
+    `)
+    addStmt.run(toCollectionId, taskId)
+
+    // Update task status to MIGRATED if it was in a different collection
+    if (currentCollections.length > 0 && !currentCollections.some(c => c.collectionId === toCollectionId)) {
+      const updateTask = db.prepare('UPDATE tasks SET status = ? WHERE id = ?')
+      updateTask.run('MIGRATED', taskId)
+    }
+  })
+  transaction()
+}

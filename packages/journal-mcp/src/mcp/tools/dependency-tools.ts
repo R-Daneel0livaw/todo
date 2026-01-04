@@ -96,6 +96,34 @@ export function getDependencyTools(): Tool[] {
           }
         }
       }
+    },
+    {
+      name: 'get_all_dependencies',
+      description: 'Get all dependencies for a task (including transitive dependencies)',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          task_id: {
+            type: 'number',
+            description: 'ID of the task'
+          }
+        },
+        required: ['task_id']
+      }
+    },
+    {
+      name: 'get_dependent_tasks',
+      description: 'Get all tasks that depend on a specific task',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          task_id: {
+            type: 'number',
+            description: 'ID of the task'
+          }
+        },
+        required: ['task_id']
+      }
     }
   ]
 }
@@ -205,6 +233,44 @@ export async function handleDependencyTools(toolName: string, args: any) {
               success: true,
               critical_path: criticalPath,
               message: 'Longest chain of task dependencies'
+            }, null, 2)
+          }
+        ]
+      }
+    }
+
+    case 'get_all_dependencies': {
+      const dependencies = TaskDependencyManager.getAllDependencies(args.task_id)
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              task_id: args.task_id,
+              count: dependencies.length,
+              dependencies,
+              message: 'All dependencies (including transitive)'
+            }, null, 2)
+          }
+        ]
+      }
+    }
+
+    case 'get_dependent_tasks': {
+      const dependentTasks = TaskDependencyManager.getDependentTasks(args.task_id)
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              task_id: args.task_id,
+              count: dependentTasks.length,
+              dependent_tasks: dependentTasks,
+              message: 'Tasks that depend on this task'
             }, null, 2)
           }
         ]
