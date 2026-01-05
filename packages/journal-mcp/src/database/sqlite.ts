@@ -1,8 +1,17 @@
 import { Collection } from '@awesome-dev-journal/shared'
 import Database from 'better-sqlite3'
 import type { Database as BetterSqlite3Database } from 'better-sqlite3'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 
-const db: BetterSqlite3Database = new Database('todo.db')
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const dbPath = join(__dirname, '..', '..', 'todo.db')
+
+const db: BetterSqlite3Database = new Database(dbPath)
+
+// Enable foreign key constraints
+db.pragma('foreign_keys = ON')
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS tasks (
@@ -60,9 +69,7 @@ db.exec(`
     collectionId INTEGER NOT NULL,
     itemId INTEGER,
     itemType TEXT NOT NULL CHECK (itemType IN ('Task', 'Event', 'Collection')),
-    FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE,
-    FOREIGN KEY (itemId) REFERENCES tasks(id) ON DELETE CASCADE,
-    FOREIGN KEY (itemId) REFERENCES events(id) ON DELETE CASCADE
+    FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE
   );
 
   CREATE TABLE IF NOT EXISTS task_dependencies (
