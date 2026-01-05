@@ -24,12 +24,8 @@ db.exec(`
     startDate TEXT,
     endDate TEXT,
     canceledDate TEXT,
-    migrated_from_id INTEGER,
-    migrated_to_id INTEGER,
     metadata TEXT,
-    CHECK (status IN ('CREATED', 'MIGRATED', 'IN_PROGRESS', 'FINISHED', 'CANCELED', 'DELETED')),
-    FOREIGN KEY (migrated_from_id) REFERENCES tasks(id) ON DELETE SET NULL,
-    FOREIGN KEY (migrated_to_id) REFERENCES tasks(id) ON DELETE SET NULL
+    CHECK (status IN ('CREATED', 'MIGRATED', 'IN_PROGRESS', 'FINISHED', 'CANCELED', 'DELETED'))
   );
 
   CREATE TABLE IF NOT EXISTS events (
@@ -120,11 +116,22 @@ db.exec(`
     FOREIGN KEY (last_task_id) REFERENCES tasks(id) ON DELETE SET NULL
   );
 
+  CREATE TABLE IF NOT EXISTS item_migration_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id INTEGER NOT NULL,
+    item_type TEXT NOT NULL CHECK (item_type IN ('Task', 'Event')),
+    from_collection_id INTEGER,
+    to_collection_id INTEGER NOT NULL,
+    migrated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    migrated_by TEXT,
+    reason TEXT,
+    FOREIGN KEY (from_collection_id) REFERENCES collections(id) ON DELETE SET NULL,
+    FOREIGN KEY (to_collection_id) REFERENCES collections(id) ON DELETE SET NULL
+  );
+
   -- Indexes for tasks
   CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
   CREATE INDEX IF NOT EXISTS idx_tasks_createDate ON tasks(createDate);
-  CREATE INDEX IF NOT EXISTS idx_tasks_migrated_from ON tasks(migrated_from_id);
-  CREATE INDEX IF NOT EXISTS idx_tasks_migrated_to ON tasks(migrated_to_id);
 
   -- Indexes for events
   CREATE INDEX IF NOT EXISTS idx_events_status ON events(status);
@@ -155,6 +162,12 @@ db.exec(`
   -- Indexes for vm_registry
   CREATE INDEX IF NOT EXISTS idx_vm_role ON vm_registry(role);
   CREATE INDEX IF NOT EXISTS idx_vm_status ON vm_registry(status);
+
+  -- Indexes for item_migration_history
+  CREATE INDEX IF NOT EXISTS idx_migration_item ON item_migration_history(item_id, item_type);
+  CREATE INDEX IF NOT EXISTS idx_migration_from_collection ON item_migration_history(from_collection_id);
+  CREATE INDEX IF NOT EXISTS idx_migration_to_collection ON item_migration_history(to_collection_id);
+  CREATE INDEX IF NOT EXISTS idx_migration_timestamp ON item_migration_history(migrated_at DESC);
 `)
 
 const defaultCollections: Partial<Collection>[] = [

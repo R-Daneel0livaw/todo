@@ -15,6 +15,7 @@ export function clearAllData() {
 
   // Delete in order to respect foreign key constraints
   db.prepare('DELETE FROM task_dependencies').run()
+  db.prepare('DELETE FROM item_migration_history').run()
   db.prepare('DELETE FROM collectionItems').run()
   db.prepare('DELETE FROM activity').run()
   db.prepare('DELETE FROM vm_registry').run()
@@ -445,6 +446,25 @@ export function seedTestData() {
 
   console.log(`    ✓ Created 3 VMs`)
 
+  // 8. Create migration history examples
+  console.log('  📋 Creating task migration history...')
+
+  // Migrate task8 from Daily Plan to Daily Log (representing completed planned work)
+  TaskManager.migrateTaskToCollection(
+    task8,
+    dailyLog.id,
+    'user',
+    'Completed during the day, moving to log'
+  )
+
+  // Migrate task3 (groceries) from Eric's list to Daily Log (completed personal task)
+  TaskManager.migrateTaskToCollection(task3, dailyLog.id, 'user', 'Completed errands')
+
+  // Migrate it again to show multiple migrations
+  TaskManager.migrateTaskToCollection(task3, taskList.id, 'system', 'Archiving completed task to main list')
+
+  console.log(`    ✓ Created migration history (3 migrations for 2 tasks)`)
+
   console.log('\n✅ Test data seeding complete!')
   console.log('\nSummary:')
   console.log(`  • 10 Collections`)
@@ -459,6 +479,7 @@ export function seedTestData() {
   console.log(`  • 3 Task Dependencies`)
   console.log(`  • 4 Activity Entries`)
   console.log(`  • 3 VMs`)
+  console.log(`  • 3 Task Migrations (demonstrating migration history tracking)`)
 }
 
 // CLI interface

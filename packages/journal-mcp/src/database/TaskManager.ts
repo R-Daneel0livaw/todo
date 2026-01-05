@@ -1,5 +1,6 @@
 import { Collection, Task } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
+import * as ItemMigrationHistoryManager from './ItemMigrationHistoryManager.js'
 
 export function getAllTasks(): Task[] {
   const stmt = db.prepare('SELECT * FROM tasks ORDER BY createDate DESC')
@@ -59,8 +60,8 @@ export function getTasksByCollection(collectionData: Partial<Collection>): Task[
 
 export function addTask(taskData: Task): number {
   const stmt = db.prepare(`
-    INSERT INTO tasks (title, description, topic, status, createDate, startDate, metadata, migrated_from_id, migrated_to_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tasks (title, description, topic, status, createDate, startDate, metadata)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `)
   const result = stmt.run(
     taskData.title,
@@ -69,9 +70,7 @@ export function addTask(taskData: Task): number {
     taskData.status,
     taskData.createDate?.toISOString(),
     taskData.startDate?.toISOString(),
-    taskData.metadata ? JSON.stringify(taskData.metadata) : null,
-    taskData.migrated_from_id || null,
-    taskData.migrated_to_id || null
+    taskData.metadata ? JSON.stringify(taskData.metadata) : null
   )
   return result.lastInsertRowid as number
 }
@@ -108,14 +107,6 @@ export function updateTask(taskData: Partial<Task> & { id: number }) {
     fields.push('metadata = ?')
     values.push(JSON.stringify(taskData.metadata))
   }
-  if (taskData.migrated_from_id !== undefined) {
-    fields.push('migrated_from_id = ?')
-    values.push(taskData.migrated_from_id)
-  }
-  if (taskData.migrated_to_id !== undefined) {
-    fields.push('migrated_to_id = ?')
-    values.push(taskData.migrated_to_id)
-  }
 
   if (fields.length === 0) return
 
@@ -139,20 +130,12 @@ export function cancelTask(taskId: number) {
   stmt.run('CANCELED', new Date().toISOString(), taskId)
 }
 
-export function migrateTask(taskId: number, toTaskId: number) {
-  const transaction = db.transaction(() => {
-    // Update the original task's migrated_to_id
-    const updateOriginal = db.prepare('UPDATE tasks SET migrated_to_id = ?, status = ? WHERE id = ?')
-    updateOriginal.run(toTaskId, 'MIGRATED', taskId)
-
-    // Update the new task's migrated_from_id
-    const updateNew = db.prepare('UPDATE tasks SET migrated_from_id = ? WHERE id = ?')
-    updateNew.run(taskId, toTaskId)
-  })
-  transaction()
-}
-
-export function migrateTaskToCollection(taskId: number, toCollectionId: number) {
+export function migrateTaskToCollection(
+  taskId: number,
+  toCollectionId: number,
+  migratedBy?: string,
+  reason?: string
+) {
   const transaction = db.transaction(() => {
     // Get current collections for this task
     const getCurrentCollections = db.prepare(`
@@ -160,6 +143,23 @@ export function migrateTaskToCollection(taskId: number, toCollectionId: number) 
       WHERE itemId = ? AND itemType = 'Task'
     `)
     const currentCollections = getCurrentCollections.all(taskId) as { collectionId: number }[]
+
+    // Record migration history for each current collection
+    if (currentCollections.length > 0) {
+      for (const collection of currentCollections) {
+        ItemMigrationHistoryManager.recordMigration(
+          taskId,
+          'Task',
+          collection.collectionId,
+          toCollectionId,
+          migratedBy,
+          reason
+        )
+      }
+    } else {
+      // No previous collection (initial assignment)
+      ItemMigrationHistoryManager.recordMigration(taskId, 'Task', null, toCollectionId, migratedBy, reason)
+    }
 
     // Remove task from all current collections
     const removeStmt = db.prepare(`
@@ -176,7 +176,7 @@ export function migrateTaskToCollection(taskId: number, toCollectionId: number) 
     addStmt.run(toCollectionId, taskId)
 
     // Update task status to MIGRATED if it was in a different collection
-    if (currentCollections.length > 0 && !currentCollections.some(c => c.collectionId === toCollectionId)) {
+    if (currentCollections.length > 0 && !currentCollections.some((c) => c.collectionId === toCollectionId)) {
       const updateTask = db.prepare('UPDATE tasks SET status = ? WHERE id = ?')
       updateTask.run('MIGRATED', taskId)
     }
