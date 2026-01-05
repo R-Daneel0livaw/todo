@@ -32,72 +32,129 @@ export function seedTestData() {
   console.log('🌱 Seeding test data...')
 
   const now = new Date()
-  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000)
-  const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  const feb1 = new Date('2026-02-01T09:00:00')
+  const feb1End = new Date('2026-02-01T17:00:00')
 
   // 1. Create Collections
   console.log('  📁 Creating collections...')
 
-  const todayLog = CollectionManager.addAndRetrieveCollection({
+  // Task List (DEFAULT/TASK)
+  const taskList = CollectionManager.addAndRetrieveCollection({
     id: 0,
-    title: `Daily Log - ${now.toISOString().split('T')[0]}`,
-    description: "Today's tasks and events",
-    type: 'DAILY',
-    subType: 'LOG',
+    title: 'Task List',
+    description: 'Main Task List',
+    longDescription: 'All created Tasks will be available in the Main Task List.',
+    type: 'DEFAULT',
+    subType: 'TASK',
     createDate: now,
-    startDate: now,
-    metadata: { date: now.toISOString().split('T')[0] }
+    startDate: now
   })
 
-  const yesterdayLog = CollectionManager.addAndRetrieveCollection({
+  // Event List (DEFAULT/EVENT)
+  const eventList = CollectionManager.addAndRetrieveCollection({
     id: 0,
-    title: `Daily Log - ${yesterday.toISOString().split('T')[0]}`,
-    description: "Yesterday's tasks and events",
+    title: 'Event List',
+    description: 'Main Event List',
+    longDescription: 'All created Events will be available in the Main Event List.',
+    type: 'DEFAULT',
+    subType: 'EVENT',
+    createDate: now,
+    startDate: now
+  })
+
+  // Eric's Task List (CUSTOM/TASK)
+  const ericsTaskList = CollectionManager.addAndRetrieveCollection({
+    id: 0,
+    title: "Eric's Task List",
+    description: "Eric's Task List",
+    type: 'CUSTOM',
+    subType: 'TASK',
+    createDate: now,
+    startDate: now
+  })
+
+  // Birthdays (CUSTOM/EVENT)
+  const birthdays = CollectionManager.addAndRetrieveCollection({
+    id: 0,
+    title: 'Birthdays',
+    description: 'Important Birthday List',
+    type: 'CUSTOM',
+    subType: 'EVENT',
+    createDate: now,
+    startDate: now
+  })
+
+  // Project TODO (PROJECT, no subType)
+  const projectTodo = CollectionManager.addAndRetrieveCollection({
+    id: 0,
+    title: 'Project TODO',
+    description: 'TODO Project List',
+    longDescription: 'All items relating to the TODO Project.',
+    type: 'PROJECT',
+    createDate: now,
+    startDate: now
+  })
+
+  // Daily Plan 2/1 (DAILY/PLAN)
+  const dailyPlan = CollectionManager.addAndRetrieveCollection({
+    id: 0,
+    title: 'Daily Plan 2/1',
+    description: 'Daily Plan View for 2/1',
+    type: 'DAILY',
+    subType: 'PLAN',
+    createDate: feb1,
+    startDate: feb1
+  })
+
+  // Daily Log 2/1 (DAILY/LOG)
+  const dailyLog = CollectionManager.addAndRetrieveCollection({
+    id: 0,
+    title: 'Daily Log 2/1',
+    description: 'Daily Log View for 2/1',
     type: 'DAILY',
     subType: 'LOG',
-    createDate: yesterday,
-    startDate: yesterday,
-    metadata: { date: yesterday.toISOString().split('T')[0] }
+    createDate: feb1,
+    startDate: feb1
   })
 
-  const authProject = CollectionManager.addAndRetrieveCollection({
+  // Daily 2/1 (DAILY, no subType) - meta-collection
+  const daily = CollectionManager.addAndRetrieveCollection({
     id: 0,
-    title: 'OAuth Implementation',
-    description: 'Add OAuth 2.0 authentication to the app',
-    longDescription: 'Full OAuth implementation with Google, GitHub, and Microsoft providers',
-    type: 'PROJECT',
-    subType: 'TASK',
-    createDate: lastWeek,
-    startDate: lastWeek
+    title: 'Daily 2/1',
+    description: 'Daily View for 2/1',
+    type: 'DAILY',
+    createDate: feb1,
+    startDate: feb1
   })
 
-  const apiProject = CollectionManager.addAndRetrieveCollection({
+  // February Plan (MONTHLY/PLAN)
+  const februaryPlan = CollectionManager.addAndRetrieveCollection({
     id: 0,
-    title: 'REST API Refactor',
-    description: 'Modernize API endpoints and add versioning',
-    type: 'PROJECT',
-    subType: 'TASK',
-    createDate: lastWeek,
-    startDate: lastWeek
-  })
-
-  const monthlyPlan = CollectionManager.addAndRetrieveCollection({
-    id: 0,
-    title: 'January 2026 Plan',
-    description: 'Monthly goals and objectives',
+    title: 'February Plan',
+    description: 'Monthly Plan View for February',
     type: 'MONTHLY',
+    subType: 'PLAN',
+    createDate: new Date('2026-02-01'),
+    startDate: new Date('2026-02-01')
+  })
+
+  // Quarter 1 Plan (QUARTERLY/PLAN)
+  const q1Plan = CollectionManager.addAndRetrieveCollection({
+    id: 0,
+    title: 'Quarter 1 Plan',
+    description: 'Quarter 1 Plan View',
+    type: 'QUARTERLY',
     subType: 'PLAN',
     createDate: new Date('2026-01-01'),
     startDate: new Date('2026-01-01')
   })
 
-  console.log(`    ✓ Created 5 collections`)
+  console.log(`    ✓ Created 10 collections`)
 
   // 2. Create Tasks
   console.log('  ✅ Creating tasks...')
 
-  // Today's tasks
+  // Tasks for Task List
   const task1 = TaskManager.addTask({
     id: 0,
     title: 'Review pull requests',
@@ -107,200 +164,262 @@ export function seedTestData() {
     createDate: now,
     startDate: now
   })
-  CollectionItemManager.addToCollection(todayLog.id, task1, 'Task')
+  CollectionItemManager.addToCollection(taskList.id, task1, 'Task')
 
   const task2 = TaskManager.addTask({
-    id: 0,
-    title: 'Deploy auth service to staging',
-    description: 'Deploy the OAuth service to staging environment for testing',
-    topic: 'deployment',
-    status: 'CREATED',
-    createDate: now
-  })
-  CollectionItemManager.addToCollection(todayLog.id, task2, 'Task')
-
-  const task3 = TaskManager.addTask({
-    id: 0,
-    title: 'Write unit tests for API endpoints',
-    description: 'Add test coverage for new REST endpoints',
-    topic: 'testing',
-    status: 'CREATED',
-    createDate: now
-  })
-  CollectionItemManager.addToCollection(todayLog.id, task3, 'Task')
-
-  // Yesterday's tasks
-  const task4 = TaskManager.addTask({
-    id: 0,
-    title: 'Fix login bug',
-    description: 'Users unable to login with special characters in password',
-    topic: 'bug-fix',
-    status: 'FINISHED',
-    createDate: yesterday,
-    startDate: yesterday,
-    endDate: yesterday
-  })
-  CollectionItemManager.addToCollection(yesterdayLog.id, task4, 'Task')
-
-  const task5 = TaskManager.addTask({
     id: 0,
     title: 'Update documentation',
     description: 'Update API documentation for new endpoints',
     topic: 'documentation',
-    status: 'MIGRATED',
-    createDate: yesterday
-  })
-  CollectionItemManager.addToCollection(yesterdayLog.id, task5, 'Task')
-
-  // OAuth Project tasks
-  const googleOAuth = TaskManager.addTask({
-    id: 0,
-    title: 'Implement OAuth Google provider',
-    description: 'Add Google OAuth 2.0 integration',
-    topic: 'oauth',
-    status: 'FINISHED',
-    createDate: lastWeek,
-    startDate: lastWeek,
-    endDate: new Date(lastWeek.getTime() + 2 * 24 * 60 * 60 * 1000)
-  })
-  CollectionItemManager.addToCollection(authProject.id, googleOAuth, 'Task')
-
-  const githubOAuth = TaskManager.addTask({
-    id: 0,
-    title: 'Implement OAuth GitHub provider',
-    description: 'Add GitHub OAuth integration',
-    topic: 'oauth',
-    status: 'IN_PROGRESS',
-    createDate: lastWeek,
-    startDate: new Date(lastWeek.getTime() + 2 * 24 * 60 * 60 * 1000)
-  })
-  CollectionItemManager.addToCollection(authProject.id, githubOAuth, 'Task')
-
-  const tokenRefresh = TaskManager.addTask({
-    id: 0,
-    title: 'Add OAuth token refresh logic',
-    description: 'Implement automatic token refresh for expired tokens',
-    topic: 'oauth',
     status: 'CREATED',
-    createDate: lastWeek
+    createDate: now
   })
-  CollectionItemManager.addToCollection(authProject.id, tokenRefresh, 'Task')
+  CollectionItemManager.addToCollection(taskList.id, task2, 'Task')
 
-  const oauthTests = TaskManager.addTask({
+  // Tasks for Eric's Task List
+  const task3 = TaskManager.addTask({
     id: 0,
-    title: 'Write OAuth integration tests',
-    description: 'End-to-end tests for OAuth flows',
+    title: 'Buy groceries',
+    description: 'Milk, eggs, bread, coffee',
+    topic: 'personal',
+    status: 'CREATED',
+    createDate: now
+  })
+  CollectionItemManager.addToCollection(ericsTaskList.id, task3, 'Task')
+
+  const task4 = TaskManager.addTask({
+    id: 0,
+    title: 'Schedule dentist appointment',
+    description: 'Regular checkup',
+    topic: 'health',
+    status: 'CREATED',
+    createDate: now
+  })
+  CollectionItemManager.addToCollection(ericsTaskList.id, task4, 'Task')
+
+  // Tasks for Project TODO
+  const task5 = TaskManager.addTask({
+    id: 0,
+    title: 'Implement OAuth authentication',
+    description: 'Add OAuth 2.0 support for Google and GitHub',
+    topic: 'feature',
+    status: 'IN_PROGRESS',
+    createDate: now,
+    startDate: now
+  })
+  CollectionItemManager.addToCollection(projectTodo.id, task5, 'Task')
+
+  const task6 = TaskManager.addTask({
+    id: 0,
+    title: 'Write unit tests for API',
+    description: 'Add test coverage for REST endpoints',
     topic: 'testing',
     status: 'CREATED',
-    createDate: lastWeek
+    createDate: now
   })
-  CollectionItemManager.addToCollection(authProject.id, oauthTests, 'Task')
+  CollectionItemManager.addToCollection(projectTodo.id, task6, 'Task')
 
-  // API Project tasks
-  const apiDesign = TaskManager.addTask({
+  const task7 = TaskManager.addTask({
     id: 0,
-    title: 'Design API versioning strategy',
-    description: 'Define how we will handle API versions (URL vs header)',
-    topic: 'architecture',
+    title: 'Fix login bug',
+    description: 'Users unable to login with special characters',
+    topic: 'bug-fix',
     status: 'FINISHED',
-    createDate: lastWeek,
-    endDate: lastWeek
+    createDate: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+    startDate: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+    endDate: now
   })
-  CollectionItemManager.addToCollection(apiProject.id, apiDesign, 'Task')
+  CollectionItemManager.addToCollection(projectTodo.id, task7, 'Task')
 
-  const apiMigrate = TaskManager.addTask({
+  // Tasks for Daily Plan 2/1
+  const task8 = TaskManager.addTask({
     id: 0,
-    title: 'Migrate endpoints to v2',
-    description: 'Update all endpoints to use new v2 structure',
-    topic: 'refactoring',
-    status: 'IN_PROGRESS',
-    createDate: lastWeek,
-    startDate: new Date(lastWeek.getTime() + 1 * 24 * 60 * 60 * 1000)
-  })
-  CollectionItemManager.addToCollection(apiProject.id, apiMigrate, 'Task')
-
-  const apiClient = TaskManager.addTask({
-    id: 0,
-    title: 'Update API client library',
-    description: 'Update SDK to support v2 endpoints',
-    topic: 'sdk',
+    title: 'Morning standup prep',
+    description: 'Prepare updates for team standup',
+    topic: 'meeting',
     status: 'CREATED',
-    createDate: lastWeek
+    createDate: feb1
   })
-  CollectionItemManager.addToCollection(apiProject.id, apiClient, 'Task')
+  CollectionItemManager.addToCollection(dailyPlan.id, task8, 'Task')
+
+  const task9 = TaskManager.addTask({
+    id: 0,
+    title: 'Code review session',
+    description: 'Review PRs before lunch',
+    topic: 'code-review',
+    status: 'CREATED',
+    createDate: feb1
+  })
+  CollectionItemManager.addToCollection(dailyPlan.id, task9, 'Task')
+
+  // Tasks for Daily Log 2/1
+  const task10 = TaskManager.addTask({
+    id: 0,
+    title: 'Completed OAuth integration',
+    description: 'Finished Google OAuth provider',
+    topic: 'feature',
+    status: 'FINISHED',
+    createDate: feb1,
+    startDate: feb1,
+    endDate: feb1End
+  })
+  CollectionItemManager.addToCollection(dailyLog.id, task10, 'Task')
+
+  // Tasks for February Plan
+  const task11 = TaskManager.addTask({
+    id: 0,
+    title: 'Launch v2.0 of TODO app',
+    description: 'Complete all features and deploy to production',
+    topic: 'milestone',
+    status: 'IN_PROGRESS',
+    createDate: new Date('2026-02-01'),
+    startDate: new Date('2026-02-01')
+  })
+  CollectionItemManager.addToCollection(februaryPlan.id, task11, 'Task')
+
+  // Tasks for Q1 Plan
+  const task12 = TaskManager.addTask({
+    id: 0,
+    title: 'Reach 1000 users',
+    description: 'Marketing and growth initiatives',
+    topic: 'growth',
+    status: 'IN_PROGRESS',
+    createDate: new Date('2026-01-01'),
+    startDate: new Date('2026-01-01')
+  })
+  CollectionItemManager.addToCollection(q1Plan.id, task12, 'Task')
 
   console.log(`    ✓ Created 12 tasks`)
 
-  // 3. Create Task Dependencies
-  console.log('  🔗 Creating task dependencies...')
-
-  // OAuth dependencies
-  TaskDependencyManager.addTaskDependency(githubOAuth, googleOAuth, 'blocks', 'user')
-  TaskDependencyManager.addTaskDependency(tokenRefresh, googleOAuth, 'blocks', 'user')
-  TaskDependencyManager.addTaskDependency(oauthTests, githubOAuth, 'blocks', 'user')
-  TaskDependencyManager.addTaskDependency(oauthTests, tokenRefresh, 'blocks', 'user')
-
-  // API dependencies
-  TaskDependencyManager.addTaskDependency(apiMigrate, apiDesign, 'blocks', 'user')
-  TaskDependencyManager.addTaskDependency(apiClient, apiMigrate, 'blocks', 'user')
-
-  console.log(`    ✓ Created 6 dependencies`)
-
-  // 4. Create Events
+  // 3. Create Events
   console.log('  📅 Creating events...')
 
+  // Events for Event List
   const event1 = EventManager.addEvent({
     id: 0,
     title: 'Team standup',
     description: 'Daily team sync',
     location: 'Zoom',
-    status: 'FINISHED',
+    status: 'CREATED',
     createDate: now,
-    scheduledDate: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0),
-    startDate: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0),
-    endDate: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 15)
+    scheduledDate: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 9, 0)
   })
-  CollectionItemManager.addToCollection(todayLog.id, event1, 'Event')
+  CollectionItemManager.addToCollection(eventList.id, event1, 'Event')
 
   const event2 = EventManager.addEvent({
     id: 0,
-    title: 'API design review',
-    description: 'Review new API design with architecture team',
+    title: 'Sprint planning',
+    description: 'Plan next sprint',
     location: 'Conference Room A',
     status: 'CREATED',
     createDate: now,
-    scheduledDate: tomorrow
+    scheduledDate: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 3, 14, 0)
   })
-  CollectionItemManager.addToCollection(todayLog.id, event2, 'Event')
+  CollectionItemManager.addToCollection(eventList.id, event2, 'Event')
 
+  // Events for Birthdays
   const event3 = EventManager.addEvent({
     id: 0,
-    title: 'OAuth security audit',
-    description: 'Security team review of OAuth implementation',
+    title: "Mom's Birthday",
+    description: 'Buy gift and call',
+    location: 'Home',
+    status: 'CREATED',
+    createDate: now,
+    scheduledDate: new Date('2026-03-15T00:00:00')
+  })
+  CollectionItemManager.addToCollection(birthdays.id, event3, 'Event')
+
+  const event4 = EventManager.addEvent({
+    id: 0,
+    title: "Sarah's Birthday",
+    description: 'Dinner party',
+    location: 'Downtown Restaurant',
+    status: 'CREATED',
+    createDate: now,
+    scheduledDate: new Date('2026-04-22T18:00:00')
+  })
+  CollectionItemManager.addToCollection(birthdays.id, event4, 'Event')
+
+  // Events for Daily Plan 2/1
+  const event5 = EventManager.addEvent({
+    id: 0,
+    title: 'Architecture review',
+    description: 'Review system design with team',
     location: 'Virtual',
     status: 'CREATED',
-    createDate: lastWeek,
-    scheduledDate: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000)
+    createDate: feb1,
+    scheduledDate: new Date('2026-02-01T10:00:00')
   })
-  CollectionItemManager.addToCollection(authProject.id, event3, 'Event')
+  CollectionItemManager.addToCollection(dailyPlan.id, event5, 'Event')
 
-  console.log(`    ✓ Created 3 events`)
+  // Events for Daily Log 2/1
+  const event6 = EventManager.addEvent({
+    id: 0,
+    title: 'Client meeting',
+    description: 'Demo new features',
+    location: 'Office',
+    status: 'FINISHED',
+    createDate: feb1,
+    scheduledDate: new Date('2026-02-01T14:00:00'),
+    startDate: new Date('2026-02-01T14:00:00'),
+    endDate: new Date('2026-02-01T15:00:00')
+  })
+  CollectionItemManager.addToCollection(dailyLog.id, event6, 'Event')
 
-  // 5. Create Activity entries
+  // Events for February Plan
+  const event7 = EventManager.addEvent({
+    id: 0,
+    title: 'Product launch event',
+    description: 'Launch v2.0 publicly',
+    location: 'Virtual Event',
+    status: 'CREATED',
+    createDate: new Date('2026-02-01'),
+    scheduledDate: new Date('2026-02-28T10:00:00')
+  })
+  CollectionItemManager.addToCollection(februaryPlan.id, event7, 'Event')
+
+  // Events for Q1 Plan
+  const event8 = EventManager.addEvent({
+    id: 0,
+    title: 'Q1 Business Review',
+    description: 'Review quarterly objectives',
+    location: 'Board Room',
+    status: 'CREATED',
+    createDate: new Date('2026-01-01'),
+    scheduledDate: new Date('2026-03-31T15:00:00')
+  })
+  CollectionItemManager.addToCollection(q1Plan.id, event8, 'Event')
+
+  console.log(`    ✓ Created 8 events`)
+
+  // 4. Add Collections to Daily 2/1 meta-collection
+  console.log('  🗂️  Creating meta-collection items...')
+  CollectionItemManager.addToCollection(daily.id, dailyPlan.id, 'Collection')
+  CollectionItemManager.addToCollection(daily.id, dailyLog.id, 'Collection')
+  console.log(`    ✓ Added 2 collections to Daily 2/1`)
+
+  // 5. Create Task Dependencies
+  console.log('  🔗 Creating task dependencies...')
+  TaskDependencyManager.addTaskDependency(task6, task5, 'blocks', 'user')
+  TaskDependencyManager.addTaskDependency(task11, task5, 'blocks', 'user')
+  TaskDependencyManager.addTaskDependency(task11, task6, 'blocks', 'user')
+  console.log(`    ✓ Created 3 dependencies`)
+
+  // 6. Create Activity entries
   console.log('  📊 Creating activity entries...')
 
   ActivityManager.addActivity(
     'git_commit',
     'github',
-    { message: 'feat: add Google OAuth integration', sha: 'abc123', author: 'dev@example.com' },
-    googleOAuth
+    { message: 'feat: add OAuth Google integration', sha: 'abc123', author: 'eric@example.com' },
+    task5
   )
 
   ActivityManager.addActivity(
     'git_commit',
     'github',
-    { message: 'fix: handle OAuth callback errors', sha: 'def456', author: 'dev@example.com' },
-    githubOAuth
+    { message: 'fix: handle special characters in login', sha: 'def456', author: 'eric@example.com' },
+    task7
   )
 
   ActivityManager.addActivity('build', 'ci/cd', { status: 'success', duration: 142, branch: 'main' })
@@ -308,13 +427,13 @@ export function seedTestData() {
   ActivityManager.addActivity(
     'test_run',
     'jest',
-    { passed: 124, failed: 0, skipped: 3, duration: 8.5 },
-    googleOAuth
+    { passed: 156, failed: 0, skipped: 4, duration: 12.3 },
+    task7
   )
 
   console.log(`    ✓ Created 4 activity entries`)
 
-  // 6. Create VM registry entries
+  // 7. Create VM registry entries
   console.log('  🖥️  Creating VM registry entries...')
 
   VmRegistryManager.registerVm('security-vm-01', 'security', 4096, 2, 50000)
@@ -322,16 +441,22 @@ export function seedTestData() {
   const testVmId = VmRegistryManager.registerVm('test-vm-01', 'test', 4096, 2, 75000)
 
   VmRegistryManager.updateVmStatus(testVmId, 'running')
-  VmRegistryManager.assignTaskToVm(testVmId, oauthTests)
+  VmRegistryManager.assignTaskToVm(testVmId, task6)
 
   console.log(`    ✓ Created 3 VMs`)
 
   console.log('\n✅ Test data seeding complete!')
   console.log('\nSummary:')
-  console.log(`  • 5 Collections (2 daily logs, 2 projects, 1 monthly plan)`)
-  console.log(`  • 12 Tasks (various states and topics)`)
-  console.log(`  • 6 Task Dependencies`)
-  console.log(`  • 3 Events`)
+  console.log(`  • 10 Collections`)
+  console.log(`    - 2 DEFAULT (Task List, Event List)`)
+  console.log(`    - 2 CUSTOM (Eric's Task List, Birthdays)`)
+  console.log(`    - 1 PROJECT (Project TODO)`)
+  console.log(`    - 3 DAILY (Daily 2/1 with Plan and Log sub-collections)`)
+  console.log(`    - 1 MONTHLY (February Plan)`)
+  console.log(`    - 1 QUARTERLY (Quarter 1 Plan)`)
+  console.log(`  • 12 Tasks (various statuses and topics)`)
+  console.log(`  • 8 Events (meetings, birthdays, milestones)`)
+  console.log(`  • 3 Task Dependencies`)
   console.log(`  • 4 Activity Entries`)
   console.log(`  • 3 VMs`)
 }

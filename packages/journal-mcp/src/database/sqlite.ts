@@ -53,7 +53,7 @@ db.exec(`
     description TEXT,
     longDescription TEXT,
     type TEXT NOT NULL,
-    subType TEXT NOT NULL,
+    subType TEXT,
     createDate TEXT,
     startDate TEXT,
     endDate TEXT,
@@ -61,7 +61,7 @@ db.exec(`
     archived_at TEXT,
     metadata TEXT,
     CHECK (type IN ('DEFAULT', 'QUARTERLY', 'MONTHLY', 'DAILY', 'PROJECT', 'CUSTOM')),
-    CHECK (subType IN ('TASK', 'EVENT', 'PLAN', 'LOG', 'CUSTOM'))
+    CHECK (subType IS NULL OR subType IN ('TASK', 'EVENT', 'PLAN', 'LOG', 'CUSTOM'))
   );
 
   CREATE TABLE IF NOT EXISTS collectionItems (
