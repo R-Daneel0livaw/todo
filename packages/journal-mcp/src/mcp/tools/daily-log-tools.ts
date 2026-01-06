@@ -1,6 +1,5 @@
 import { Tool } from '@modelcontextprotocol/sdk/types.js'
 import * as CollectionManager from '../../database/CollectionManager.js'
-import * as TaskManager from '../../database/TaskManager.js'
 import { Collection } from '@awesome-dev-journal/shared'
 
 export function getDailyLogTools(): Tool[] {
@@ -25,24 +24,6 @@ export function getDailyLogTools(): Tool[] {
           }
         },
         required: ['date']
-      }
-    },
-    {
-      name: 'migrate_task',
-      description: 'Migrate a task from one collection to another (e.g., move unfinished task to today)',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          task_id: {
-            type: 'number',
-            description: 'ID of the task to migrate'
-          },
-          to_collection_id: {
-            type: 'number',
-            description: 'ID of the destination collection'
-          }
-        },
-        required: ['task_id', 'to_collection_id']
       }
     }
   ]
@@ -79,24 +60,6 @@ export async function handleDailyLogTools(toolName: string, args: any) {
               success: true,
               collection,
               message: `Daily log for ${args.date}`
-            }, null, 2)
-          }
-        ]
-      }
-    }
-
-    case 'migrate_task': {
-      const task = TaskManager.getTask(args.task_id)
-      TaskManager.migrateTaskToCollection(args.task_id, args.to_collection_id)
-
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({
-              success: true,
-              task_id: args.task_id,
-              message: `Task "${task.title}" migrated to collection ${args.to_collection_id}`
             }, null, 2)
           }
         ]

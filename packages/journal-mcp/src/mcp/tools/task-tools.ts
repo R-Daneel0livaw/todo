@@ -157,6 +157,32 @@ export function getTaskTools(): Tool[] {
           }
         }
       }
+    },
+    {
+      name: 'migrate_task_to_collection',
+      description: 'Migrate a task from one collection to another, tracking the migration history',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          task_id: {
+            type: 'number',
+            description: 'ID of the task to migrate'
+          },
+          to_collection_id: {
+            type: 'number',
+            description: 'ID of the destination collection'
+          },
+          migrated_by: {
+            type: 'string',
+            description: 'Who is performing the migration (e.g., "user", "system")'
+          },
+          reason: {
+            type: 'string',
+            description: 'Reason for the migration'
+          }
+        },
+        required: ['task_id', 'to_collection_id']
+      }
     }
   ]
 }
@@ -174,8 +200,6 @@ export async function handleTaskTools(toolName: string, args: any) {
         startDate: undefined,
         endDate: undefined,
         canceledDate: undefined,
-        migrated_from_id: undefined,
-        migrated_to_id: undefined,
         metadata: {}
       }
 
@@ -340,6 +364,29 @@ export async function handleTaskTools(toolName: string, args: any) {
               success: true,
               count: tasks.length,
               tasks
+            }, null, 2)
+          }
+        ]
+      }
+    }
+
+    case 'migrate_task_to_collection': {
+      TaskManager.migrateTaskToCollection(
+        args.task_id,
+        args.to_collection_id,
+        args.migrated_by,
+        args.reason
+      )
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              task_id: args.task_id,
+              to_collection_id: args.to_collection_id,
+              message: 'Task migrated successfully'
             }, null, 2)
           }
         ]

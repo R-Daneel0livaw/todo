@@ -123,6 +123,32 @@ export function getEventTools(): Tool[] {
         },
         required: ['event_id']
       }
+    },
+    {
+      name: 'migrate_event_to_collection',
+      description: 'Migrate an event from one collection to another, tracking the migration history',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          event_id: {
+            type: 'number',
+            description: 'ID of the event to migrate'
+          },
+          to_collection_id: {
+            type: 'number',
+            description: 'ID of the destination collection'
+          },
+          migrated_by: {
+            type: 'string',
+            description: 'Who is performing the migration (e.g., "user", "system")'
+          },
+          reason: {
+            type: 'string',
+            description: 'Reason for the migration'
+          }
+        },
+        required: ['event_id', 'to_collection_id']
+      }
     }
   ]
 }
@@ -261,6 +287,29 @@ export async function handleEventTools(toolName: string, args: any) {
               success: true,
               event_id: args.event_id,
               message: 'Event cancelled'
+            }, null, 2)
+          }
+        ]
+      }
+    }
+
+    case 'migrate_event_to_collection': {
+      EventManager.migrateEventToCollection(
+        args.event_id,
+        args.to_collection_id,
+        args.migrated_by,
+        args.reason
+      )
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: true,
+              event_id: args.event_id,
+              to_collection_id: args.to_collection_id,
+              message: 'Event migrated successfully'
             }, null, 2)
           }
         ]

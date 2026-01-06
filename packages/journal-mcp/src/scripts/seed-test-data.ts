@@ -447,7 +447,7 @@ export function seedTestData() {
   console.log(`    ✓ Created 3 VMs`)
 
   // 8. Create migration history examples
-  console.log('  📋 Creating task migration history...')
+  console.log('  📋 Creating migration history...')
 
   // Migrate task8 from Daily Plan to Daily Log (representing completed planned work)
   TaskManager.migrateTaskToCollection(
@@ -463,7 +463,23 @@ export function seedTestData() {
   // Migrate it again to show multiple migrations
   TaskManager.migrateTaskToCollection(task3, taskList.id, 'system', 'Archiving completed task to main list')
 
-  console.log(`    ✓ Created migration history (3 migrations for 2 tasks)`)
+  // Migrate event5 (Architecture review) from Daily Plan to Daily Log (meeting happened)
+  EventManager.migrateEventToCollection(
+    event5,
+    dailyLog.id,
+    'user',
+    'Meeting completed, logging to daily log'
+  )
+
+  // Migrate event1 (Team standup) to February Plan
+  EventManager.migrateEventToCollection(
+    event1,
+    februaryPlan.id,
+    'user',
+    'Recurring event - adding to monthly plan'
+  )
+
+  console.log(`    ✓ Created migration history (3 task migrations, 2 event migrations)`)
 
   console.log('\n✅ Test data seeding complete!')
   console.log('\nSummary:')
@@ -479,7 +495,7 @@ export function seedTestData() {
   console.log(`  • 3 Task Dependencies`)
   console.log(`  • 4 Activity Entries`)
   console.log(`  • 3 VMs`)
-  console.log(`  • 3 Task Migrations (demonstrating migration history tracking)`)
+  console.log(`  • 5 Item Migrations (3 tasks, 2 events - demonstrating migration history)`)
 }
 
 // CLI interface

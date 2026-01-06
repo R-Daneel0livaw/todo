@@ -1,5 +1,6 @@
 import { Collection, Event } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
+import * as ItemMigrationHistoryManager from './ItemMigrationHistoryManager.js'
 
 export function getAllEvents(): Event[] {
   const stmt = db.prepare('SELECT * FROM events ORDER BY createDate DESC')
@@ -132,4 +133,58 @@ export function deleteEvent(eventId: number) {
 export function cancelEvent(eventId: number) {
   const stmt = db.prepare('UPDATE events SET status = ?, canceledDate = ? WHERE id = ?')
   stmt.run('CANCELED', new Date().toISOString(), eventId)
+}
+
+export function migrateEventToCollection(
+  eventId: number,
+  toCollectionId: number,
+  migratedBy?: string,
+  reason?: string
+) {
+  const transaction = db.transaction(() => {
+    // Get current collections for this event
+    const getCurrentCollections = db.prepare(`
+      SELECT collectionId FROM collectionItems
+      WHERE itemId = ? AND itemType = 'Event'
+    `)
+    const currentCollections = getCurrentCollections.all(eventId) as { collectionId: number }[]
+
+    // Record migration history for each current collection
+    if (currentCollections.length > 0) {
+      for (const collection of currentCollections) {
+        ItemMigrationHistoryManager.recordMigration(
+          eventId,
+          'Event',
+          collection.collectionId,
+          toCollectionId,
+          migratedBy,
+          reason
+        )
+      }
+    } else {
+      // No previous collection (initial assignment)
+      ItemMigrationHistoryManager.recordMigration(eventId, 'Event', null, toCollectionId, migratedBy, reason)
+    }
+
+    // Remove event from all current collections
+    const removeStmt = db.prepare(`
+      DELETE FROM collectionItems
+      WHERE itemId = ? AND itemType = 'Event'
+    `)
+    removeStmt.run(eventId)
+
+    // Add event to new collection
+    const addStmt = db.prepare(`
+      INSERT INTO collectionItems (collectionId, itemId, itemType)
+      VALUES (?, ?, 'Event')
+    `)
+    addStmt.run(toCollectionId, eventId)
+
+    // Update event status to MIGRATED if it was in a different collection
+    if (currentCollections.length > 0 && !currentCollections.some((c) => c.collectionId === toCollectionId)) {
+      const updateEvent = db.prepare('UPDATE events SET status = ? WHERE id = ?')
+      updateEvent.run('MIGRATED', eventId)
+    }
+  })
+  transaction()
 }

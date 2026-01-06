@@ -131,12 +131,12 @@ router.post('/:id/cancel', (req: Request, res: Response) => {
 router.post('/:id/migrate', (req: Request, res: Response): void => {
   try {
     const id = parseInt(req.params.id)
-    const { toCollectionId } = req.body
+    const { toCollectionId, migratedBy, reason } = req.body
     if (!toCollectionId) {
       res.status(400).json({ error: 'toCollectionId is required' })
       return
     }
-    TaskManager.migrateTaskToCollection(id, toCollectionId)
+    TaskManager.migrateTaskToCollection(id, toCollectionId, migratedBy, reason)
     res.json({ message: 'Task migrated successfully' })
   } catch (error) {
     res.status(500).json({ error: (error as Error).message })

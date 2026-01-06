@@ -112,4 +112,20 @@ router.post('/:id/cancel', (req: Request, res: Response) => {
   }
 })
 
+// POST /api/events/:id/migrate - Migrate event to another collection
+router.post('/:id/migrate', (req: Request, res: Response): void => {
+  try {
+    const id = parseInt(req.params.id)
+    const { toCollectionId, migratedBy, reason } = req.body
+    if (!toCollectionId) {
+      res.status(400).json({ error: 'toCollectionId is required' })
+      return
+    }
+    EventManager.migrateEventToCollection(id, toCollectionId, migratedBy, reason)
+    res.json({ message: 'Event migrated successfully' })
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message })
+  }
+})
+
 export default router
