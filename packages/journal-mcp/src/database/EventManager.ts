@@ -1,6 +1,8 @@
 import { Collection, Event } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
 import * as ItemMigrationHistoryManager from './ItemMigrationHistoryManager.js'
+import * as EventTemplateManager from './EventTemplateManager.js'
+import * as CollectionItemManager from './CollectionItemManager.js'
 
 export function getAllEvents(): Event[] {
   const stmt = db.prepare('SELECT * FROM events ORDER BY createDate DESC')
@@ -60,8 +62,8 @@ export function getEventsByCollection(collectionData: Partial<Collection>): Even
 
 export function addEvent(eventData: Event): number {
   const stmt = db.prepare(`
-    INSERT INTO events (title, description, location, status, createDate, startDate, scheduledDate, metadata)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO events (title, description, location, status, createDate, startDate, scheduledDate, metadata, template_id, instance_number)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
   const result = stmt.run(
     eventData.title,
@@ -71,7 +73,9 @@ export function addEvent(eventData: Event): number {
     eventData.createDate?.toISOString(),
     eventData.startDate?.toISOString(),
     eventData.scheduledDate?.toISOString(),
-    eventData.metadata ? JSON.stringify(eventData.metadata) : null
+    eventData.metadata ? JSON.stringify(eventData.metadata) : null,
+    eventData.template_id || null,
+    eventData.instance_number || null
   )
   return result.lastInsertRowid as number
 }
@@ -187,4 +191,64 @@ export function migrateEventToCollection(
     }
   })
   transaction()
+}
+
+/**
+ * Spawn a new event instance from a template
+ */
+export function spawnInstanceFromTemplate(templateId: number, collectionId?: number): number {
+  const template = EventTemplateManager.getTemplate(templateId)
+
+  // Get instance count
+  const countStmt = db.prepare('SELECT COUNT(*) as count FROM events WHERE template_id = ?')
+  const { count } = countStmt.get(templateId) as { count: number }
+
+  // Create event instance
+  const newEvent: Event = {
+    id: 0,
+    title: template.title,
+    description: template.description,
+    location: template.location,
+    status: 'CREATED',
+    createDate: new Date(),
+    startDate: undefined,
+    endDate: undefined,
+    canceledDate: undefined,
+    scheduledDate: undefined,
+    metadata: template.metadata,
+    template_id: templateId,
+    instance_number: count + 1
+  }
+
+  const eventId = addEvent(newEvent)
+
+  // Add to collection
+  const targetCollection = collectionId || template.default_collection_id
+  if (targetCollection) {
+    CollectionItemManager.addToCollection(targetCollection, eventId, 'Event')
+  }
+
+  return eventId
+}
+
+/**
+ * Complete an event instance and optionally spawn the next one
+ */
+export function completeEventInstance(eventId: number): { completed: number; next?: number } {
+  const event = getEvent(eventId)
+
+  // Complete the event
+  completeEvent(eventId)
+
+  // If it has a template, check auto-spawn
+  if (event.template_id) {
+    const template = EventTemplateManager.getTemplate(event.template_id)
+
+    if (template.auto_spawn) {
+      const nextId = spawnInstanceFromTemplate(event.template_id)
+      return { completed: eventId, next: nextId }
+    }
+  }
+
+  return { completed: eventId }
 }

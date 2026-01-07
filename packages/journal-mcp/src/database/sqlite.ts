@@ -14,6 +14,30 @@ const db: BetterSqlite3Database = new Database(dbPath)
 db.pragma('foreign_keys = ON')
 
 db.exec(`
+  CREATE TABLE IF NOT EXISTS task_templates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    topic TEXT,
+    createDate TEXT,
+    metadata TEXT,
+    auto_spawn INTEGER DEFAULT 0,
+    default_collection_id INTEGER,
+    FOREIGN KEY (default_collection_id) REFERENCES collections(id) ON DELETE SET NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS event_templates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    location TEXT,
+    createDate TEXT,
+    metadata TEXT,
+    auto_spawn INTEGER DEFAULT 0,
+    default_collection_id INTEGER,
+    FOREIGN KEY (default_collection_id) REFERENCES collections(id) ON DELETE SET NULL
+  );
+
   CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -25,7 +49,10 @@ db.exec(`
     endDate TEXT,
     canceledDate TEXT,
     metadata TEXT,
-    CHECK (status IN ('CREATED', 'MIGRATED', 'IN_PROGRESS', 'FINISHED', 'CANCELED', 'DELETED'))
+    template_id INTEGER,
+    instance_number INTEGER,
+    CHECK (status IN ('CREATED', 'MIGRATED', 'IN_PROGRESS', 'FINISHED', 'CANCELED', 'DELETED')),
+    FOREIGN KEY (template_id) REFERENCES task_templates(id) ON DELETE SET NULL
   );
 
   CREATE TABLE IF NOT EXISTS events (
@@ -40,7 +67,10 @@ db.exec(`
     canceledDate TEXT,
     scheduledDate TEXT,
     metadata TEXT,
-    CHECK (status IN ('CREATED', 'MIGRATED', 'IN_PROGRESS', 'FINISHED', 'CANCELED', 'DELETED'))
+    template_id INTEGER,
+    instance_number INTEGER,
+    CHECK (status IN ('CREATED', 'MIGRATED', 'IN_PROGRESS', 'FINISHED', 'CANCELED', 'DELETED')),
+    FOREIGN KEY (template_id) REFERENCES event_templates(id) ON DELETE SET NULL
   );
 
   CREATE TABLE IF NOT EXISTS collections (
@@ -129,13 +159,25 @@ db.exec(`
     FOREIGN KEY (to_collection_id) REFERENCES collections(id) ON DELETE SET NULL
   );
 
+  -- Indexes for task_templates
+  CREATE INDEX IF NOT EXISTS idx_task_templates_auto_spawn ON task_templates(auto_spawn);
+  CREATE INDEX IF NOT EXISTS idx_task_templates_default_collection ON task_templates(default_collection_id);
+
+  -- Indexes for event_templates
+  CREATE INDEX IF NOT EXISTS idx_event_templates_auto_spawn ON event_templates(auto_spawn);
+  CREATE INDEX IF NOT EXISTS idx_event_templates_default_collection ON event_templates(default_collection_id);
+
   -- Indexes for tasks
   CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
   CREATE INDEX IF NOT EXISTS idx_tasks_createDate ON tasks(createDate);
+  CREATE INDEX IF NOT EXISTS idx_tasks_template_id ON tasks(template_id);
+  CREATE INDEX IF NOT EXISTS idx_tasks_instance_number ON tasks(template_id, instance_number);
 
   -- Indexes for events
   CREATE INDEX IF NOT EXISTS idx_events_status ON events(status);
   CREATE INDEX IF NOT EXISTS idx_events_scheduledDate ON events(scheduledDate);
+  CREATE INDEX IF NOT EXISTS idx_events_template_id ON events(template_id);
+  CREATE INDEX IF NOT EXISTS idx_events_instance_number ON events(template_id, instance_number);
 
   -- Indexes for collections
   CREATE INDEX IF NOT EXISTS idx_collections_type ON collections(type);

@@ -6,6 +6,8 @@ import collectionsRouter from './routes/collections.js'
 import dependenciesRouter from './routes/dependencies.js'
 import activityRouter from './routes/activity.js'
 import vmsRouter from './routes/vms.js'
+import taskTemplatesRouter from './routes/task-templates.js'
+import eventTemplatesRouter from './routes/event-templates.js'
 
 const app: Express = express()
 const PORT = process.env.PORT || 3333
@@ -36,6 +38,8 @@ app.get('/api/health', (req: Request, res: Response) => {
 // API Routes
 app.use('/api/tasks', tasksRouter)
 app.use('/api/events', eventsRouter)
+app.use('/api/task-templates', taskTemplatesRouter)
+app.use('/api/event-templates', eventTemplatesRouter)
 app.use('/api/collections', collectionsRouter)
 app.use('/api/dependencies', dependenciesRouter)
 app.use('/api/activity', activityRouter)

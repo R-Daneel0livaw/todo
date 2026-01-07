@@ -1,6 +1,8 @@
 import { Collection, Task } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
 import * as ItemMigrationHistoryManager from './ItemMigrationHistoryManager.js'
+import * as TaskTemplateManager from './TaskTemplateManager.js'
+import * as CollectionItemManager from './CollectionItemManager.js'
 
 export function getAllTasks(): Task[] {
   const stmt = db.prepare('SELECT * FROM tasks ORDER BY createDate DESC')
@@ -60,8 +62,8 @@ export function getTasksByCollection(collectionData: Partial<Collection>): Task[
 
 export function addTask(taskData: Task): number {
   const stmt = db.prepare(`
-    INSERT INTO tasks (title, description, topic, status, createDate, startDate, metadata)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tasks (title, description, topic, status, createDate, startDate, metadata, template_id, instance_number)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
   const result = stmt.run(
     taskData.title,
@@ -70,7 +72,9 @@ export function addTask(taskData: Task): number {
     taskData.status,
     taskData.createDate?.toISOString(),
     taskData.startDate?.toISOString(),
-    taskData.metadata ? JSON.stringify(taskData.metadata) : null
+    taskData.metadata ? JSON.stringify(taskData.metadata) : null,
+    taskData.template_id || null,
+    taskData.instance_number || null
   )
   return result.lastInsertRowid as number
 }
@@ -182,4 +186,63 @@ export function migrateTaskToCollection(
     }
   })
   transaction()
+}
+
+/**
+ * Spawn a new task instance from a template
+ */
+export function spawnInstanceFromTemplate(templateId: number, collectionId?: number): number {
+  const template = TaskTemplateManager.getTemplate(templateId)
+
+  // Get instance count
+  const countStmt = db.prepare('SELECT COUNT(*) as count FROM tasks WHERE template_id = ?')
+  const { count } = countStmt.get(templateId) as { count: number }
+
+  // Create task instance
+  const newTask: Task = {
+    id: 0,
+    title: template.title,
+    description: template.description,
+    topic: template.topic,
+    status: 'CREATED',
+    createDate: new Date(),
+    startDate: undefined,
+    endDate: undefined,
+    canceledDate: undefined,
+    metadata: template.metadata,
+    template_id: templateId,
+    instance_number: count + 1
+  }
+
+  const taskId = addTask(newTask)
+
+  // Add to collection
+  const targetCollection = collectionId || template.default_collection_id
+  if (targetCollection) {
+    CollectionItemManager.addToCollection(targetCollection, taskId, 'Task')
+  }
+
+  return taskId
+}
+
+/**
+ * Complete a task instance and optionally spawn the next one
+ */
+export function completeTaskInstance(taskId: number): { completed: number; next?: number } {
+  const task = getTask(taskId)
+
+  // Complete the task
+  completeTask(taskId)
+
+  // If it has a template, check auto-spawn
+  if (task.template_id) {
+    const template = TaskTemplateManager.getTemplate(task.template_id)
+
+    if (template.auto_spawn) {
+      const nextId = spawnInstanceFromTemplate(task.template_id)
+      return { completed: taskId, next: nextId }
+    }
+  }
+
+  return { completed: taskId }
 }

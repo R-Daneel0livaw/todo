@@ -5,6 +5,8 @@ import * as TaskDependencyManager from '../database/TaskDependencyManager.js'
 import * as CollectionItemManager from '../database/CollectionItemManager.js'
 import * as ActivityManager from '../database/ActivityManager.js'
 import * as VmRegistryManager from '../database/VmRegistryManager.js'
+import * as TaskTemplateManager from '../database/TaskTemplateManager.js'
+import * as EventTemplateManager from '../database/EventTemplateManager.js'
 import db from '../database/sqlite.js'
 
 /**
@@ -21,6 +23,8 @@ export function clearAllData() {
   db.prepare('DELETE FROM vm_registry').run()
   db.prepare('DELETE FROM tasks').run()
   db.prepare('DELETE FROM events').run()
+  db.prepare('DELETE FROM task_templates').run()
+  db.prepare('DELETE FROM event_templates').run()
   db.prepare('DELETE FROM collections').run()
 
   console.log('✅ All data cleared')
@@ -481,6 +485,103 @@ export function seedTestData() {
 
   console.log(`    ✓ Created migration history (3 task migrations, 2 event migrations)`)
 
+  // 9. Create Task Templates
+  console.log('  📋 Creating task templates...')
+
+  const readTemplate = TaskTemplateManager.addTemplate({
+    id: 0,
+    title: 'Read',
+    description: 'Daily reading session',
+    topic: 'personal',
+    createDate: now,
+    metadata: {},
+    auto_spawn: true,
+    default_collection_id: taskList.id
+  })
+
+  const exerciseTemplate = TaskTemplateManager.addTemplate({
+    id: 0,
+    title: 'Exercise',
+    description: 'Morning workout routine',
+    topic: 'health',
+    createDate: now,
+    metadata: {},
+    auto_spawn: true,
+    default_collection_id: taskList.id
+  })
+
+  const codeReviewTemplate = TaskTemplateManager.addTemplate({
+    id: 0,
+    title: 'Code Review',
+    description: 'Review open pull requests',
+    topic: 'code-review',
+    createDate: now,
+    metadata: {},
+    auto_spawn: false,
+    default_collection_id: projectTodo.id
+  })
+
+  console.log(`    ✓ Created 3 task templates`)
+
+  // 10. Create Event Templates
+  console.log('  📅 Creating event templates...')
+
+  const standupTemplate = EventTemplateManager.addTemplate({
+    id: 0,
+    title: 'Daily Standup',
+    description: 'Team daily sync',
+    location: 'Zoom',
+    createDate: now,
+    metadata: {},
+    auto_spawn: true,
+    default_collection_id: eventList.id
+  })
+
+  const weeklyReviewTemplate = EventTemplateManager.addTemplate({
+    id: 0,
+    title: 'Weekly Review',
+    description: 'Review weekly progress and plan ahead',
+    location: 'Home Office',
+    createDate: now,
+    metadata: {},
+    auto_spawn: false,
+    default_collection_id: eventList.id
+  })
+
+  console.log(`    ✓ Created 2 event templates`)
+
+  // 11. Spawn some instances from templates
+  console.log('  🌱 Spawning template instances...')
+
+  // Spawn 3 "Read" instances
+  const readInstance1 = TaskManager.spawnInstanceFromTemplate(readTemplate)
+  TaskManager.completeTask(readInstance1)
+
+  const readInstance2 = TaskManager.spawnInstanceFromTemplate(readTemplate)
+  TaskManager.completeTask(readInstance2)
+
+  TaskManager.spawnInstanceFromTemplate(readTemplate) // Active instance #3
+
+  // Spawn 2 "Exercise" instances
+  const exerciseInstance1 = TaskManager.spawnInstanceFromTemplate(exerciseTemplate)
+  TaskManager.completeTask(exerciseInstance1)
+
+  TaskManager.spawnInstanceFromTemplate(exerciseTemplate) // Active instance #2
+
+  // Spawn 1 "Code Review" instance (no auto-spawn)
+  TaskManager.spawnInstanceFromTemplate(codeReviewTemplate)
+
+  // Spawn 2 "Daily Standup" instances
+  const standupInstance1 = EventManager.spawnInstanceFromTemplate(standupTemplate)
+  EventManager.completeEvent(standupInstance1)
+
+  EventManager.spawnInstanceFromTemplate(standupTemplate) // Active instance #2
+
+  // Spawn 1 "Weekly Review" instance (no auto-spawn)
+  EventManager.spawnInstanceFromTemplate(weeklyReviewTemplate)
+
+  console.log(`    ✓ Spawned 9 instances (6 tasks, 3 events)`)
+
   console.log('\n✅ Test data seeding complete!')
   console.log('\nSummary:')
   console.log(`  • 10 Collections`)
@@ -492,6 +593,9 @@ export function seedTestData() {
   console.log(`    - 1 QUARTERLY (Quarter 1 Plan)`)
   console.log(`  • 12 Tasks (various statuses and topics)`)
   console.log(`  • 8 Events (meetings, birthdays, milestones)`)
+  console.log(`  • 3 Task Templates (Read, Exercise, Code Review)`)
+  console.log(`  • 2 Event Templates (Daily Standup, Weekly Review)`)
+  console.log(`  • 9 Template Instances (6 task instances, 3 event instances)`)
   console.log(`  • 3 Task Dependencies`)
   console.log(`  • 4 Activity Entries`)
   console.log(`  • 3 VMs`)
