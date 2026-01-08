@@ -62,13 +62,14 @@ export function getEventsByCollection(collectionData: Partial<Collection>): Even
 
 export function addEvent(eventData: Event): number {
   const stmt = db.prepare(`
-    INSERT INTO events (title, description, location, status, createDate, startDate, scheduledDate, metadata, template_id, instance_number)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO events (title, description, location, link, status, createDate, startDate, scheduledDate, metadata, template_id, instance_number)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `)
   const result = stmt.run(
     eventData.title,
     eventData.description,
     eventData.location,
+    eventData.link,
     eventData.status,
     eventData.createDate?.toISOString(),
     eventData.startDate?.toISOString(),
@@ -95,6 +96,10 @@ export function updateEvent(eventData: Partial<Event> & { id: number }) {
   if (eventData.location !== undefined) {
     fields.push('location = ?')
     values.push(eventData.location)
+  }
+  if (eventData.link !== undefined) {
+    fields.push('link = ?')
+    values.push(eventData.link)
   }
   if (eventData.status !== undefined) {
     fields.push('status = ?')
@@ -209,6 +214,7 @@ export function spawnInstanceFromTemplate(templateId: number, collectionId?: num
     title: template.title,
     description: template.description,
     location: template.location,
+    link: template.link,
     status: 'CREATED',
     createDate: new Date(),
     startDate: undefined,

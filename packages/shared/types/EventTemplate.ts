@@ -3,6 +3,7 @@ export interface EventTemplate {
   title: string
   description?: string
   location?: string
+  link?: string
   createDate: Date
   metadata?: Record<string, any>
   auto_spawn: boolean

@@ -13,13 +13,14 @@ export function getTemplate(templateId: number): EventTemplate {
 
 export function addTemplate(templateData: EventTemplate): number {
   const stmt = db.prepare(`
-    INSERT INTO event_templates (title, description, location, createDate, metadata, auto_spawn, default_collection_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO event_templates (title, description, location, link, createDate, metadata, auto_spawn, default_collection_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `)
   const result = stmt.run(
     templateData.title,
     templateData.description,
     templateData.location,
+    templateData.link,
     templateData.createDate?.toISOString(),
     templateData.metadata ? JSON.stringify(templateData.metadata) : null,
     templateData.auto_spawn ? 1 : 0,
@@ -43,6 +44,10 @@ export function updateTemplate(templateData: Partial<EventTemplate> & { id: numb
   if (templateData.location !== undefined) {
     fields.push('location = ?')
     values.push(templateData.location)
+  }
+  if (templateData.link !== undefined) {
+    fields.push('link = ?')
+    values.push(templateData.link)
   }
   if (templateData.metadata !== undefined) {
     fields.push('metadata = ?')

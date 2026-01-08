@@ -305,6 +305,7 @@ export function seedTestData() {
     title: 'Team standup',
     description: 'Daily team sync',
     location: 'Zoom',
+    link: 'https://zoom.us/j/123456789',
     status: 'CREATED',
     createDate: now,
     scheduledDate: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 9, 0)
@@ -351,6 +352,7 @@ export function seedTestData() {
     title: 'Architecture review',
     description: 'Review system design with team',
     location: 'Virtual',
+    link: 'https://meet.google.com/abc-defg-hij',
     status: 'CREATED',
     createDate: feb1,
     scheduledDate: new Date('2026-02-01T10:00:00')
@@ -531,6 +533,7 @@ export function seedTestData() {
     title: 'Daily Standup',
     description: 'Team daily sync',
     location: 'Zoom',
+    link: 'https://zoom.us/j/987654321',
     createDate: now,
     metadata: {},
     auto_spawn: true,
@@ -542,6 +545,7 @@ export function seedTestData() {
     title: 'Weekly Review',
     description: 'Review weekly progress and plan ahead',
     location: 'Home Office',
+    link: 'https://meet.google.com/weekly-review',
     createDate: now,
     metadata: {},
     auto_spawn: false,
