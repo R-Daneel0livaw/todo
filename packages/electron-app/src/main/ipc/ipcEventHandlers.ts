@@ -3,6 +3,10 @@ import { IpcMainInvokeEvent, ipcMain } from 'electron'
 import * as JournalClient from '../api/journal-client'
 
 export function setupEventHandlers() {
+  ipcMain.handle('get-all-events', async (_: IpcMainInvokeEvent): Promise<Event[]> => {
+    return JournalClient.getAllEvents()
+  })
+
   ipcMain.handle('get-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<Event> => {
     return JournalClient.getEvent(eventId)
   })

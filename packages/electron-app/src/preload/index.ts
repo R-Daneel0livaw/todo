@@ -14,6 +14,7 @@ import type {
 } from '@awesome-dev-journal/shared'
 
 const taskApi: TaskApi = {
+  getAllTasks: () => ipcRenderer.invoke('get-all-tasks'),
   getTask: (taskId) => ipcRenderer.invoke('get-task', taskId),
   getTaskByCollectionId: (taskId, collectionId) =>
     ipcRenderer.invoke('get-task-by-collection-id', taskId, collectionId),
@@ -30,6 +31,7 @@ const taskApi: TaskApi = {
 }
 
 const eventApi: EventApi = {
+  getAllEvents: () => ipcRenderer.invoke('get-all-events'),
   getEvent: (eventId) => ipcRenderer.invoke('get-event', eventId),
   getEventByCollectionId: (eventId, collectionId) =>
     ipcRenderer.invoke('get-event-by-collection-id', eventId, collectionId),

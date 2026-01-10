@@ -3,6 +3,10 @@ import { IpcMainInvokeEvent, ipcMain } from 'electron'
 import * as JournalClient from '../api/journal-client'
 
 export function setupTaskHandlers() {
+  ipcMain.handle('get-all-tasks', async (_: IpcMainInvokeEvent): Promise<Task[]> => {
+    return JournalClient.getAllTasks()
+  })
+
   ipcMain.handle('get-task', async (_: IpcMainInvokeEvent, taskId: number): Promise<Task> => {
     return JournalClient.getTask(taskId)
   })

@@ -1,6 +1,7 @@
 import { Collection, Task } from '.'
 
 export interface TaskApi {
+  getAllTasks(): Promise<Task[]>
   getTask(taskId: number): Promise<Task>
   getTaskByCollectionId(taskId: number, collectionId: number): Promise<Task>
   getTasksByCollectionId(collectionId: number): Promise<Task[]>

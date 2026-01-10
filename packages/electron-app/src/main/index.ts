@@ -17,7 +17,7 @@ function createWindow(): void {
     width: 900,
     height: 670,
     show: false,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -26,7 +26,10 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.webContents.openDevTools()
+  // Open dev tools only in development mode
+  if (isDev) {
+    mainWindow.webContents.openDevTools()
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()

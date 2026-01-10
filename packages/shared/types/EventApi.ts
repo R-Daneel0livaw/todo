@@ -1,6 +1,7 @@
 import { Collection, Event } from '.'
 
 export interface EventApi {
+  getAllEvents(): Promise<Event[]>
   getEvent(eventId: number): Promise<Event>
   getEventByCollectionId(eventId: number, collectionId: number): Promise<Event>
   getEventsByCollectionId(collectionId: number): Promise<Event[]>
