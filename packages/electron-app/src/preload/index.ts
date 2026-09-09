@@ -27,7 +27,7 @@ const taskApi: TaskApi = {
   completeTask: (taskId) => ipcRenderer.invoke('complete-task', taskId),
   deleteTask: (taskId) => ipcRenderer.invoke('delete-task', taskId),
   cancelTask: (taskId) => ipcRenderer.invoke('cancel-task', taskId),
-  migrateTask: (taskId, toTaskId) => ipcRenderer.invoke('migrate-task', taskId, toTaskId)
+  migrateTask: (taskId, toCollectionId) => ipcRenderer.invoke('migrate-task', taskId, toCollectionId)
 }
 
 const eventApi: EventApi = {
@@ -43,7 +43,9 @@ const eventApi: EventApi = {
   updateEvent: (eventData) => ipcRenderer.invoke('update-event', eventData),
   completeEvent: (eventId) => ipcRenderer.invoke('complete-event', eventId),
   deleteEvent: (eventId) => ipcRenderer.invoke('delete-event', eventId),
-  cancelEvent: (eventId) => ipcRenderer.invoke('cancel-event', eventId)
+  cancelEvent: (eventId) => ipcRenderer.invoke('cancel-event', eventId),
+  migrateEvent: (eventId, toCollectionId) =>
+    ipcRenderer.invoke('migrate-event', eventId, toCollectionId)
 }
 
 const collectionApi: CollectionApi = {

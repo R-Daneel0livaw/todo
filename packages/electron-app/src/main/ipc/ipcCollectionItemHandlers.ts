@@ -35,18 +35,20 @@ export function setupCollectionItemHandlers() {
     }
   )
 
-  // TODO: Temporarily disabled - need HTTP API endpoints for these methods
-  // ipcMain.handle(
-  //   'get-item-collections',
-  //   async (
-  //     _: IpcMainInvokeEvent,
-  //     itemId: number,
-  //     itemType: 'Task' | 'Event' | 'Collection'
-  //   ): Promise<CollectionItem[]> => {
-  //     return getItemCollections(itemId, itemType)
-  //   }
-  // )
+  ipcMain.handle(
+    'get-item-collections',
+    async (
+      _: IpcMainInvokeEvent,
+      itemId: number,
+      itemType: 'Task' | 'Event' | 'Collection'
+    ): Promise<CollectionItem[]> => {
+      return JournalClient.getItemCollections(itemId, itemType)
+    }
+  )
 
+  // Disabled: unused so far. The HTTP route exists
+  // (GET /api/collections/:id/items/:itemId/check) — wire this up like
+  // get-item-collections above whenever something needs it.
   // ipcMain.handle(
   //   'is-item-in-collection',
   //   async (

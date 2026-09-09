@@ -86,11 +86,11 @@ export async function cancelTask(taskId: number): Promise<{ message: string }> {
 
 export async function migrateTask(
   taskId: number,
-  toTaskId: number
+  toCollectionId: number
 ): Promise<{ message: string }> {
   return fetchJSON(`/tasks/${taskId}/migrate`, {
     method: 'POST',
-    body: JSON.stringify({ toTaskId })
+    body: JSON.stringify({ toCollectionId, migratedBy: 'user' })
   })
 }
 
@@ -142,6 +142,16 @@ export async function completeEvent(eventId: number): Promise<{ message: string 
 export async function cancelEvent(eventId: number): Promise<{ message: string }> {
   return fetchJSON(`/events/${eventId}/cancel`, {
     method: 'POST'
+  })
+}
+
+export async function migrateEvent(
+  eventId: number,
+  toCollectionId: number
+): Promise<{ message: string }> {
+  return fetchJSON(`/events/${eventId}/migrate`, {
+    method: 'POST',
+    body: JSON.stringify({ toCollectionId, migratedBy: 'user' })
   })
 }
 
@@ -220,6 +230,13 @@ export async function removeItemFromCollection(
     method: 'DELETE',
     body: JSON.stringify({ itemId, itemType })
   })
+}
+
+export async function getItemCollections(
+  itemId: number,
+  itemType: 'Task' | 'Event' | 'Collection'
+): Promise<CollectionItem[]> {
+  return fetchJSON<CollectionItem[]>(`/collections/item/${itemId}?itemType=${itemType}`)
 }
 
 // ============================================================================

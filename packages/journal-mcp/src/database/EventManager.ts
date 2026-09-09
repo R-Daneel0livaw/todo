@@ -3,6 +3,8 @@ import db from './sqlite.js'
 import * as ItemMigrationHistoryManager from './ItemMigrationHistoryManager.js'
 import * as EventTemplateManager from './EventTemplateManager.js'
 import * as CollectionItemManager from './CollectionItemManager.js'
+import * as CollectionManager from './CollectionManager.js'
+import { toISOStringOrNull } from '../utils/date-utils.js'
 
 export function getAllEvents(): Event[] {
   const stmt = db.prepare('SELECT * FROM events ORDER BY createDate DESC')
@@ -71,14 +73,23 @@ export function addEvent(eventData: Event): number {
     eventData.location,
     eventData.link,
     eventData.status,
-    eventData.createDate?.toISOString(),
-    eventData.startDate?.toISOString(),
-    eventData.scheduledDate?.toISOString(),
+    toISOStringOrNull(eventData.createDate),
+    toISOStringOrNull(eventData.startDate),
+    toISOStringOrNull(eventData.scheduledDate),
     eventData.metadata ? JSON.stringify(eventData.metadata) : null,
     eventData.template_id || null,
     eventData.instance_number || null
   )
-  return result.lastInsertRowid as number
+  const eventId = result.lastInsertRowid as number
+
+  // Every event belongs to the catch-all Event List, regardless of which
+  // other collection(s) it's also organized into.
+  const defaultCollection = CollectionManager.getDefaultCollection('EVENT')
+  if (defaultCollection) {
+    CollectionItemManager.addToCollection(defaultCollection.id, eventId, 'Event')
+  }
+
+  return eventId
 }
 
 export function updateEvent(eventData: Partial<Event> & { id: number }) {
@@ -107,15 +118,15 @@ export function updateEvent(eventData: Partial<Event> & { id: number }) {
   }
   if (eventData.startDate !== undefined) {
     fields.push('startDate = ?')
-    values.push(eventData.startDate?.toISOString())
+    values.push(toISOStringOrNull(eventData.startDate))
   }
   if (eventData.endDate !== undefined) {
     fields.push('endDate = ?')
-    values.push(eventData.endDate?.toISOString())
+    values.push(toISOStringOrNull(eventData.endDate))
   }
   if (eventData.scheduledDate !== undefined) {
     fields.push('scheduledDate = ?')
-    values.push(eventData.scheduledDate?.toISOString())
+    values.push(toISOStringOrNull(eventData.scheduledDate))
   }
   if (eventData.metadata !== undefined) {
     fields.push('metadata = ?')
@@ -175,19 +186,26 @@ export function migrateEventToCollection(
       ItemMigrationHistoryManager.recordMigration(eventId, 'Event', null, toCollectionId, migratedBy, reason)
     }
 
-    // Remove event from all current collections
-    const removeStmt = db.prepare(`
-      DELETE FROM collectionItems
-      WHERE itemId = ? AND itemType = 'Event'
-    `)
-    removeStmt.run(eventId)
+    // Remove event from all current collections, except the catch-all Event
+    // List — an event always stays visible there regardless of migration.
+    const defaultCollection = CollectionManager.getDefaultCollection('EVENT')
+    const removeStmt = defaultCollection
+      ? db.prepare(`
+          DELETE FROM collectionItems
+          WHERE itemId = ? AND itemType = 'Event' AND collectionId != ?
+        `)
+      : db.prepare(`
+          DELETE FROM collectionItems
+          WHERE itemId = ? AND itemType = 'Event'
+        `)
+    if (defaultCollection) {
+      removeStmt.run(eventId, defaultCollection.id)
+    } else {
+      removeStmt.run(eventId)
+    }
 
-    // Add event to new collection
-    const addStmt = db.prepare(`
-      INSERT INTO collectionItems (collectionId, itemId, itemType)
-      VALUES (?, ?, 'Event')
-    `)
-    addStmt.run(toCollectionId, eventId)
+    // Add event to new collection (idempotent, in case it's the Event List itself)
+    CollectionItemManager.addToCollection(toCollectionId, eventId, 'Event')
 
     // Update event status to MIGRATED if it was in a different collection
     if (currentCollections.length > 0 && !currentCollections.some((c) => c.collectionId === toCollectionId)) {

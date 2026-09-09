@@ -12,8 +12,8 @@ export const getEventsByCollection = async (
   return window.eventApi.getEventsByCollection(cd)
 }
 
-export const addEvent = async (eventData: Event): Promise<void> => {
-  window.eventApi.addEvent(eventData)
+export const addEvent = async (eventData: Event): Promise<number> => {
+  return window.eventApi.addEvent(eventData)
 }
 
 export const deleteEvent = async (eventId: number): Promise<void> => {
@@ -22,4 +22,8 @@ export const deleteEvent = async (eventId: number): Promise<void> => {
 
 export const cancelEvent = async (eventId: number): Promise<void> => {
   window.eventApi.cancelEvent(eventId)
+}
+
+export const migrateEvent = async (eventId: number, toCollectionId: number): Promise<void> => {
+  return window.eventApi.migrateEvent(eventId, toCollectionId)
 }

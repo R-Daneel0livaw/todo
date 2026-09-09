@@ -1,5 +1,9 @@
 import { Collection } from '@awesome-dev-journal/shared'
 
+export const getCollection = async (collectionId: number): Promise<Collection> => {
+  return window.collectionApi.getCollection(collectionId)
+}
+
 export const getCollections = async (): Promise<Collection[]> => {
   return window.collectionApi.getCollections()
 }

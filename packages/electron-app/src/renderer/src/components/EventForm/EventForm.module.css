@@ -1,0 +1,86 @@
+.eventFormContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: #333;
+}
+
+.eventFormTitle {
+  font-size: 1.4rem;
+}
+
+.eventForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+  margin-top: 1rem;
+}
+
+.fieldHolder {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.innerLabel {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  display: flex;
+  align-items: center;
+  color: #aeb4ba;
+  font-weight: bold;
+  cursor: text;
+  transition: 0.3s ease-in-out;
+}
+
+input[type='text'].innerInput,
+input[type='date'].innerInput,
+textarea.innerInput {
+  height: 1.8rem;
+}
+
+.innerInput:focus + label,
+.innerInput.touched:valid + label {
+  font-size: 0.85rem;
+  top: -25px;
+  left: 0;
+  pointer-events: none;
+}
+
+.innerInput.touched:valid + label {
+  color: #42a96a;
+}
+
+.innerInput.touched:invalid + label {
+  color: #ef5350;
+}
+
+.eventFormMidWidthInput {
+  width: 35%;
+}
+
+.eventFormLongWidthInput {
+  width: 65%;
+}
+
+.eventFormInputContainer,
+.eventFormBtnContainer {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.eventFormBtn {
+  width: fit-content;
+}
+
+input[type='date'].innerInput::-webkit-datetime-edit-fields-wrapper,
+input[type='date'].innerInput::-webkit-datetime-edit-text {
+  color: transparent;
+}
+
+input[type='date'].innerInput:focus::-webkit-datetime-edit-fields-wrapper,
+input[type='date'].innerInput:focus::-webkit-datetime-edit-text,
+input[type='date'].innerInput.touched::-webkit-datetime-edit-fields-wrapper,
+input[type='date'].innerInput.touched::-webkit-datetime-edit-text {
+  color: initial;
+}

@@ -1,5 +1,6 @@
 import { EventTemplate } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
+import { toISOStringOrNull } from '../utils/date-utils.js'
 
 export function getAllTemplates(): EventTemplate[] {
   const stmt = db.prepare('SELECT * FROM event_templates ORDER BY title')
@@ -21,7 +22,7 @@ export function addTemplate(templateData: EventTemplate): number {
     templateData.description,
     templateData.location,
     templateData.link,
-    templateData.createDate?.toISOString(),
+    toISOStringOrNull(templateData.createDate),
     templateData.metadata ? JSON.stringify(templateData.metadata) : null,
     templateData.auto_spawn ? 1 : 0,
     templateData.default_collection_id

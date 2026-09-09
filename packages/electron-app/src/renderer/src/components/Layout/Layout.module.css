@@ -1,0 +1,82 @@
+.layout {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #232428;
+  border-bottom: 1px solid #1e1f22;
+}
+
+.navLink {
+  background: none;
+  border: none;
+  color: #b5bac1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.navLink:hover {
+  background: #2b2d31;
+  color: #f2f3f5;
+}
+
+.navLinkActive {
+  background: #1976d2;
+  color: white;
+}
+
+.navLinkActive:hover {
+  background: #1976d2;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.6rem 1.5rem;
+  background: #2b2d31;
+  border-bottom: 1px solid #1e1f22;
+  font-size: 0.85rem;
+}
+
+.breadcrumbItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breadcrumbSeparator {
+  color: #6d6f78;
+}
+
+.breadcrumbLink {
+  background: none;
+  border: none;
+  color: #8ab4f8;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbCurrent {
+  color: #f2f3f5;
+  font-weight: 600;
+}
+
+.content {
+  flex: 1;
+  background: #f4f4f5;
+}

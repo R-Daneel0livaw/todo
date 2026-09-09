@@ -12,6 +12,13 @@ export function addToCollection(
   itemId: number,
   itemType: 'Task' | 'Event' | 'Collection'
 ): number {
+  const existing = db
+    .prepare(
+      `SELECT id FROM collectionItems WHERE collectionId = ? AND itemId = ? AND itemType = ?`
+    )
+    .get(collectionId, itemId, itemType) as { id: number } | undefined
+  if (existing) return existing.id
+
   const stmt = db.prepare(`
     INSERT INTO collectionItems (collectionId, itemId, itemType)
     VALUES (?, ?, ?)

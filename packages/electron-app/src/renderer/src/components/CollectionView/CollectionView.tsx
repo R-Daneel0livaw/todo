@@ -19,7 +19,7 @@ function CollectionView({ collection, isExpanded, onExpand }: CollectionViewProp
       <div className={styles.collectionViewContainer} onClick={() => onExpand(collection.id)}>
         <h2 className={styles.collectionViewTitle}>
           <span className={styles.collectionViewType}>[{collection.type.charAt(0)}]</span>
-          <span className={styles.collectionViewType}>[{collection.subType.charAt(0)}]</span>
+          <span className={styles.collectionViewType}>[{collection.subType?.charAt(0)}]</span>
           {collection.title}
         </h2>
         <p className={styles.collectionViewMainInfo}>{collection.description}</p>

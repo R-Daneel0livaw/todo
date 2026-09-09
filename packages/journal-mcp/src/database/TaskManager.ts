@@ -3,6 +3,8 @@ import db from './sqlite.js'
 import * as ItemMigrationHistoryManager from './ItemMigrationHistoryManager.js'
 import * as TaskTemplateManager from './TaskTemplateManager.js'
 import * as CollectionItemManager from './CollectionItemManager.js'
+import * as CollectionManager from './CollectionManager.js'
+import { toISOStringOrNull } from '../utils/date-utils.js'
 
 export function getAllTasks(): Task[] {
   const stmt = db.prepare('SELECT * FROM tasks ORDER BY createDate DESC')
@@ -70,13 +72,22 @@ export function addTask(taskData: Task): number {
     taskData.description,
     taskData.topic,
     taskData.status,
-    taskData.createDate?.toISOString(),
-    taskData.startDate?.toISOString(),
+    toISOStringOrNull(taskData.createDate),
+    toISOStringOrNull(taskData.startDate),
     taskData.metadata ? JSON.stringify(taskData.metadata) : null,
     taskData.template_id || null,
     taskData.instance_number || null
   )
-  return result.lastInsertRowid as number
+  const taskId = result.lastInsertRowid as number
+
+  // Every task belongs to the catch-all Task List, regardless of which
+  // other collection(s) it's also organized into.
+  const defaultCollection = CollectionManager.getDefaultCollection('TASK')
+  if (defaultCollection) {
+    CollectionItemManager.addToCollection(defaultCollection.id, taskId, 'Task')
+  }
+
+  return taskId
 }
 
 export function updateTask(taskData: Partial<Task> & { id: number }) {
@@ -101,11 +112,11 @@ export function updateTask(taskData: Partial<Task> & { id: number }) {
   }
   if (taskData.startDate !== undefined) {
     fields.push('startDate = ?')
-    values.push(taskData.startDate?.toISOString())
+    values.push(toISOStringOrNull(taskData.startDate))
   }
   if (taskData.endDate !== undefined) {
     fields.push('endDate = ?')
-    values.push(taskData.endDate?.toISOString())
+    values.push(toISOStringOrNull(taskData.endDate))
   }
   if (taskData.metadata !== undefined) {
     fields.push('metadata = ?')
@@ -165,19 +176,26 @@ export function migrateTaskToCollection(
       ItemMigrationHistoryManager.recordMigration(taskId, 'Task', null, toCollectionId, migratedBy, reason)
     }
 
-    // Remove task from all current collections
-    const removeStmt = db.prepare(`
-      DELETE FROM collectionItems
-      WHERE itemId = ? AND itemType = 'Task'
-    `)
-    removeStmt.run(taskId)
+    // Remove task from all current collections, except the catch-all Task
+    // List — a task always stays visible there regardless of migration.
+    const defaultCollection = CollectionManager.getDefaultCollection('TASK')
+    const removeStmt = defaultCollection
+      ? db.prepare(`
+          DELETE FROM collectionItems
+          WHERE itemId = ? AND itemType = 'Task' AND collectionId != ?
+        `)
+      : db.prepare(`
+          DELETE FROM collectionItems
+          WHERE itemId = ? AND itemType = 'Task'
+        `)
+    if (defaultCollection) {
+      removeStmt.run(taskId, defaultCollection.id)
+    } else {
+      removeStmt.run(taskId)
+    }
 
-    // Add task to new collection
-    const addStmt = db.prepare(`
-      INSERT INTO collectionItems (collectionId, itemId, itemType)
-      VALUES (?, ?, 'Task')
-    `)
-    addStmt.run(toCollectionId, taskId)
+    // Add task to new collection (idempotent, in case it's the Task List itself)
+    CollectionItemManager.addToCollection(toCollectionId, taskId, 'Task')
 
     // Update task status to MIGRATED if it was in a different collection
     if (currentCollections.length > 0 && !currentCollections.some((c) => c.collectionId === toCollectionId)) {

@@ -1,5 +1,6 @@
 import { Collection } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
+import { toISOStringOrNull } from '../utils/date-utils.js'
 
 export function getCollection(collectionId: number): Collection {
   const stmt = db.prepare('SELECT * FROM collections WHERE id = ?')
@@ -19,6 +20,16 @@ export function getCollectionsByType(type: string): Collection[] {
   return collections.map((c) => convert(c))
 }
 
+/**
+ * The catch-all "Task List" / "Event List" collection (type=DEFAULT) that
+ * every task/event belongs to regardless of what else it's organized into.
+ */
+export function getDefaultCollection(subType: 'TASK' | 'EVENT'): Collection | undefined {
+  const stmt = db.prepare('SELECT * FROM collections WHERE type = ? AND subType = ? LIMIT 1')
+  const collection = stmt.get('DEFAULT', subType) as Collection | undefined
+  return collection ? convert(collection) : undefined
+}
+
 export function addCollection(collectionData: Collection): number {
   const stmt = db.prepare(
     `INSERT INTO collections (title, description, longDescription, type, subType, createDate, startDate, metadata)
@@ -30,8 +41,8 @@ export function addCollection(collectionData: Collection): number {
     collectionData.longDescription,
     collectionData.type,
     collectionData.subType,
-    collectionData.createDate?.toISOString(),
-    collectionData.startDate?.toISOString(),
+    toISOStringOrNull(collectionData.createDate),
+    toISOStringOrNull(collectionData.startDate),
     collectionData.metadata ? JSON.stringify(collectionData.metadata) : null
   )
   return result.lastInsertRowid as number
@@ -49,8 +60,8 @@ export function addAndRetrieveCollection(collectionData: Collection): Collection
     collectionData.longDescription,
     collectionData.type,
     collectionData.subType,
-    collectionData.createDate?.toISOString(),
-    collectionData.startDate?.toISOString(),
+    toISOStringOrNull(collectionData.createDate),
+    toISOStringOrNull(collectionData.startDate),
     collectionData.metadata ? JSON.stringify(collectionData.metadata) : null
   ) as Collection
   return convert(newCollection)
@@ -70,10 +81,10 @@ export function updateCollection(collectionData: Collection): Collection {
     collectionData.longDescription,
     collectionData.type,
     collectionData.subType,
-    collectionData.createDate?.toISOString(),
-    collectionData.startDate?.toISOString(),
+    toISOStringOrNull(collectionData.createDate),
+    toISOStringOrNull(collectionData.startDate),
     collectionData.metadata ? JSON.stringify(collectionData.metadata) : null,
-    collectionData.archived_at?.toISOString() || null,
+    toISOStringOrNull(collectionData.archived_at),
     collectionData.id
   ) as Collection
 

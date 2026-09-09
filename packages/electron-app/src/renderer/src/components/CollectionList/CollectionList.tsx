@@ -7,9 +7,10 @@ interface CollectionListProps {
   collections: Collection[]
   onEdit: (index: number) => void
   onDelete: (index: number) => void
+  onOpen: (index: number) => void
 }
 
-const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) => {
+const CollectionList = ({ collections, onEdit, onDelete, onOpen }: CollectionListProps) => {
   const [expandedCollectionIds, setExpandedCollectionIds] = useState<number[]>([])
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null)
 
@@ -46,9 +47,12 @@ const CollectionList = ({ collections, onEdit, onDelete }: CollectionListProps) 
             onExpand={() => handleExpand(collection.id)}
           />
           <div className={styles.collectionsItemBtnContainer}>
-            <button onClick={() => handleEdit(index)}>Edit</button>
+            <button onClick={() => onOpen(index)}>Open</button>
             {collection.type !== 'DEFAULT' && (
-              <button onClick={() => handleDelete(index)}>Delete</button>
+              <>
+                <button onClick={() => handleEdit(index)}>Edit</button>
+                <button onClick={() => handleDelete(index)}>Delete</button>
+              </>
             )}
           </div>
         </li>

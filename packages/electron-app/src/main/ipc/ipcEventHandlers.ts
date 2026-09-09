@@ -44,4 +44,11 @@ export function setupEventHandlers() {
   ipcMain.handle('cancel-event', async (_: IpcMainInvokeEvent, eventId: number): Promise<void> => {
     await JournalClient.cancelEvent(eventId)
   })
+
+  ipcMain.handle(
+    'migrate-event',
+    async (_: IpcMainInvokeEvent, eventId: number, toCollectionId: number): Promise<void> => {
+      await JournalClient.migrateEvent(eventId, toCollectionId)
+    }
+  )
 }

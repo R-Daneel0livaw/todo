@@ -44,8 +44,8 @@ export function setupTaskHandlers() {
 
   ipcMain.handle(
     'migrate-task',
-    async (_: IpcMainInvokeEvent, taskId: number, toTaskId: number): Promise<void> => {
-      await JournalClient.migrateTask(taskId, toTaskId)
+    async (_: IpcMainInvokeEvent, taskId: number, toCollectionId: number): Promise<void> => {
+      await JournalClient.migrateTask(taskId, toCollectionId)
     }
   )
 }

@@ -10,7 +10,11 @@ export const collectionTypes: CollectionType[] = [
 
 export const collectionSubTypes: CollectionSubType[] = ['TASK', 'EVENT', 'PLAN', 'LOG', 'CUSTOM']
 
-export const getDateParts = (date: Date) => {
+export const getDateParts = (dateInput: Date | string) => {
+  // Dates arrive as ISO strings once they've crossed the IPC/HTTP boundary,
+  // not real Date instances, even though the types claim otherwise.
+  const date = dateInput instanceof Date ? dateInput : new Date(dateInput)
+
   const dateOptions: Intl.DateTimeFormatOptions = {
     weekday: 'long',
     month: 'long',
@@ -58,6 +62,16 @@ export const getDateParts = (date: Date) => {
     date: formattedDateWithSuffix,
     time: formattedTimeWithZone
   }
+}
+
+export const isSameDay = (a: Date | string, b: Date | string): boolean => {
+  const dateA = a instanceof Date ? a : new Date(a)
+  const dateB = b instanceof Date ? b : new Date(b)
+  return (
+    dateA.getFullYear() === dateB.getFullYear() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getDate() === dateB.getDate()
+  )
 }
 
 export const toTitleCase = (str: string) => {

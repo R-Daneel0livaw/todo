@@ -11,4 +11,5 @@ export interface EventApi {
   completeEvent(eventId: number): Promise<void>
   deleteEvent(eventId: number): Promise<void>
   cancelEvent(eventId: number): Promise<void>
+  migrateEvent(eventId: number, toCollectionId: number): Promise<void>
 }

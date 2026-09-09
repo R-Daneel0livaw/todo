@@ -6,18 +6,18 @@ import styles from './CollectionForm.module.css'
 interface CollectionFormProps {
   onSave: (collection: Collection) => void
   onCancel: () => void
-  collection: Collection
+  collection?: Collection
 }
 
 const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) => {
   const [collectionState, setCollectionState] = useState<Collection>(
-    collection || {
+    collection || ({
       title: '',
       description: '',
       longDescription: '',
       type: '',
       subType: ''
-    }
+    } as unknown as Collection)
   )
 
   const fieldTypes = {
@@ -44,13 +44,13 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
 
   useEffect(() => {
     setCollectionState(
-      collection || {
+      collection || ({
         title: '',
         description: '',
         longDescription: '',
         type: '',
         subType: ''
-      }
+      } as unknown as Collection)
     )
 
     if (collection?.title) {
@@ -235,7 +235,9 @@ const CollectionForm = ({ onSave, onCancel, collection }: CollectionFormProps) =
             name="startDate"
             id="startDate"
             value={
-              collectionState.startDate ? collectionState.startDate.toISOString().split('T')[0] : ''
+              collectionState.startDate
+                ? new Date(collectionState.startDate).toISOString().split('T')[0]
+                : ''
             }
             onChange={handleChange}
             onBlur={handleBlur('startDate', true)}

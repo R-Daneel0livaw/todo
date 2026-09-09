@@ -1,5 +1,6 @@
 import { TaskTemplate } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
+import { toISOStringOrNull } from '../utils/date-utils.js'
 
 export function getAllTemplates(): TaskTemplate[] {
   const stmt = db.prepare('SELECT * FROM task_templates ORDER BY title')
@@ -20,7 +21,7 @@ export function addTemplate(templateData: TaskTemplate): number {
     templateData.title,
     templateData.description,
     templateData.topic,
-    templateData.createDate?.toISOString(),
+    toISOStringOrNull(templateData.createDate),
     templateData.metadata ? JSON.stringify(templateData.metadata) : null,
     templateData.auto_spawn ? 1 : 0,
     templateData.default_collection_id

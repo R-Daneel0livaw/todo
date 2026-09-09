@@ -12,8 +12,8 @@ export const getTasksByCollection = async (
   return window.taskApi.getTasksByCollection(cd)
 }
 
-export const addTask = async (taskData: Task): Promise<void> => {
-  window.taskApi.addTask(taskData)
+export const addTask = async (taskData: Task): Promise<number> => {
+  return window.taskApi.addTask(taskData)
 }
 
 export const deleteTask = async (taskId: number): Promise<void> => {
@@ -22,4 +22,8 @@ export const deleteTask = async (taskId: number): Promise<void> => {
 
 export const cancelTask = async (taskId: number): Promise<void> => {
   window.taskApi.cancelTask(taskId)
+}
+
+export const migrateTask = async (taskId: number, toCollectionId: number): Promise<void> => {
+  return window.taskApi.migrateTask(taskId, toCollectionId)
 }

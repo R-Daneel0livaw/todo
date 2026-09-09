@@ -11,6 +11,93 @@
   padding-bottom: 1rem;
 }
 
+.daily-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.daily-nav button {
+  background: none;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.daily-nav button:disabled {
+  color: #bbb;
+  border-color: #e0e0e0;
+  cursor: default;
+}
+
+.create-daily-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  color: #7a4a00;
+}
+
+.create-daily-prompt button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
+.create-daily-panel {
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: 6px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #7a4a00;
+}
+
+.create-daily-panel h3 {
+  margin: 0 0 0.75rem 0;
+  color: #7a4a00;
+}
+
+.carry-over-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.carry-over-list li {
+  padding: 0.35rem 0;
+}
+
+.carry-over-source {
+  margin-left: 0.4rem;
+  color: #a17a3f;
+  font-size: 0.8rem;
+}
+
+.create-daily-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.create-daily-actions button:first-child {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
 .daily-log-header h1 {
   margin: 0;
   font-size: 2rem;
@@ -61,16 +148,50 @@
   }
 }
 
-.tasks-section, .events-section {
+.plan-section, .log-section {
   background: #f9f9f9;
   border-radius: 8px;
   padding: 1.5rem;
 }
 
-.tasks-section h2, .events-section h2 {
-  margin: 0 0 1rem 0;
+.plan-section h2, .log-section h2 {
+  margin: 0;
   font-size: 1.5rem;
   color: #333;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.start-button {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.start-button:hover {
+  background-color: #1565c0;
 }
 
 .empty-message {

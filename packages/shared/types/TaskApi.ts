@@ -11,5 +11,5 @@ export interface TaskApi {
   completeTask(taskId: number): Promise<void>
   deleteTask(taskId: number): Promise<void>
   cancelTask(taskId: number): Promise<void>
-  migrateTask(taskId: number, toTaskId: number): Promise<void>
+  migrateTask(taskId: number, toCollectionId: number): Promise<void>
 }

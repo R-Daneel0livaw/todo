@@ -4,13 +4,19 @@ import {
   getCollections,
   updateCollection
 } from '@renderer/services/CollectionService'
+import { getItemCollections } from '@renderer/services/CollectionItemService'
 import { Collection } from '@awesome-dev-journal/shared'
 import { useEffect, useState } from 'react'
 import styles from './CollectionsPage.module.css'
 import CollectionList from '@renderer/components/CollectionList/CollectionList'
 import CollectionForm from '@renderer/components/CollectionForm/CollectionForm'
+import { Route } from '@renderer/navigation/types'
 
-function CollectionsPage() {
+interface CollectionsPageProps {
+  onNavigate: (route: Route) => void
+}
+
+function CollectionsPage({ onNavigate }: CollectionsPageProps) {
   const [collections, setCollections] = useState<Collection[]>([])
   const [currentCollectionIndex, setCurrentCollectionIndex] = useState<number | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -18,8 +24,19 @@ function CollectionsPage() {
 
   useEffect(() => {
     async function loadCollections() {
-      const collections = await getCollections()
-      setCollections(collections)
+      const allCollections = await getCollections()
+
+      // A collection nested under another one (e.g. a Daily's Plan/Log) isn't
+      // meant to be browsed on its own — only show genuinely top-level
+      // collections here. This is structural (based on actual nesting), not
+      // tied to any specific type/subType, so it applies to any future
+      // parent/child collection shape without extra code.
+      const parentChecks = await Promise.all(
+        allCollections.map((c) => getItemCollections(c.id, 'Collection'))
+      )
+      const topLevelCollections = allCollections.filter((_, index) => parentChecks[index].length === 0)
+
+      setCollections(topLevelCollections)
     }
     loadCollections()
   }, [])
@@ -88,6 +105,11 @@ function CollectionsPage() {
     }, 300)
   }
 
+  const handleOpen = (index: number) => {
+    const collection = collections[index]
+    onNavigate({ page: 'collection-detail', collectionId: collection.id, label: collection.title })
+  }
+
   return (
     <div className={`${styles.collectionsContainer}`}>
       <h1 className={styles.collectionsTitle}>Collections</h1>
@@ -103,7 +125,12 @@ function CollectionsPage() {
             <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
               Add New
             </button>
-            <CollectionList collections={collections} onEdit={handleEdit} onDelete={handleDelete} />
+            <CollectionList
+              collections={collections}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onOpen={handleOpen}
+            />
           </div>
         )}
       </div>
