@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import * as CollectionManager from '../../database/CollectionManager.js'
 import * as CollectionItemManager from '../../database/CollectionItemManager.js'
+import * as ItemMigrationHistoryManager from '../../database/ItemMigrationHistoryManager.js'
 import { Collection } from '@awesome-dev-journal/shared'
 
 const router = Router()
@@ -165,6 +166,21 @@ router.get('/:id/items/:itemId/check', (req: Request, res: Response): void => {
 
     const isInCollection = CollectionItemManager.isItemInCollection(collectionId, itemId, itemType as any)
     res.json({ isInCollection })
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message })
+  }
+})
+
+// GET /api/collections/:id/migrations-out - Items that have migrated away from this collection
+router.get('/:id/migrations-out', (req: Request, res: Response): void => {
+  try {
+    const collectionId = parseInt(req.params.id)
+    const { itemType } = req.query
+    const migrations = ItemMigrationHistoryManager.getMigrationsFromCollection(
+      collectionId,
+      itemType as 'Task' | 'Event' | undefined
+    )
+    res.json(migrations)
   } catch (error) {
     res.status(500).json({ error: (error as Error).message })
   }

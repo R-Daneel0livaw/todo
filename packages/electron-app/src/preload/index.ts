@@ -5,7 +5,9 @@ import type {
   ActivityType,
   CollectionApi,
   CollectionItemApi,
+  DevApi,
   EventApi,
+  MigrationHistoryApi,
   TaskApi,
   TaskDependencyApi,
   VmRegistryApi,
@@ -108,6 +110,15 @@ const activityApi: ActivityApi = {
   deleteOldActivity: (daysToKeep?: number) => ipcRenderer.invoke('delete-old-activity', daysToKeep)
 }
 
+const migrationHistoryApi: MigrationHistoryApi = {
+  getMigrationsFromCollection: (collectionId: number, itemType?: 'Task' | 'Event') =>
+    ipcRenderer.invoke('get-migrations-from-collection', collectionId, itemType)
+}
+
+const devApi: DevApi = {
+  resetDatabase: () => ipcRenderer.invoke('reset-database')
+}
+
 const vmRegistryApi: VmRegistryApi = {
   registerVm: (name: string, role: VmRole, memoryMb?: number, cpus?: number, diskSizeMb?: number) =>
     ipcRenderer.invoke('register-vm', name, role, memoryMb, cpus, diskSizeMb),
@@ -133,6 +144,8 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('taskDependencyApi', taskDependencyApi)
     contextBridge.exposeInMainWorld('activityApi', activityApi)
     contextBridge.exposeInMainWorld('vmRegistryApi', vmRegistryApi)
+    contextBridge.exposeInMainWorld('migrationHistoryApi', migrationHistoryApi)
+    contextBridge.exposeInMainWorld('devApi', devApi)
   } catch (error) {
     console.error(error)
   }
@@ -153,4 +166,8 @@ if (process.contextIsolated) {
   window.activityApi = activityApi
   // @ts-ignore (define in dts)
   window.vmRegistryApi = vmRegistryApi
+  // @ts-ignore (define in dts)
+  window.migrationHistoryApi = migrationHistoryApi
+  // @ts-ignore (define in dts)
+  window.devApi = devApi
 }

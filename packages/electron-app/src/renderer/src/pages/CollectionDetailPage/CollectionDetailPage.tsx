@@ -10,6 +10,8 @@ import TaskForm from '@renderer/components/TaskForm/TaskForm'
 import EventForm from '@renderer/components/EventForm/EventForm'
 import MigrateSelect from '@renderer/components/MigrateSelect/MigrateSelect'
 import DailyView from '@renderer/components/DailyView/DailyView'
+import TaskListView from '@renderer/components/TaskListView/TaskListView'
+import EventListView from '@renderer/components/EventListView/EventListView'
 import { Route } from '@renderer/navigation/types'
 import styles from './CollectionDetailPage.module.css'
 
@@ -150,6 +152,15 @@ function CollectionDetailPage({ collectionId, onNavigate }: CollectionDetailPage
   // generic sub-collections/tasks/events browser.
   if (collection.type === 'DAILY' && !collection.subType) {
     return <DailyView initialDailyId={collectionId} />
+  }
+
+  // The default Task List / Event List are plain single-purpose lists —
+  // no sub-collections, no mixing tasks into an event list or vice versa.
+  if (collection.type === 'DEFAULT' && collection.subType === 'TASK') {
+    return <TaskListView collectionId={collectionId} />
+  }
+  if (collection.type === 'DEFAULT' && collection.subType === 'EVENT') {
+    return <EventListView collectionId={collectionId} />
   }
 
   return (

@@ -3,7 +3,9 @@ import {
   ActivityApi,
   CollectionApi,
   CollectionItemApi,
+  DevApi,
   EventApi,
+  MigrationHistoryApi,
   TaskApi,
   TaskDependencyApi,
   VmRegistryApi
@@ -19,5 +21,7 @@ declare global {
     taskDependencyApi: TaskDependencyApi
     activityApi: ActivityApi
     vmRegistryApi: VmRegistryApi
+    migrationHistoryApi: MigrationHistoryApi
+    devApi: DevApi
   }
 }

@@ -8,6 +8,8 @@ import { setupCollectionItemHandlers } from './ipc/ipcCollectionItemHandlers'
 import { setupTaskDependencyHandlers } from './ipc/ipcTaskDependencyHandlers'
 import { setupActivityHandlers } from './ipc/ipcActivityHandlers'
 import { setupVmRegistryHandlers } from './ipc/ipcVmRegistryHandlers'
+import { setupMigrationHistoryHandlers } from './ipc/ipcMigrationHistoryHandlers'
+import { setupDevHandlers } from './ipc/ipcDevHandlers'
 
 function createWindow(): void {
   const isDev = !app.isPackaged
@@ -47,6 +49,8 @@ function createWindow(): void {
   setupTaskDependencyHandlers()
   setupActivityHandlers()
   setupVmRegistryHandlers()
+  setupMigrationHistoryHandlers()
+  setupDevHandlers()
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.

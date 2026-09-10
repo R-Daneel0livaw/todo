@@ -8,6 +8,7 @@ import activityRouter from './routes/activity.js'
 import vmsRouter from './routes/vms.js'
 import taskTemplatesRouter from './routes/task-templates.js'
 import eventTemplatesRouter from './routes/event-templates.js'
+import devRouter from './routes/dev.js'
 
 const app: Express = express()
 const PORT = process.env.PORT || 3333
@@ -44,6 +45,7 @@ app.use('/api/collections', collectionsRouter)
 app.use('/api/dependencies', dependenciesRouter)
 app.use('/api/activity', activityRouter)
 app.use('/api/vms', vmsRouter)
+app.use('/api/dev', devRouter)
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

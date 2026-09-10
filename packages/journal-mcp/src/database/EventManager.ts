@@ -168,10 +168,19 @@ export function migrateEventToCollection(
       WHERE itemId = ? AND itemType = 'Event'
     `)
     const currentCollections = getCurrentCollections.all(eventId) as { collectionId: number }[]
+    const defaultCollection = CollectionManager.getDefaultCollection('EVENT')
 
-    // Record migration history for each current collection
-    if (currentCollections.length > 0) {
-      for (const collection of currentCollections) {
+    // Record migration history only for collections actually being left
+    // behind: exclude the catch-all Event List (it's preserved, never
+    // actually removed — see below) and the destination itself (if the
+    // event happens to already be there, nothing is "migrated away from" it).
+    const collectionsBeingLeft = currentCollections.filter(
+      (c) => c.collectionId !== toCollectionId && c.collectionId !== defaultCollection?.id
+    )
+    const alreadyInDestination = currentCollections.some((c) => c.collectionId === toCollectionId)
+
+    if (collectionsBeingLeft.length > 0) {
+      for (const collection of collectionsBeingLeft) {
         ItemMigrationHistoryManager.recordMigration(
           eventId,
           'Event',
@@ -181,14 +190,14 @@ export function migrateEventToCollection(
           reason
         )
       }
-    } else {
-      // No previous collection (initial assignment)
+    } else if (!alreadyInDestination) {
+      // First real assignment into an organizational collection (it was
+      // only ever in the Event List, or had no collections at all).
       ItemMigrationHistoryManager.recordMigration(eventId, 'Event', null, toCollectionId, migratedBy, reason)
     }
 
     // Remove event from all current collections, except the catch-all Event
     // List — an event always stays visible there regardless of migration.
-    const defaultCollection = CollectionManager.getDefaultCollection('EVENT')
     const removeStmt = defaultCollection
       ? db.prepare(`
           DELETE FROM collectionItems

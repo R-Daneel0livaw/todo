@@ -37,6 +37,28 @@
   background: #1976d2;
 }
 
+.devResetButton {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #7a4a00;
+  color: #ffb74d;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.devResetButton:hover:not(:disabled) {
+  background: #7a4a00;
+  color: white;
+}
+
+.devResetButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .breadcrumbs {
   display: flex;
   align-items: center;

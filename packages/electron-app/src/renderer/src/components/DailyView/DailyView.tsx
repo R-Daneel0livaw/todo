@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Collection, Event, Task } from '@awesome-dev-journal/shared'
+import { Collection, Event, ItemMigrationHistory, Task } from '@awesome-dev-journal/shared'
 import * as CollectionService from '@renderer/services/CollectionService'
 import * as CollectionItemService from '@renderer/services/CollectionItemService'
 import * as TaskService from '@renderer/services/TaskService'
 import * as EventService from '@renderer/services/EventService'
+import * as MigrationHistoryService from '@renderer/services/MigrationHistoryService'
 import TaskForm from '@renderer/components/TaskForm/TaskForm'
 import EventForm from '@renderer/components/EventForm/EventForm'
 import MigrateSelect from '@renderer/components/MigrateSelect/MigrateSelect'
@@ -15,6 +16,13 @@ interface CarryOverCandidate {
   title: string
   itemType: 'Task' | 'Event'
   source: 'Plan' | 'Log'
+}
+
+interface MigratedAwayItem {
+  id: number
+  itemType: 'Task' | 'Event'
+  title: string
+  toCollectionTitle: string
 }
 
 interface DailyViewProps {
@@ -34,6 +42,8 @@ function DailyView({ initialDailyId }: DailyViewProps) {
   const [planEvents, setPlanEvents] = useState<Event[]>([])
   const [logTasks, setLogTasks] = useState<Task[]>([])
   const [logEvents, setLogEvents] = useState<Event[]>([])
+  const [planMigratedAway, setPlanMigratedAway] = useState<MigratedAwayItem[]>([])
+  const [logMigratedAway, setLogMigratedAway] = useState<MigratedAwayItem[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -100,6 +110,45 @@ function DailyView({ initialDailyId }: DailyViewProps) {
     }
   }
 
+  const resolveMigratedAway = async (
+    migrations: ItemMigrationHistory[],
+    itemType: 'Task' | 'Event',
+    excludeToCollectionId?: number
+  ): Promise<MigratedAwayItem[]> => {
+    // getMigrationsFromCollection is already ordered newest-first, so keeping
+    // only the first occurrence per item gives the most recent departure.
+    const seen = new Set<number>()
+    const relevant = migrations.filter((m) => {
+      if (excludeToCollectionId != null && m.to_collection_id === excludeToCollectionId) return false
+      if (seen.has(m.item_id)) return false
+      seen.add(m.item_id)
+      return true
+    })
+
+    const hydrated = await Promise.all(
+      relevant.map(async (m): Promise<MigratedAwayItem | null> => {
+        try {
+          const item =
+            itemType === 'Task'
+              ? await TaskService.getTask(m.item_id)
+              : await EventService.getEvent(m.item_id)
+          const toCollection = allCollections.find((c) => c.id === m.to_collection_id)
+          return {
+            id: m.item_id,
+            itemType,
+            title: item.title,
+            toCollectionTitle: toCollection?.title ?? 'another collection'
+          }
+        } catch {
+          // The item or destination collection may have since been deleted.
+          return null
+        }
+      })
+    )
+
+    return hydrated.filter((item): item is MigratedAwayItem => item !== null)
+  }
+
   const loadDailyContent = async (dailyId: number, showLoading = true) => {
     try {
       if (showLoading) setLoading(true)
@@ -123,6 +172,27 @@ function DailyView({ initialDailyId }: DailyViewProps) {
       setPlanEvents(pe)
       setLogTasks(lt)
       setLogEvents(le)
+
+      // Items that used to live here but got migrated elsewhere — shown as a
+      // "migrated away" mark, like the > notation in a physical bullet
+      // journal, instead of just silently vanishing.
+      const [planTaskMigrations, planEventMigrations, logTaskMigrations, logEventMigrations] = await Promise.all([
+        plan ? MigrationHistoryService.getMigrationsFromCollection(plan.id, 'Task') : Promise.resolve([]),
+        plan ? MigrationHistoryService.getMigrationsFromCollection(plan.id, 'Event') : Promise.resolve([]),
+        log ? MigrationHistoryService.getMigrationsFromCollection(log.id, 'Task') : Promise.resolve([]),
+        log ? MigrationHistoryService.getMigrationsFromCollection(log.id, 'Event') : Promise.resolve([])
+      ])
+
+      // Moving Plan -> this same Daily's Log ("Start") isn't a real
+      // migration in the bullet-journal sense — it's already visible in Log.
+      const [planMigratedTasks, planMigratedEvents, logMigratedTasks, logMigratedEvents] = await Promise.all([
+        resolveMigratedAway(planTaskMigrations, 'Task', log?.id),
+        resolveMigratedAway(planEventMigrations, 'Event', log?.id),
+        resolveMigratedAway(logTaskMigrations, 'Task'),
+        resolveMigratedAway(logEventMigrations, 'Event')
+      ])
+      setPlanMigratedAway([...planMigratedTasks, ...planMigratedEvents])
+      setLogMigratedAway([...logMigratedTasks, ...logMigratedEvents])
     } catch (err) {
       console.error('Failed to load daily content:', err)
       setError('Failed to load daily content. Make sure the MCP server is running.')
@@ -132,10 +202,14 @@ function DailyView({ initialDailyId }: DailyViewProps) {
   }
 
   const goToPreviousDay = () => {
+    setAddingTask(false)
+    setAddingEvent(false)
     setCurrentIndex((prev) => Math.min(prev + 1, dailies.length - 1))
   }
 
   const goToNextDay = () => {
+    setAddingTask(false)
+    setAddingEvent(false)
     setCurrentIndex((prev) => Math.max(prev - 1, 0))
   }
 
@@ -198,10 +272,14 @@ function DailyView({ initialDailyId }: DailyViewProps) {
   }
 
   const handleSaveTask = async (task: Task) => {
-    if (!daily || !planCollection) return
+    // On today's Daily, new items are freshly planned (Plan). On a past day,
+    // there's nothing left to plan — adding one means logging something you
+    // forgot to record, so it goes straight into Log.
+    const targetCollection = isToday ? planCollection : logCollection
+    if (!daily || !targetCollection) return
     try {
       const newId = await TaskService.addTask(task)
-      await CollectionItemService.addToCollection(planCollection.id, newId, 'Task')
+      await CollectionItemService.addToCollection(targetCollection.id, newId, 'Task')
       setAddingTask(false)
       await loadDailyContent(daily.id, false)
     } catch (err) {
@@ -210,10 +288,11 @@ function DailyView({ initialDailyId }: DailyViewProps) {
   }
 
   const handleSaveEvent = async (event: Event) => {
-    if (!daily || !planCollection) return
+    const targetCollection = isToday ? planCollection : logCollection
+    if (!daily || !targetCollection) return
     try {
       const newId = await EventService.addEvent(event)
-      await CollectionItemService.addToCollection(planCollection.id, newId, 'Event')
+      await CollectionItemService.addToCollection(targetCollection.id, newId, 'Event')
       setAddingEvent(false)
       await loadDailyContent(daily.id, false)
     } catch (err) {
@@ -404,18 +483,20 @@ function DailyView({ initialDailyId }: DailyViewProps) {
         <section className="plan-section">
           <div className="section-header">
             <h2>Plan ({planTasks.length + planEvents.length})</h2>
-            <div className="section-header-actions">
-              <button onClick={() => setAddingTask((prev) => !prev)}>
-                {addingTask ? 'Cancel' : 'Add Task'}
-              </button>
-              <button onClick={() => setAddingEvent((prev) => !prev)}>
-                {addingEvent ? 'Cancel' : 'Add Event'}
-              </button>
-            </div>
+            {isToday && (
+              <div className="section-header-actions">
+                <button onClick={() => setAddingTask((prev) => !prev)}>
+                  {addingTask ? 'Cancel' : 'Add Task'}
+                </button>
+                <button onClick={() => setAddingEvent((prev) => !prev)}>
+                  {addingEvent ? 'Cancel' : 'Add Event'}
+                </button>
+              </div>
+            )}
           </div>
-          {addingTask && <TaskForm onSave={handleSaveTask} onCancel={() => setAddingTask(false)} />}
-          {addingEvent && <EventForm onSave={handleSaveEvent} onCancel={() => setAddingEvent(false)} />}
-          {planTasks.length === 0 && planEvents.length === 0 ? (
+          {isToday && addingTask && <TaskForm onSave={handleSaveTask} onCancel={() => setAddingTask(false)} />}
+          {isToday && addingEvent && <EventForm onSave={handleSaveEvent} onCancel={() => setAddingEvent(false)} />}
+          {planTasks.length === 0 && planEvents.length === 0 && planMigratedAway.length === 0 ? (
             <p className="empty-message">Nothing planned yet</p>
           ) : (
             <ul className="task-list">
@@ -464,14 +545,37 @@ function DailyView({ initialDailyId }: DailyViewProps) {
               ))}
             </ul>
           )}
+          {planMigratedAway.length > 0 && (
+            <ul className="migrated-away-list">
+              {planMigratedAway.map((item) => (
+                <li key={`${item.itemType}-${item.id}`} className="migrated-away-item">
+                  <span className="migrated-away-arrow">→</span>
+                  <span className="migrated-away-title">{item.title}</span>
+                  <span className="migrated-away-target">migrated to {item.toCollectionTitle}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         {/* Log Section */}
         <section className="log-section">
           <div className="section-header">
             <h2>Log ({logTasks.length + logEvents.length})</h2>
+            {!isToday && (
+              <div className="section-header-actions">
+                <button onClick={() => setAddingTask((prev) => !prev)}>
+                  {addingTask ? 'Cancel' : 'Add Task'}
+                </button>
+                <button onClick={() => setAddingEvent((prev) => !prev)}>
+                  {addingEvent ? 'Cancel' : 'Add Event'}
+                </button>
+              </div>
+            )}
           </div>
-          {logTasks.length === 0 && logEvents.length === 0 ? (
+          {!isToday && addingTask && <TaskForm onSave={handleSaveTask} onCancel={() => setAddingTask(false)} />}
+          {!isToday && addingEvent && <EventForm onSave={handleSaveEvent} onCancel={() => setAddingEvent(false)} />}
+          {logTasks.length === 0 && logEvents.length === 0 && logMigratedAway.length === 0 ? (
             <p className="empty-message">Nothing in progress yet</p>
           ) : (
             <ul className="task-list">
@@ -524,6 +628,17 @@ function DailyView({ initialDailyId }: DailyViewProps) {
                     collections={eventCollections}
                     onMigrate={(collectionId) => migrateEvent(event.id, collectionId)}
                   />
+                </li>
+              ))}
+            </ul>
+          )}
+          {logMigratedAway.length > 0 && (
+            <ul className="migrated-away-list">
+              {logMigratedAway.map((item) => (
+                <li key={`${item.itemType}-${item.id}`} className="migrated-away-item">
+                  <span className="migrated-away-arrow">→</span>
+                  <span className="migrated-away-title">{item.title}</span>
+                  <span className="migrated-away-target">migrated to {item.toCollectionTitle}</span>
                 </li>
               ))}
             </ul>

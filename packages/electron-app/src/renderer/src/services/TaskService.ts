@@ -1,5 +1,9 @@
 import { Collection, Task } from '@awesome-dev-journal/shared'
 
+export const getTask = async (taskId: number): Promise<Task> => {
+  return window.taskApi.getTask(taskId)
+}
+
 export const getTasksByCollectionId = async (collectionId: number): Promise<Task[]> => {
   return window.taskApi.getTasksByCollectionId(collectionId)
 }

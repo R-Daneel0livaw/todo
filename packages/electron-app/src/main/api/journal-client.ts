@@ -3,6 +3,7 @@ import {
   Event,
   Collection,
   CollectionItem,
+  ItemMigrationHistory,
   ActivityType,
   VmRole,
   VmStatus
@@ -230,6 +231,18 @@ export async function removeItemFromCollection(
     method: 'DELETE',
     body: JSON.stringify({ itemId, itemType })
   })
+}
+
+export async function resetDatabase(): Promise<{ message: string }> {
+  return fetchJSON('/dev/reset-db', { method: 'POST' })
+}
+
+export async function getMigrationsFromCollection(
+  collectionId: number,
+  itemType?: 'Task' | 'Event'
+): Promise<ItemMigrationHistory[]> {
+  const query = itemType ? `?itemType=${itemType}` : ''
+  return fetchJSON<ItemMigrationHistory[]>(`/collections/${collectionId}/migrations-out${query}`)
 }
 
 export async function getItemCollections(

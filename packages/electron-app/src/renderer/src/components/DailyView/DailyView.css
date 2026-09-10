@@ -207,6 +207,33 @@
   margin: 0;
 }
 
+.migrated-away-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0 0;
+}
+
+.migrated-away-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.migrated-away-arrow {
+  color: #bbb;
+}
+
+.migrated-away-title {
+  text-decoration: line-through;
+}
+
+.migrated-away-target {
+  font-style: italic;
+}
+
 .task-item, .event-item {
   display: flex;
   align-items: flex-start;

@@ -35,17 +35,19 @@ const CollectionList = ({ collections, onEdit, onDelete, onOpen }: CollectionLis
   }
 
   return (
-    <ul>
+    <ul className={styles.itemList}>
       {collections.map((collection, index) => (
         <li
           key={collection.id}
           className={`${styles.collectionsItem} ${deletingIndex === index ? styles.fadeOut : ''}`}
         >
-          <CollectionView
-            collection={collection}
-            isExpanded={expandedCollectionIds.includes(collection.id)}
-            onExpand={() => handleExpand(collection.id)}
-          />
+          <div className={styles.collectionsItemContent}>
+            <CollectionView
+              collection={collection}
+              isExpanded={expandedCollectionIds.includes(collection.id)}
+              onExpand={() => handleExpand(collection.id)}
+            />
+          </div>
           <div className={styles.collectionsItemBtnContainer}>
             <button onClick={() => onOpen(index)}>Open</button>
             {collection.type !== 'DEFAULT' && (

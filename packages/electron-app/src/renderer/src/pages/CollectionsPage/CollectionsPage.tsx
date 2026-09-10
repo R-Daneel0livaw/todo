@@ -111,29 +111,37 @@ function CollectionsPage({ onNavigate }: CollectionsPageProps) {
   }
 
   return (
-    <div className={`${styles.collectionsContainer}`}>
-      <h1 className={styles.collectionsTitle}>Collections</h1>
-      <div className={`${inTransition ? styles.viewTransitionExit : styles.viewTransitionEnter}`}>
-        {isEditing ? (
-          <CollectionForm
-            onSave={handleSave}
-            onCancel={handleCancel}
-            collection={collections[currentCollectionIndex != null ? currentCollectionIndex : -1]}
-          />
-        ) : (
-          <div className={styles.collectionsViewContainer}>
-            <button className={styles.collectionsAddBtn} onClick={handleAddNew}>
-              Add New
-            </button>
+    <div className={styles.collectionsPage}>
+      <header className={styles.header}>
+        <h1>Collection List</h1>
+      </header>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2>Collections ({collections.length})</h2>
+          <button onClick={isEditing ? handleCancel : handleAddNew}>
+            {isEditing ? 'Cancel' : 'Add New'}
+          </button>
+        </div>
+        <div className={inTransition ? styles.viewTransitionExit : styles.viewTransitionEnter}>
+          {isEditing ? (
+            <CollectionForm
+              onSave={handleSave}
+              onCancel={handleCancel}
+              collection={collections[currentCollectionIndex != null ? currentCollectionIndex : -1]}
+            />
+          ) : collections.length === 0 ? (
+            <p className={styles.emptyMessage}>No collections yet</p>
+          ) : (
             <CollectionList
               collections={collections}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onOpen={handleOpen}
             />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </section>
     </div>
   )
 }

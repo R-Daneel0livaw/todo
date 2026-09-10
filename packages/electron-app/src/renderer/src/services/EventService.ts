@@ -1,5 +1,9 @@
 import { Collection, Event } from '@awesome-dev-journal/shared'
 
+export const getEvent = async (eventId: number): Promise<Event> => {
+  return window.eventApi.getEvent(eventId)
+}
+
 export const getEventsByCollectionId = async (collectionId: number): Promise<Event[]> => {
   return window.eventApi.getEventsByCollectionId(collectionId)
 }
