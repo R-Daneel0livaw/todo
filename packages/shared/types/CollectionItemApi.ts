@@ -21,4 +21,8 @@ export interface CollectionItemApi {
     itemId: number,
     itemType: 'Task' | 'Event' | 'Collection'
   ): Promise<boolean>
+  reorderCollectionItems(
+    collectionId: number,
+    items: { itemId: number; itemType: 'Task' | 'Event' | 'Collection' }[]
+  ): Promise<void>
 }

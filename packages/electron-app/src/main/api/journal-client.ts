@@ -233,6 +233,16 @@ export async function removeItemFromCollection(
   })
 }
 
+export async function reorderCollectionItems(
+  collectionId: number,
+  items: { itemId: number; itemType: 'Task' | 'Event' | 'Collection' }[]
+): Promise<{ message: string }> {
+  return fetchJSON(`/collections/${collectionId}/items/order`, {
+    method: 'PUT',
+    body: JSON.stringify({ items })
+  })
+}
+
 export async function resetDatabase(): Promise<{ message: string }> {
   return fetchJSON('/dev/reset-db', { method: 'POST' })
 }

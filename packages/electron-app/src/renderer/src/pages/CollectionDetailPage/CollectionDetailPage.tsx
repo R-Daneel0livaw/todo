@@ -34,9 +34,14 @@ function CollectionDetailPage({ collectionId, onNavigate }: CollectionDetailPage
   const [addingSubCollection, setAddingSubCollection] = useState(false)
 
   // Default Task List/Event List aren't real migration targets — every item
-  // is always in them already.
-  const taskCollections = allCollections.filter((c) => c.type !== 'DEFAULT' && c.subType !== 'EVENT')
-  const eventCollections = allCollections.filter((c) => c.type !== 'DEFAULT' && c.subType !== 'TASK')
+  // is always in them already. Nor is this collection itself — you can't
+  // move to where you already are.
+  const taskCollections = allCollections.filter(
+    (c) => c.type !== 'DEFAULT' && c.subType !== 'EVENT' && c.id !== collectionId
+  )
+  const eventCollections = allCollections.filter(
+    (c) => c.type !== 'DEFAULT' && c.subType !== 'TASK' && c.id !== collectionId
+  )
 
   useEffect(() => {
     loadCollectionDetail()
@@ -217,10 +222,12 @@ function CollectionDetailPage({ collectionId, onNavigate }: CollectionDetailPage
                     <div className={styles.itemTitle}>{task.title}</div>
                     {task.description && <div className={styles.itemDescription}>{task.description}</div>}
                   </div>
-                  <MigrateSelect
-                    collections={taskCollections}
-                    onMigrate={(toCollectionId) => migrateTask(task.id, toCollectionId)}
-                  />
+                  {task.status !== 'FINISHED' && (
+                    <MigrateSelect
+                      collections={taskCollections}
+                      onMigrate={(toCollectionId) => migrateTask(task.id, toCollectionId)}
+                    />
+                  )}
                 </li>
               ))}
             </ul>
@@ -250,10 +257,12 @@ function CollectionDetailPage({ collectionId, onNavigate }: CollectionDetailPage
                     <div className={styles.itemTitle}>{event.title}</div>
                     {event.description && <div className={styles.itemDescription}>{event.description}</div>}
                   </div>
-                  <MigrateSelect
-                    collections={eventCollections}
-                    onMigrate={(toCollectionId) => migrateEvent(event.id, toCollectionId)}
-                  />
+                  {event.status !== 'FINISHED' && (
+                    <MigrateSelect
+                      collections={eventCollections}
+                      onMigrate={(toCollectionId) => migrateEvent(event.id, toCollectionId)}
+                    />
+                  )}
                 </li>
               ))}
             </ul>

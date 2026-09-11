@@ -97,6 +97,7 @@ db.exec(`
     collectionId INTEGER NOT NULL,
     itemId INTEGER,
     itemType TEXT NOT NULL CHECK (itemType IN ('Task', 'Event', 'Collection')),
+    sortOrder INTEGER,
     FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE
   );
 
@@ -213,6 +214,18 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_migration_to_collection ON item_migration_history(to_collection_id);
   CREATE INDEX IF NOT EXISTS idx_migration_timestamp ON item_migration_history(migrated_at DESC);
 `)
+
+// Lightweight forward-only migration for columns added after a table already
+// existed — CREATE TABLE IF NOT EXISTS above only applies to brand-new
+// databases, so existing ones need the column added explicitly.
+function ensureColumn(table: string, column: string, definition: string) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[]
+  if (!columns.some((c) => c.name === column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`)
+  }
+}
+
+ensureColumn('collectionItems', 'sortOrder', 'INTEGER')
 
 const defaultCollections: Partial<Collection>[] = [
   {

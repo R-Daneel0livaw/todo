@@ -179,6 +179,34 @@
   gap: 0.4rem;
 }
 
+.order-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+.order-button {
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  line-height: 1;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background: white;
+  color: #555;
+  cursor: pointer;
+}
+
+.order-button:hover:not(:disabled) {
+  background: #f0f0f0;
+}
+
+.order-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 .start-button {
   font-size: 0.8rem;
   padding: 0.25rem 0.6rem;

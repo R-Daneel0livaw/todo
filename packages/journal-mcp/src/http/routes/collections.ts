@@ -116,6 +116,24 @@ router.post('/:id/items', (req: Request, res: Response): void => {
   }
 })
 
+// PUT /api/collections/:id/items/order - Persist a new item order for a collection
+router.put('/:id/items/order', (req: Request, res: Response): void => {
+  try {
+    const collectionId = parseInt(req.params.id)
+    const { items } = req.body
+
+    if (!Array.isArray(items)) {
+      res.status(400).json({ error: 'items must be an array of {itemId, itemType}' })
+      return
+    }
+
+    CollectionItemManager.reorderCollectionItems(collectionId, items)
+    res.json({ message: 'Collection items reordered successfully' })
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message })
+  }
+})
+
 // DELETE /api/collections/:id/items - Remove item from collection
 router.delete('/:id/items', (req: Request, res: Response): void => {
   try {

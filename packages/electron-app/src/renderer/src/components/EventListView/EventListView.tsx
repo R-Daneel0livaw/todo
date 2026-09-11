@@ -22,8 +22,12 @@ function EventListView({ collectionId }: EventListViewProps) {
   const [addingEvent, setAddingEvent] = useState(false)
   const [showFinished, setShowFinished] = useState(false)
 
-  // Default Event List isn't a real migration target — every event is always in it already.
-  const eventCollections = allCollections.filter((c) => c.type !== 'DEFAULT' && c.subType !== 'TASK')
+  // Default Event List isn't a real migration target — every event is always
+  // in it already. Nor is the collection this view is showing — you can't
+  // move to where you already are.
+  const eventCollections = allCollections.filter(
+    (c) => c.type !== 'DEFAULT' && c.subType !== 'TASK' && c.id !== collectionId
+  )
   const visibleEvents = showFinished ? events : events.filter((e) => e.status !== 'FINISHED')
 
   useEffect(() => {
@@ -156,10 +160,12 @@ function EventListView({ collectionId }: EventListViewProps) {
                     )}
                   </div>
                 </div>
-                <MigrateSelect
-                  collections={eventCollections}
-                  onMigrate={(toCollectionId) => migrateEvent(event.id, toCollectionId)}
-                />
+                {event.status !== 'FINISHED' && (
+                  <MigrateSelect
+                    collections={eventCollections}
+                    onMigrate={(toCollectionId) => migrateEvent(event.id, toCollectionId)}
+                  />
+                )}
               </li>
             ))}
           </ul>

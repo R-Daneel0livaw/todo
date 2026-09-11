@@ -46,6 +46,17 @@ export function setupCollectionItemHandlers() {
     }
   )
 
+  ipcMain.handle(
+    'reorder-collection-items',
+    async (
+      _: IpcMainInvokeEvent,
+      collectionId: number,
+      items: { itemId: number; itemType: 'Task' | 'Event' | 'Collection' }[]
+    ): Promise<void> => {
+      await JournalClient.reorderCollectionItems(collectionId, items)
+    }
+  )
+
   // Disabled: unused so far. The HTTP route exists
   // (GET /api/collections/:id/items/:itemId/check) — wire this up like
   // get-item-collections above whenever something needs it.

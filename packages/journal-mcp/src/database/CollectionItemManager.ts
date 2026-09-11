@@ -1,11 +1,5 @@
+import { CollectionItem } from '@awesome-dev-journal/shared'
 import db from './sqlite.js'
-
-export interface CollectionItem {
-  id: number
-  collectionId: number
-  itemId: number
-  itemType: 'Task' | 'Event' | 'Collection'
-}
 
 export function addToCollection(
   collectionId: number,
@@ -19,11 +13,16 @@ export function addToCollection(
     .get(collectionId, itemId, itemType) as { id: number } | undefined
   if (existing) return existing.id
 
+  const { maxOrder } = db
+    .prepare(`SELECT MAX(sortOrder) as maxOrder FROM collectionItems WHERE collectionId = ?`)
+    .get(collectionId) as { maxOrder: number | null }
+  const nextOrder = (maxOrder ?? -1) + 1
+
   const stmt = db.prepare(`
-    INSERT INTO collectionItems (collectionId, itemId, itemType)
-    VALUES (?, ?, ?)
+    INSERT INTO collectionItems (collectionId, itemId, itemType, sortOrder)
+    VALUES (?, ?, ?, ?)
   `)
-  const result = stmt.run(collectionId, itemId, itemType)
+  const result = stmt.run(collectionId, itemId, itemType, nextOrder)
   return result.lastInsertRowid as number
 }
 
@@ -43,6 +42,7 @@ export function getCollectionItems(collectionId: number): CollectionItem[] {
   const stmt = db.prepare(`
     SELECT * FROM collectionItems
     WHERE collectionId = ?
+    ORDER BY sortOrder ASC, id ASC
   `)
   return stmt.all(collectionId) as CollectionItem[]
 }
@@ -69,4 +69,25 @@ export function isItemInCollection(
   `)
   const result = stmt.get(collectionId, itemId, itemType) as { count: number }
   return result.count > 0
+}
+
+/**
+ * Persist a new item order for a collection. `orderedItems` must list every
+ * item currently in the collection, in the desired order — each gets
+ * sortOrder = its index.
+ */
+export function reorderCollectionItems(
+  collectionId: number,
+  orderedItems: { itemId: number; itemType: 'Task' | 'Event' | 'Collection' }[]
+): void {
+  const stmt = db.prepare(`
+    UPDATE collectionItems SET sortOrder = ?
+    WHERE collectionId = ? AND itemId = ? AND itemType = ?
+  `)
+  const transaction = db.transaction(() => {
+    orderedItems.forEach((item, index) => {
+      stmt.run(index, collectionId, item.itemId, item.itemType)
+    })
+  })
+  transaction()
 }

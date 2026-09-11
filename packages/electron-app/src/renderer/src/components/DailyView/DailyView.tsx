@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Collection, Event, ItemMigrationHistory, Task } from '@awesome-dev-journal/shared'
+import { Collection, CollectionItem, Event, ItemMigrationHistory, Task } from '@awesome-dev-journal/shared'
 import * as CollectionService from '@renderer/services/CollectionService'
 import * as CollectionItemService from '@renderer/services/CollectionItemService'
 import * as TaskService from '@renderer/services/TaskService'
@@ -25,6 +25,13 @@ interface MigratedAwayItem {
   toCollectionTitle: string
 }
 
+interface PlanEntry {
+  itemId: number
+  itemType: 'Task' | 'Event'
+  task?: Task
+  event?: Event
+}
+
 interface DailyViewProps {
   // Which Daily to land on initially. Omit to land on the most recent one
   // (the "Daily Log" nav destination's default behavior).
@@ -44,6 +51,7 @@ function DailyView({ initialDailyId }: DailyViewProps) {
   const [logEvents, setLogEvents] = useState<Event[]>([])
   const [planMigratedAway, setPlanMigratedAway] = useState<MigratedAwayItem[]>([])
   const [logMigratedAway, setLogMigratedAway] = useState<MigratedAwayItem[]>([])
+  const [planItemOrder, setPlanItemOrder] = useState<CollectionItem[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -63,6 +71,27 @@ function DailyView({ initialDailyId }: DailyViewProps) {
   // is always in them already.
   const taskCollections = allCollections.filter((c) => c.type !== 'DEFAULT' && c.subType !== 'EVENT')
   const eventCollections = allCollections.filter((c) => c.type !== 'DEFAULT' && c.subType !== 'TASK')
+
+  // Nor is the collection an item is already sitting in — moving "to" where
+  // it already is isn't a real option.
+  const planTaskCollections = taskCollections.filter((c) => c.id !== planCollection?.id)
+  const planEventCollections = eventCollections.filter((c) => c.id !== planCollection?.id)
+  const logTaskCollections = taskCollections.filter((c) => c.id !== logCollection?.id)
+  const logEventCollections = eventCollections.filter((c) => c.id !== logCollection?.id)
+
+  // Plan is priority-ordered (bullet-journal ranking), unlike every other
+  // list in the app — derive one combined, ordered Task+Event sequence from
+  // the collection-item rows (which carry sortOrder) instead of rendering
+  // tasks and events as two separate lists.
+  const planEntries: PlanEntry[] = planItemOrder
+    .filter((item) => item.itemType === 'Task' || item.itemType === 'Event')
+    .map((item) => ({
+      itemId: item.itemId,
+      itemType: item.itemType as 'Task' | 'Event',
+      task: item.itemType === 'Task' ? planTasks.find((t) => t.id === item.itemId) : undefined,
+      event: item.itemType === 'Event' ? planEvents.find((e) => e.id === item.itemId) : undefined
+    }))
+    .filter((entry) => entry.task || entry.event)
 
   useEffect(() => {
     loadDailies(true)
@@ -162,16 +191,18 @@ function DailyView({ initialDailyId }: DailyViewProps) {
       setPlanCollection(plan)
       setLogCollection(log)
 
-      const [pt, pe, lt, le] = await Promise.all([
+      const [pt, pe, lt, le, planItems] = await Promise.all([
         plan ? TaskService.getTasksByCollectionId(plan.id) : Promise.resolve([]),
         plan ? EventService.getEventsByCollectionId(plan.id) : Promise.resolve([]),
         log ? TaskService.getTasksByCollectionId(log.id) : Promise.resolve([]),
-        log ? EventService.getEventsByCollectionId(log.id) : Promise.resolve([])
+        log ? EventService.getEventsByCollectionId(log.id) : Promise.resolve([]),
+        plan ? CollectionItemService.getCollectionItems(plan.id) : Promise.resolve([])
       ])
       setPlanTasks(pt)
       setPlanEvents(pe)
       setLogTasks(lt)
       setLogEvents(le)
+      setPlanItemOrder(planItems)
 
       // Items that used to live here but got migrated elsewhere — shown as a
       // "migrated away" mark, like the > notation in a physical bullet
@@ -230,6 +261,40 @@ function DailyView({ initialDailyId }: DailyViewProps) {
       await loadDailyContent(daily.id, false)
     } catch (err) {
       console.error('Failed to start event:', err)
+    }
+  }
+
+  const movePlanItem = async (index: number, direction: -1 | 1) => {
+    if (!planCollection) return
+    const newIndex = index + direction
+    if (newIndex < 0 || newIndex >= planEntries.length) return
+
+    // Reorder by identity (itemId + itemType) against the actual rendered
+    // list, rather than assuming planItemOrder and planEntries stay
+    // index-aligned — safer if a row ever fails to resolve to a task/event.
+    const reorderedEntries = [...planEntries]
+    const [moved] = reorderedEntries.splice(index, 1)
+    reorderedEntries.splice(newIndex, 0, moved)
+
+    const reorderedItems = reorderedEntries.map(
+      (entry) =>
+        planItemOrder.find((item) => item.itemId === entry.itemId && item.itemType === entry.itemType) ?? {
+          id: 0,
+          collectionId: planCollection.id,
+          itemId: entry.itemId,
+          itemType: entry.itemType
+        }
+    )
+    setPlanItemOrder(reorderedItems) // optimistic — avoids waiting on a round trip for a simple swap
+
+    try {
+      await CollectionItemService.reorderCollectionItems(
+        planCollection.id,
+        reorderedItems.map((item) => ({ itemId: item.itemId, itemType: item.itemType }))
+      )
+    } catch (err) {
+      console.error('Failed to reorder plan:', err)
+      if (daily) await loadDailyContent(daily.id, false)
     }
   }
 
@@ -482,7 +547,7 @@ function DailyView({ initialDailyId }: DailyViewProps) {
         {/* Plan Section */}
         <section className="plan-section">
           <div className="section-header">
-            <h2>Plan ({planTasks.length + planEvents.length})</h2>
+            <h2>Plan ({planEntries.length})</h2>
             {isToday && (
               <div className="section-header-actions">
                 <button onClick={() => setAddingTask((prev) => !prev)}>
@@ -496,53 +561,95 @@ function DailyView({ initialDailyId }: DailyViewProps) {
           </div>
           {isToday && addingTask && <TaskForm onSave={handleSaveTask} onCancel={() => setAddingTask(false)} />}
           {isToday && addingEvent && <EventForm onSave={handleSaveEvent} onCancel={() => setAddingEvent(false)} />}
-          {planTasks.length === 0 && planEvents.length === 0 && planMigratedAway.length === 0 ? (
+          {planEntries.length === 0 && planMigratedAway.length === 0 ? (
             <p className="empty-message">Nothing planned yet</p>
           ) : (
             <ul className="task-list">
-              {planTasks.map((task) => (
-                <li key={`task-${task.id}`} className="task-item">
-                  <div className="task-content">
-                    <div className="task-title">{task.title}</div>
-                    {task.description && <div className="task-description">{task.description}</div>}
-                    <div className="task-meta">
-                      {task.topic && <span className="task-topic">{task.topic}</span>}
-                    </div>
-                  </div>
-                  <div className="item-actions">
-                    <button className="start-button" onClick={() => startTask(task.id)}>
-                      Start →
+              {planEntries.map((entry, index) => {
+                const orderControls = isToday && (
+                  <div className="order-buttons">
+                    <button
+                      className="order-button"
+                      disabled={index === 0}
+                      onClick={() => movePlanItem(index, -1)}
+                      title="Move up"
+                    >
+                      ↑
                     </button>
-                    <MigrateSelect
-                      collections={taskCollections}
-                      onMigrate={(collectionId) => migrateTask(task.id, collectionId)}
-                    />
-                  </div>
-                </li>
-              ))}
-              {planEvents.map((event) => (
-                <li key={`event-${event.id}`} className="event-item">
-                  <div className="event-content">
-                    <div className="event-title">{event.title}</div>
-                    {event.description && <div className="event-description">{event.description}</div>}
-                    <div className="event-meta">
-                      {event.scheduledDate && (
-                        <span className="event-time">🕒 {formatTime(event.scheduledDate)}</span>
-                      )}
-                      {event.location && <span className="event-location">📍 {event.location}</span>}
-                    </div>
-                  </div>
-                  <div className="item-actions">
-                    <button className="start-button" onClick={() => startEvent(event.id)}>
-                      Start →
+                    <button
+                      className="order-button"
+                      disabled={index === planEntries.length - 1}
+                      onClick={() => movePlanItem(index, 1)}
+                      title="Move down"
+                    >
+                      ↓
                     </button>
-                    <MigrateSelect
-                      collections={eventCollections}
-                      onMigrate={(collectionId) => migrateEvent(event.id, collectionId)}
-                    />
                   </div>
-                </li>
-              ))}
+                )
+
+                if (entry.itemType === 'Task' && entry.task) {
+                  const task = entry.task
+                  return (
+                    <li key={`task-${task.id}`} className="task-item">
+                      {orderControls}
+                      <div className="task-content">
+                        <div className="task-title">{task.title}</div>
+                        {task.description && <div className="task-description">{task.description}</div>}
+                        <div className="task-meta">
+                          {task.topic && <span className="task-topic">{task.topic}</span>}
+                        </div>
+                      </div>
+                      <div className="item-actions">
+                        {isToday && (
+                          <button className="start-button" onClick={() => startTask(task.id)}>
+                            Start →
+                          </button>
+                        )}
+                        {task.status !== 'FINISHED' && (
+                          <MigrateSelect
+                            collections={planTaskCollections}
+                            onMigrate={(collectionId) => migrateTask(task.id, collectionId)}
+                          />
+                        )}
+                      </div>
+                    </li>
+                  )
+                }
+
+                if (entry.itemType === 'Event' && entry.event) {
+                  const event = entry.event
+                  return (
+                    <li key={`event-${event.id}`} className="event-item">
+                      {orderControls}
+                      <div className="event-content">
+                        <div className="event-title">{event.title}</div>
+                        {event.description && <div className="event-description">{event.description}</div>}
+                        <div className="event-meta">
+                          {event.scheduledDate && (
+                            <span className="event-time">🕒 {formatTime(event.scheduledDate)}</span>
+                          )}
+                          {event.location && <span className="event-location">📍 {event.location}</span>}
+                        </div>
+                      </div>
+                      <div className="item-actions">
+                        {isToday && (
+                          <button className="start-button" onClick={() => startEvent(event.id)}>
+                            Start →
+                          </button>
+                        )}
+                        {event.status !== 'FINISHED' && (
+                          <MigrateSelect
+                            collections={planEventCollections}
+                            onMigrate={(collectionId) => migrateEvent(event.id, collectionId)}
+                          />
+                        )}
+                      </div>
+                    </li>
+                  )
+                }
+
+                return null
+              })}
             </ul>
           )}
           {planMigratedAway.length > 0 && (
@@ -595,10 +702,12 @@ function DailyView({ initialDailyId }: DailyViewProps) {
                       <span className="task-status">{task.status}</span>
                     </div>
                   </div>
-                  <MigrateSelect
-                    collections={taskCollections}
-                    onMigrate={(collectionId) => migrateTask(task.id, collectionId)}
-                  />
+                  {task.status !== 'FINISHED' && (
+                    <MigrateSelect
+                      collections={logTaskCollections}
+                      onMigrate={(collectionId) => migrateTask(task.id, collectionId)}
+                    />
+                  )}
                 </li>
               ))}
               {logEvents.map((event) => (
@@ -624,10 +733,12 @@ function DailyView({ initialDailyId }: DailyViewProps) {
                       )}
                     </div>
                   </div>
-                  <MigrateSelect
-                    collections={eventCollections}
-                    onMigrate={(collectionId) => migrateEvent(event.id, collectionId)}
-                  />
+                  {event.status !== 'FINISHED' && (
+                    <MigrateSelect
+                      collections={logEventCollections}
+                      onMigrate={(collectionId) => migrateEvent(event.id, collectionId)}
+                    />
+                  )}
                 </li>
               ))}
             </ul>

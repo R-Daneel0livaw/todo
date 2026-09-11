@@ -71,7 +71,11 @@ const collectionItemApi: CollectionItemApi = {
   getItemCollections: (itemId: number, itemType: 'Task' | 'Event' | 'Collection') =>
     ipcRenderer.invoke('get-item-collections', itemId, itemType),
   isItemInCollection: (collectionId: number, itemId: number, itemType: 'Task' | 'Event' | 'Collection') =>
-    ipcRenderer.invoke('is-item-in-collection', collectionId, itemId, itemType)
+    ipcRenderer.invoke('is-item-in-collection', collectionId, itemId, itemType),
+  reorderCollectionItems: (
+    collectionId: number,
+    items: { itemId: number; itemType: 'Task' | 'Event' | 'Collection' }[]
+  ) => ipcRenderer.invoke('reorder-collection-items', collectionId, items)
 }
 
 const taskDependencyApi: TaskDependencyApi = {

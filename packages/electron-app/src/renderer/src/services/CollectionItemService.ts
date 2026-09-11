@@ -18,3 +18,10 @@ export const getItemCollections = async (
 ): Promise<CollectionItem[]> => {
   return window.collectionItemApi.getItemCollections(itemId, itemType)
 }
+
+export const reorderCollectionItems = async (
+  collectionId: number,
+  items: { itemId: number; itemType: 'Task' | 'Event' | 'Collection' }[]
+): Promise<void> => {
+  return window.collectionItemApi.reorderCollectionItems(collectionId, items)
+}

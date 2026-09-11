@@ -22,8 +22,12 @@ function TaskListView({ collectionId }: TaskListViewProps) {
   const [addingTask, setAddingTask] = useState(false)
   const [showFinished, setShowFinished] = useState(false)
 
-  // Default Task List isn't a real migration target — every task is always in it already.
-  const taskCollections = allCollections.filter((c) => c.type !== 'DEFAULT' && c.subType !== 'EVENT')
+  // Default Task List isn't a real migration target — every task is always in
+  // it already. Nor is the collection this view is showing — you can't move
+  // to where you already are.
+  const taskCollections = allCollections.filter(
+    (c) => c.type !== 'DEFAULT' && c.subType !== 'EVENT' && c.id !== collectionId
+  )
   const visibleTasks = showFinished ? tasks : tasks.filter((t) => t.status !== 'FINISHED')
 
   useEffect(() => {
@@ -144,10 +148,12 @@ function TaskListView({ collectionId }: TaskListViewProps) {
                     <span className={styles.itemStatus}>{task.status}</span>
                   </div>
                 </div>
-                <MigrateSelect
-                  collections={taskCollections}
-                  onMigrate={(toCollectionId) => migrateTask(task.id, toCollectionId)}
-                />
+                {task.status !== 'FINISHED' && (
+                  <MigrateSelect
+                    collections={taskCollections}
+                    onMigrate={(toCollectionId) => migrateTask(task.id, toCollectionId)}
+                  />
+                )}
               </li>
             ))}
           </ul>
